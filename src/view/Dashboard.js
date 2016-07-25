@@ -47,20 +47,20 @@ class Dashboard extends React.Component {
 
         // code to handle new child.
         this.firebaseRef.on('child_added', function(childSnapshot, prevChildKey) {
-            var notes = [];
+            /*var notes = [];
             var newNote = childSnapshot.val();
             newNote['.key'] = childSnapshot.key;
             notes.push(newNote);
 
             this.setState({
                 notes: notes
-            });
+            });*/
         }.bind(this));
 
 
         // code to handle child removal.
         this.firebaseRef.on('child_removed', function(oldChildSnapshot) {
-            var note = oldChildSnapshot.val();
+            /*var note = oldChildSnapshot.val();
             note['.key'] = oldChildSnapshot.key;
             var removed_note = notes.map((data,key) => {
 
@@ -68,13 +68,13 @@ class Dashboard extends React.Component {
 
             this.setState({
                 notes: notes
-            });
+            });*/
         }.bind(this));
 
 
         // code to handle child data changes.
         this.firebaseRef.on('child_changed', function(childSnapshot, prevChildKey) {
-            var changeNote = childSnapshot.val();
+            /*var changeNote = childSnapshot.val();
             changeNote['.key'] = childSnapshot.key;
             var updated_note = notes.map((data, index) => {
                 if(data.key == prevChildKey){
@@ -84,7 +84,7 @@ class Dashboard extends React.Component {
 
             this.setState({
                 notes: updated_note
-            });
+            });*/
         }.bind(this));
     }
 
@@ -109,34 +109,83 @@ class Dashboard extends React.Component {
 
     onSubmit(event){
         event.preventDefault();
+
+        /*firebase.auth.signInWithEmailAndPassword(email,password).catch(function(error){
+         var errorCode = error.code;
+         var errorMessage = error.message;
+         });*/
+
         let  continueObject, startObject, stopObject;
 
         if(this.state.start != "" ) {
             startObject = {note : this.state.start, username: "neha"};
-        }else{
+        }/*else{
             startObject = {note : 'NA', username: "neha"};
-        }
+        }*/
         if(this.state.stop != ""){
             stopObject = {note : this.state.stop, username: "neha"};
-        }else{
+        }/*else{
             stopObject = {note : 'NA', username: "neha"};
-        }
+        }*/
         if(this.state.continue != ""){
             continueObject = {note : this.state.continue, username: "neha"};
-        }else{
+        }/*else{
             continueObject = {note : 'NA', username: "neha"};
+        }*/
+
+
+        if(startObject == undefined){
+            if(stopObject == undefined){
+                this.firebaseRef.push({
+                    continueNotes:continueObject
+                });
+            }else if(continueObject == undefined){
+                this.firebaseRef.push({
+                    stopNotes: stopObject
+                });
+            }else {
+                this.firebaseRef.push({
+                    stopNotes: stopObject,
+                    continueNotes:continueObject
+                });
+            }
+        }else if(stopObject == undefined){
+            if(startObject == undefined){
+                this.firebaseRef.push({
+                    continueNotes:continueObject
+                });
+            }else if(continueObject == undefined){
+                this.firebaseRef.push({
+                    startNotes:startObject
+                });
+            }else {
+                this.firebaseRef.push({
+                    startNotes:startObject,
+                    continueNotes:continueObject
+                });
+            }
+        }else if(continueObject == undefined){
+            if(startObject == undefined){
+                this.firebaseRef.push({
+                    stopNotes: stopObject
+                });
+            }else if(stopObject == undefined){
+                this.firebaseRef.push({
+                    startNotes:startObject
+                });
+            }else {
+                this.firebaseRef.push({
+                    startNotes:startObject,
+                    stopNotes: stopObject
+                });
+            }
+        }else {
+            this.firebaseRef.push({
+                startNotes:startObject,
+                stopNotes: stopObject,
+                continueNotes:continueObject
+            });
         }
-
-        /*firebase.auth.signInWithEmailAndPassword(email,password).catch(function(error){
-           var errorCode = error.code;
-            var errorMessage = error.message;
-        });*/
-
-        this.firebaseRef.push({
-            startNotes:startObject,
-            stopNotes: stopObject,
-            continueNotes:continueObject
-        });
 
         this.setState({
             start: "",
@@ -151,128 +200,87 @@ class Dashboard extends React.Component {
         var key = event.target.accessKey;
         var index = event.target.id;
 
-        this.firebaseRef.child(key + "/" + deleteNodeCategory + "Notes" + "/" + index).remove();
+        this.firebaseRef.child(key + "/" + deleteNodeCategory + "Notes").remove();
+        //this.firebaseRef.child(key).remove();
     }
 
     render(){
-        /*var startDataNote = this.state.notes.map((data,index,key) => {
-            var startData = data.startNotes.map((startNotesData,index,key) => {
-                return(
-                    <Row style={{margin:"10px",backgroundColor:"#72B53E",padding:"10px"}} id="start" key={index}>
-                        <Col xs={10} md={10}> {startNotesData.startNotes.note} </Col>
-                        <Col xs={2} md={2} className="glyphicon glyphicon-trash" title="start" style={{cursor:"pointer"}}
-                             id={index} accessKey={key[index]['.key']} onClick={this.onDeleteNote.bind(this)}> </Col>
-                    </Row>
-                );
-            });
 
-            return(
-                {startData}
-            );
-
-        });
-        var stopDataNote = this.state.notes.map((data,index,key) => {
-            var stopData = data.stopNotes.map((stopNotesData,index,key) => {
-                return (
-                    <Row style={{margin:"10px",backgroundColor:"#F36576",padding:"10px"}} id="stop" key={index}>
-                        <Col xs={10} md={10}> {stopNotesData.stopNotes.note} </Col>
-                        <Col xs={2} md={2} className="glyphicon glyphicon-trash" title="stop" style={{cursor:"pointer"}}
-                             id={index} accessKey={key[index]['.key']} onClick={this.onDeleteNote.bind(this)}> </Col>
-                    </Row>
-                );
-            });
-
-            return(
-                {stopData}
-            );
-        });
-        var continueDataNote = this.state.notes.map((data,index,key) => {
-            var continueData = data.continueNotes.map((continueNotesData,index,key) => {
-                return (
-                    <Row style={{margin:"10px",backgroundColor:"#6593F1",padding:"10px"}} id="continue" key={index}>
-                        <Col xs={10} md={10}> {continueNotesData.continueNotes.note} </Col>
-                        <Col xs={2} md={2} className="glyphicon glyphicon-trash" title="continue"
-                             style={{cursor:"pointer"}}
-                             id={index} accessKey={key[index]['.key']} onClick={this.onDeleteNote.bind(this)}> </Col>
-                    </Row>
-                );
-            });
-
-            return(
-                {continueData}
-            );
-        });*/
-
-        var startDataNote = this.state.notes.map((data,index,key) => {
-            return(
-                data.startNotes.note
-            );
-        });
-        var stopDataNote = this.state.notes.map((data,index,key) => {
-            return(
-                data.stopNotes.note
-            );
-        });
-        var continueDataNote = this.state.notes.map((data,index,key) => {
-            return(
-                data.continueNotes.note
-            );
-        });
-
-
-           /*var NOTES = this.state.notes.map((data,index,key) => {
-                var startDataNote = this.state.notes.map((data,index,key) => {
-                    var startData = data.startNotes.note;
-                    return(
+        if(this.state.notes.length != 0 ){
+            var startData = this.state.notes.map((data,index,key) => {
+                if(data.startNotes != undefined){
+                    if(data.startNotes.note == "NA"){
+                        return(
+                            undefined
+                        );
+                    }
+                    return (
                         <Row style={{margin:"10px",backgroundColor:"#72B53E",padding:"10px"}} id="start" key={index}>
-                            <Col xs={10} md={10}> {startData} </Col>
+                            <Col xs={10} md={10}> {data.startNotes.note} </Col>
                             <Col xs={2} md={2} className="glyphicon glyphicon-trash" title="start" style={{cursor:"pointer"}}
                                  id={index} accessKey={data['.key']} onClick={this.onDeleteNote.bind(this)}> </Col>
                         </Row>
                     );
-                });
-                var stopDataNote = this.state.notes.map((data,index,key) => {
-                    var stopData = data.stopNotes.note;
-                    return(
+                }
+            });
+
+            var stopData = this.state.notes.map((data,index,key) => {
+                if(data.stopNotes != undefined){
+                    if(data.stopNotes.note == "NA"){
+                        return(
+                            undefined
+                        );
+                    }
+                    return (
                         <Row style={{margin:"10px",backgroundColor:"#F36576",padding:"10px"}} id="stop" key={index}>
-                            <Col xs={10} md={10}> {stopData} </Col>
+                            <Col xs={10} md={10}> {data.stopNotes.note} </Col>
                             <Col xs={2} md={2} className="glyphicon glyphicon-trash" title="stop" style={{cursor:"pointer"}}
                                  id={index} accessKey={data['.key']} onClick={this.onDeleteNote.bind(this)}> </Col>
                         </Row>
                     );
-                });
-                var continueDataNote = this.state.notes.map((data,index,key) => {
-                    var continueData = data.continueNotes.note;
-                    return(
+                }
+            });
+            var continueData = this.state.notes.map((data,index,key) => {
+                if(data.continueNotes != undefined){
+                    if(data.continueNotes.note == "NA"){
+                        return(
+                            undefined
+                        );
+                    }
+                    return (
                         <Row style={{margin:"10px",backgroundColor:"#6593F1",padding:"10px"}} id="continue" key={index}>
-                            <Col xs={10} md={10}> {continueData} </Col>
-                            <Col xs={2} md={2} className="glyphicon glyphicon-trash" title="continue" style={{cursor:"pointer"}}
+                            <Col xs={10} md={10}> {data.continueNotes.note} </Col>
+                            <Col xs={2} md={2} className="glyphicon glyphicon-trash" title="continue"
+                                 style={{cursor:"pointer"}}
                                  id={index} accessKey={data['.key']} onClick={this.onDeleteNote.bind(this)}> </Col>
                         </Row>
                     );
-                });
-                return(
-                    <Row style={{marginTop:"20px"}}>
-                        <Col xs={4} md={4}>{startDataNote}</Col>
-                        <Col xs={4} md={4}>{stopDataNote}</Col>
-                        <Col xs={4} md={4}>{continueDataNote}</Col>
-                    </Row>
-                );
-            });*/
+                }
+            });
+        }
 
         return(
             <Grid style={{backgroundColor: "#E6E6E6", textAlign: "center"}}>
                 <Row style={{backgroundColor:"#FF0000"}}>
-                    <Col xs={3} md={3}>
-                        <FormGroup>
-                            <FormControl type="text" placeholder="Search"/>
+                    <Col xs={3} md={3} style={{marginTop:"20px"}}>
+                        <FormGroup controlId="formControlsUserImage">
+                            <Image src="../images/logo.png" style={{width:"200px", height:"50px"}} />
                         </FormGroup>
                     </Col>
-                    <Col  xs={1} md={1}>
-                        <Button type="submit" className="glyphicon glyphicon-search" style={{backgroundColor:"white"}}> </Button>
-                    </Col>
-                    <Col xs={4} md={4} style={{ color:"white",fontSize:30}}>
+                    <Col xs={3} md={3} style={{ color:"white",fontSize:30}}>
                         <strong> LiveRetro </strong>
+                    </Col>
+                    <Col xs={2} md={2}>
+                        <FormGroup controlId="formControlsProjectName">
+                            <FormControl componentClass="select" placeholder="Project Name" onChange={this.projectNameChange.bind(this)}>
+                                <option value="select">Project Name</option>
+                                <option value="peopleadmin">PeopleAdmin</option>
+                                <option value="fuelquest">FuelQuest</option>
+                                <option value="qsi">QSI</option>
+                                <option value="chartspan">ChartSpan</option>
+                                <option value="stepone">StepOne</option>
+                            </FormControl>
+                        </FormGroup>
                     </Col>
                     <Col xs={1} md={1}>
                         <FormGroup controlId="formControlsUserImage">
@@ -361,25 +369,13 @@ class Dashboard extends React.Component {
 
                 <Row style={{marginTop:"20px"}}>
                     <Col xs={4} md={4}>
-                        <Row style={{margin:"10px",backgroundColor:"#72B53E",padding:"10px"}} id="start" >
-                            <Col xs={10} md={10}> {startDataNote} </Col>
-                            <Col xs={2} md={2} className="glyphicon glyphicon-trash" title="start" style={{cursor:"pointer"}}
-                                onClick={this.onDeleteNote.bind(this)}> </Col>
-                        </Row>
+                        {startData}
                     </Col>
                     <Col xs={4} md={4}>
-                        <Row style={{margin:"10px",backgroundColor:"#F36576",padding:"10px"}} id="stop" >
-                            <Col xs={10} md={10}> {stopDataNote} </Col>
-                            <Col xs={2} md={2} className="glyphicon glyphicon-trash" title="stop" style={{cursor:"pointer"}}
-                                 onClick={this.onDeleteNote.bind(this)}> </Col>
-                        </Row>
+                        {stopData}
                     </Col>
                     <Col xs={4} md={4}>
-                        <Row style={{margin:"10px",backgroundColor:"#6593F1",padding:"10px"}} id="continue" >
-                            <Col xs={10} md={10}> {continueDataNote} </Col>
-                            <Col xs={2} md={2} className="glyphicon glyphicon-trash" title="continue" style={{cursor:"pointer"}}
-                                 onClick={this.onDeleteNote.bind(this)}> </Col>
-                        </Row>
+                        {continueData}
                     </Col>
                 </Row>
 

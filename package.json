@@ -71,10 +71,6 @@
     "webpack": "^1.11.0",
     "webpack-dev-server": "^1.10.1"
   },
-  "author": {
-    "name": "Nikhil Ahir",
-    "email": "nikhil.ahir@synerzip.com"
-  },
-  "contributors": [],
+
   "license": "LICENSE"
 }

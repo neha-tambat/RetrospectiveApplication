@@ -11,6 +11,8 @@ import {connect} from 'react-redux';
 import * as scrumsActionCreator from '../actions/scrums/index';
 import {Navbar, Nav,NavItem,Input,Button,Grid,Row,Col} from 'react-bootstrap';
 
+import AppHeader from './AppHeader';
+
 class Main extends React.Component {
 
     constructor(){
@@ -27,12 +29,8 @@ class Main extends React.Component {
     render() {
         return (
             <Grid style={{backgroundColor: "#E6E6E6", textAlign: "center"}}>
-                <Row style={{backgroundColor:"#FF0000"}}>
-                    <Col xs={11} md={11} style={{ color:"white",fontSize:30}}> <strong> LiveRetro </strong> </Col>
-                    <Col xs={1} md={1} className="glyphicon glyphicon-circle-arrow-right"
-                                        onClick={this.handleNext.bind(this)}
-                                        style={{cursor:'pointer' ,color:'white',fontSize:"25px",float: 'right', marginTop:"7px"}}> </Col>
-                </Row>
+
+                <AppHeader />
 
                 <Row style={{margin : "50px"}}>
                     <Col xs={5} md={5} style={{backgroundColor:"white",boxShadow: "5px 5px 5px", padding: "10px"}}>
