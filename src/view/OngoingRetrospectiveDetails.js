@@ -18,14 +18,18 @@ class OngoingRetrospectiveDetails extends React.Component {
         };
     }
 
+    handleSelectRetro(event){
+        this.props.actions.loadPage('loginSuccess/dashboard');
+    }
+
     render(){
         return(
             <Grid>
                 <Row>
-                    <a> Retrospective 1 </a>
+                    <a onClick={this.handleSelectRetro.bind(this)}> Retrospective 1 </a>
                 </Row>
                 <Row>
-                    <a> Retrospective 2 </a>
+                    <a onClick={this.handleSelectRetro.bind(this)}> Retrospective 2 </a>
                 </Row>
             </Grid>
         );

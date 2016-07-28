@@ -7,6 +7,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import {Navbar, Nav,NavItem,Input,Image,Button,Grid,Row,Col,FormGroup,FormControl,ControlLabel} from 'react-bootstrap';
 import _ from 'lodash';
+import * as scrumsActionCreator from '../actions/scrums/index';
 import reactMixin from 'react-mixin';
 import ReactFireMixin from 'reactfire';
 import firebase from 'firebase';
@@ -21,23 +22,27 @@ class Dashboard extends React.Component {
         this.state = {
             name : "",
             start: "", stop: "", continue: "",
-            notes:[]
+            notes:[], retrospectives: [],
+            matchedProjectIDKey: null
         };
     }
 
     componentWillMount(){
-        var firebaseRef = firebase.database().ref('retrospective-application/notes');
-        this.bindAsArray(firebaseRef.limitToLast(25), 'notes');
+        var firebaseRef = firebase.database().ref('retrospectives/' + this.state.matchedProjectIDKey + 'notes');
+        //this.bindAsArray(firebaseRef.limitToLast(25), 'retrospectives/notes');
 
-        this.firebaseRef = firebase.database().ref('retrospective-application/notes');
+        this.firebaseRef = firebase.database().ref('retrospectives/' + this.state.matchedProjectIDKey + 'notes');
 
         this.firebaseRef.limitToLast(25).on('value', function(dataSnapshot) {
+            console.log("Tree for notes : ", 'retrospectives/' + this.state.matchedProjectIDKey + 'notes');
             var notes = [];
             dataSnapshot.forEach(function(childSnapshot) {
                 var note = childSnapshot.val();
                 note['.key'] = childSnapshot.key;
                 notes.push(note);
             }.bind(this));
+
+            console.log("notes : ", notes);
 
             this.setState({
                 notes: notes
@@ -89,7 +94,7 @@ class Dashboard extends React.Component {
     }
 
     componentWillUnmount() {
-        this.firebaseRefs.off();
+        //this.firebaseRefs.off();
     }
 
     nameChange(event){
@@ -109,30 +114,27 @@ class Dashboard extends React.Component {
 
     onSubmit(event){
         event.preventDefault();
-
-        /*firebase.auth.signInWithEmailAndPassword(email,password).catch(function(error){
-         var errorCode = error.code;
-         var errorMessage = error.message;
-         });*/
-
         let  continueObject, startObject, stopObject;
+        var selected_project_id = this.props.selected_project_id;
+
+        for(var index=0; index <= this.state.retrospectives.length; index++){
+            if(this.state.retrospectives[index].project_id.toLowerCase() == selected_project_id.toLowerCase()){
+                var matchedProjectIDKey = this.state.retrospectives[index]['.key'];
+                break;
+            }
+        }
+        console.log("matchedProjectIDKey : ", matchedProjectIDKey);
+        this.state.matchedProjectIDKey = matchedProjectIDKey;
 
         if(this.state.start != "" ) {
             startObject = {note : this.state.start, username: "neha"};
-        }/*else{
-            startObject = {note : 'NA', username: "neha"};
-        }*/
+        }
         if(this.state.stop != ""){
             stopObject = {note : this.state.stop, username: "neha"};
-        }/*else{
-            stopObject = {note : 'NA', username: "neha"};
-        }*/
+        }
         if(this.state.continue != ""){
             continueObject = {note : this.state.continue, username: "neha"};
-        }/*else{
-            continueObject = {note : 'NA', username: "neha"};
-        }*/
-
+        }
 
         if(startObject == undefined){
             if(stopObject == undefined){
@@ -261,43 +263,6 @@ class Dashboard extends React.Component {
 
         return(
             <Grid style={{backgroundColor: "#E6E6E6", textAlign: "center"}}>
-                <Row style={{backgroundColor:"#FF0000"}}>
-                    <Col xs={3} md={3} style={{marginTop:"20px"}}>
-                        <FormGroup controlId="formControlsUserImage">
-                            <Image src="../images/logo.png" style={{width:"200px", height:"50px"}} />
-                        </FormGroup>
-                    </Col>
-                    <Col xs={3} md={3} style={{ color:"white",fontSize:30}}>
-                        <strong> LiveRetro </strong>
-                    </Col>
-                    <Col xs={2} md={2}>
-                        <FormGroup controlId="formControlsProjectName">
-                            <FormControl componentClass="select" placeholder="Project Name" onChange={this.projectNameChange.bind(this)}>
-                                <option value="select">Project Name</option>
-                                <option value="peopleadmin">PeopleAdmin</option>
-                                <option value="fuelquest">FuelQuest</option>
-                                <option value="qsi">QSI</option>
-                                <option value="chartspan">ChartSpan</option>
-                                <option value="stepone">StepOne</option>
-                            </FormControl>
-                        </FormGroup>
-                    </Col>
-                    <Col xs={1} md={1}>
-                        <FormGroup controlId="formControlsUserImage">
-                            <Image src="../images/common.jpg" style={{width:"40px", height:"40px"}} />
-                        </FormGroup>
-                    </Col>
-                    <Col xs={2} md={2}>
-                        <FormGroup>
-                            <FormControl type="text" placeholder="User Name"/>
-                        </FormGroup>
-                    </Col>
-                    <Col xs={1} md={1}>
-                        <Button type="submit" style={{backgroundColor:"white",width:"30px", height:"30px"}}>
-                            <span className="glyphicon glyphicon-bell" style={{textAlign:"center",fontSize:"20px"}}> </span>
-                        </Button>
-                    </Col>
-                </Row>
 
                 <Row style={{marginTop:"20px"}}>
                     <Col xs={4} md={4}> </Col>
@@ -400,11 +365,11 @@ reactMixin(Dashboard.prototype,ReactFireMixin);
 //export default Dashboard;
 
 const mapStateToProps = (state) => ({
-    loading : state.scrums.loading
+    selected_project_id: state.scrums.selected_project_id
 });
 
 const mapDispatchToProps = (dispatch) => ({
-
+    actions: bindActionCreators(scrumsActionCreator, dispatch)
 });
 
 export default connect (mapStateToProps, mapDispatchToProps) (Dashboard);

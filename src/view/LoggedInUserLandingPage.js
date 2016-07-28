@@ -12,19 +12,69 @@ import firebase from 'firebase';
 import database from 'firebase/database';
 import auth from 'firebase/auth';
 import firebaseInit from '../firebase/firebaseInit';
-
+import ModalBox from '../components/ModalBox';
 import AppHeader from './AppHeader';
 
 class LoggedInUserLandingPage extends React.Component {
     constructor() {
         super();
         this.state = {
-            menuIndex: 2
+            projects: [], team:[],
+            menuIndex: 2,
+            show : false,
+            createEmployee: false,
+            modalBody_createEmployee: 'Confirm Details...',
+            headerMsg : 'Create Project',
+            matchedKey: null
         };
     }
 
     componentWillMount(){
         this.props.actions.loadPage('/loginSuccess/ongoingRetro');
+
+
+        var firebaseRef = firebase.database().ref('projects');
+        //this.bindAsArray(firebaseRef.limitToLast(25), 'projects');
+        this.firebaseRef = firebase.database().ref('projects');
+
+        this.firebaseRef.limitToLast(25).on('value', function (dataSnapshot) {
+            var projects = [];
+            dataSnapshot.forEach(function (childSnapshot) {
+                var project = childSnapshot.val();
+                project['.key'] = childSnapshot.key;
+                projects.push(project);
+            }.bind(this));
+
+            console.log('projects', projects);
+
+            this.setState({
+                projects: projects
+            });
+        }.bind(this));
+
+
+
+       // if(this.state.matchedKey != null){
+            var firebaseRef1 = firebase.database().ref('projects/'+ this.state.matchedKey +'/team');
+            this.firebaseRef1 = firebase.database().ref('projects/'+ this.state.matchedKey +'/team');
+
+            this.firebaseRef1.limitToLast(25).on('value', function (dataSnapshot) {
+                console.log("Tree for team : " , 'projects/'+ this.state.matchedKey +'/team');
+                var team = [];
+                dataSnapshot.forEach(function (childSnapshot) {
+                    var teamMate = childSnapshot.val();
+                    teamMate['.key'] = childSnapshot.key;
+                    team.push(teamMate);
+                }.bind(this));
+
+                console.log('team', team);
+
+                this.setState({
+                    team: team
+                });
+            }.bind(this));
+       // }
+
     }
 
     handleSelect(selectedKey) {
@@ -37,10 +87,8 @@ class LoggedInUserLandingPage extends React.Component {
         }else if(selectedKey == "3"){
             tab = "pastRetro";
         }else if(selectedKey == "4"){
-            tab = "createProject";
-        }else if(selectedKey == "5"){
             tab = "teamManage";
-        }else if(selectedKey == "6"){
+        }else if(selectedKey == "5"){
             tab = "createSprintRetro";
         }
 
@@ -48,36 +96,87 @@ class LoggedInUserLandingPage extends React.Component {
         this.setState({menuIndex  : selectedKey});
     }
 
-    render(){
+    createProject(){
+        this.setState({show:true, createEmployee: true});
+    }
+    onHide(){
+        this.setState({show:false});
+    }
 
-        const tabsInstance = (
-            <TabContainer id="left-tabs-example" defaultActiveKey={this.state.menuIndex} activeKey={this.state.menuIndex} onSelect={this.handleSelect.bind(this)}>
+    modalSubmitCreateProject(event,modalTab){
+        console.log("ModalTab : ", modalTab);
+        console.log("Event : " , event);
+
+        if(modalTab == "Create Project"){
+            this.firebaseRef.push(event);
+        }else if(modalTab == "Add Member"){
+            /*var matchedKey = this.state.projects.map(data => {
+               if(data.project_name.toLowerCase() == event.teamMemberProjectName.toLowerCase()){
+                   var key = data['.key'];
+                   return key;
+               }
+            });
+            for(var index=0; index <= matchedKey.length; index++){
+                if(matchedKey[index] != undefined){
+                    var filtered_matchedKey = matchedKey[index];
+                    break;
+                }
+            }*/
+
+            for(var index=0; index <= this.state.projects.length; index++){
+                if(this.state.projects[index].project_id.toLowerCase() == event.teamMemberProjectName.toLowerCase()){
+                    var matchedKey = this.state.projects[index]['.key'];
+                    break;
+                }
+            }
+
+            this.state.matchedKey = matchedKey;
+            console.log("matchedKey : ", matchedKey);
+            this.firebaseRef1.push(event);
+        }
+
+        console.log("this.state.projects : ", this.state.projects);
+        this.setState({show:false, createEmployee: false, matchedKey: matchedKey});
+    }
+
+
+    render(){
+        return(
+            <Grid style={{backgroundColor: "#E6E6E6", textAlign: "center", margin: 0, width: "100%"}}>
+                <AppHeader />
                 <Row className="clearfix">
                     <Col xs={3} md={3} >
-                        <Nav bsStyle="pills" stacked style={{backgroundColor:"black"}}>
+                        <Nav bsStyle="pills" stacked style={{backgroundColor:"black"}} activeKey={this.state.menuIndex} onSelect={this.handleSelect.bind(this)}>
                             <NavItem eventKey={0} >
                                 <Button type="button" className="glyphicon glyphicon-menu-hamburger" style={{backgroundColor:"black",color:"white"}}> </Button>
                             </NavItem>
                             <NavItem eventKey={1} href="#myProfile"> <span style={{color:"white"}}>My Profile</span> </NavItem>
                             <NavItem eventKey={2} href="#ongoingRetro"> <span style={{color:"white"}}>Ongoing Retrospective</span> </NavItem>
                             <NavItem eventKey={3} href="#pastRetro"> <span style={{color:"white"}}>Past Retrospective</span> </NavItem>
-                            <NavItem eventKey={4} href="#createProject"> <span style={{color:"white"}}>Create Project</span> </NavItem>
-                            <NavItem eventKey={5} href="#teamManage"> <span style={{color:"white"}}>Team Manage</span> </NavItem>
-                            <NavItem eventKey={6} href="#createSprintRetro"> <span style={{color:"white"}}>Create Sprint Retrospective</span> </NavItem>
+                            <NavItem eventKey={4} href="#teamManage"> <span style={{color:"white"}}>Team Manage</span> </NavItem>
+                            <NavItem eventKey={5} href="#createSprintRetro"> <span style={{color:"white"}}>Create Sprint Retrospective</span> </NavItem>
                         </Nav>
                     </Col>
 
-                    <Col xs={9} md={9} style={{backgroundColor:"#E6E6E6"}} >
-                        {this.props.children}
+                    <Col xs={9} md={9} style={{backgroundColor:"#E6E6E6",marginTop:"10px"}} >
+                        <Row style={{margin:"20px", marginLeft:"1200px"}}>
+                            <Button type="button" className="createProject" onClick={this.createProject.bind(this)} style={{color:"white", backgroundColor:"red"}}> Create Project </Button>
+                        </Row>
+                        <Row>
+                            {this.props.children}
+                        </Row>
                     </Col>
                 </Row>
-            </TabContainer>
-        );
+                <Row>
+                    <ModalBox
+                        showModal= {this.state.show}
+                        onHide= {this.onHide.bind(this)}
+                        headerMsg= {this.state.headerMsg}
+                        modalbody={this.state.modalBody_createEmployee}
+                        onModalSubmit ={this.modalSubmitCreateProject.bind(this)}
 
-        return(
-            <Grid style={{backgroundColor: "#E6E6E6", textAlign: "center", margin: 0, width: "100%"}}>
-                <AppHeader />
-                {tabsInstance}
+                    />
+                </Row>
             </Grid>
         );
     }

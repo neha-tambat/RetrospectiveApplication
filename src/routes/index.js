@@ -24,9 +24,10 @@ var Routes = (
             <Route path="signUp" component={SignUpPage}/>
             <Route path="login" component={LoginPage}/>
             <Route path="loginSuccess" component={LoggedInUserLandingPage} onEnter={requireAuth}>
+                <IndexRoute component={OngoingRetrospectiveDetails} />
+                <Route path="ongoingRetro" component={OngoingRetrospectiveDetails} />
                 <Route path="myProfile" component={MyProfile} />
                 <Route path="createProject" component={CreateProject} />
-                <Route path="ongoingRetro" component={OngoingRetrospectiveDetails} />
                 <Route path="createSprintRetro" component={CreateSprintRetrospective} />
                 <Route path="main" component={Main}/>
                 <Route path="dashboard" component={Dashboard}/>

@@ -8,13 +8,17 @@ import { pushState } from 'redux-router';
 import {connect} from 'react-redux';
 import * as scrumsActionCreator from '../actions/scrums/index';
 import {Navbar, Nav,NavItem,Input,Image,Tab,TabContainer,TabContent,TabPane,Button,Grid,Row,Col,FormGroup,FormControl,ControlLabel} from 'react-bootstrap';
-
+import firebase from 'firebase';
+import database from 'firebase/database';
+import auth from 'firebase/auth';
+import firebaseInit from '../firebase/firebaseInit';
 
 class CreateSprintRetrospective extends React.Component {
 
     constructor(){
         super();
         this.state = {
+            retrospectives: [],
             scrumMasterName : null,
             projectName : null,
             sprintTitle : null,
@@ -22,6 +26,28 @@ class CreateSprintRetrospective extends React.Component {
             endDate : null,
             retrospectiveTime : null
         };
+    }
+
+    componentWillMount(){
+        var firebaseRef = firebase.database().ref('retrospectives');
+        //this.bindAsArray(firebaseRef.limitToLast(25), 'retrospectives');
+
+        this.firebaseRef = firebase.database().ref('retrospectives');
+
+        this.firebaseRef.limitToLast(25).on('value', function(dataSnapshot) {
+            var retrospectives = [];
+            dataSnapshot.forEach(function(childSnapshot) {
+                var retrospective = childSnapshot.val();
+                retrospective['.key'] = childSnapshot.key;
+                retrospectives.push(retrospective);
+            }.bind(this));
+
+            console.log("retrospectives : ", retrospectives);
+
+            this.setState({
+                retrospectives: retrospectives
+            });
+        }.bind(this));
     }
 
     scrumMasterNameChange(event){
@@ -50,7 +76,14 @@ class CreateSprintRetrospective extends React.Component {
     }
 
     registerScrum(){
-        console.log("User Input : " , this.state);
+        var retroRegister = {
+            sprint_title: this.state.sprintTitle,
+            sprint_start_date: this.state.startDate,
+            sprint_end_date: this.state.endDate,
+            retrospective_time: this.state.retrospectiveTime,
+            project_id: this.props.selected_project_id
+        };
+        this.firebaseRef.push(retroRegister);
     }
 
 
@@ -86,7 +119,7 @@ class CreateSprintRetrospective extends React.Component {
 }
 
 const mapStateToProps = (state) => ({
-
+    selected_project_id: state.scrums.selected_project_id
 });
 
 const mapDispatchToProps = (dispatch) => ({

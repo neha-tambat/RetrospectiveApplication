@@ -6,5 +6,6 @@ import {createConstants} from '../utils';
 
 export default createConstants(
 
+    'SELECTED_PROJECT_ID'
 
 );

@@ -27,6 +27,7 @@
     "history": "^1.9.0",
     "jquery": "^2.1.4",
     "lodash": "^3.10.1",
+    "menu-component": "^0.1.1",
     "moment": "^2.14.1",
     "morgan": "^1.5.3",
     "object-assign": "^4.0.1",
@@ -40,6 +41,7 @@
     "react-redux": "^4.4.5",
     "react-router": "1.0.1",
     "react-router-redux": "^4.0.5",
+    "react-sidebar": "^2.2.1",
     "react-toastr": "^2.7.0",
     "reactfire": "^1.0.0",
     "redux-logger": "^2.6.1",
@@ -71,6 +73,5 @@
     "webpack": "^1.11.0",
     "webpack-dev-server": "^1.10.1"
   },
-
   "license": "LICENSE"
 }

@@ -82,19 +82,7 @@ class SignUpPage extends React.Component {
     signUp(event){
         var email = this.state.email;
         var password = this.state.password;
-
         firebaseUtils.createNewUser({email: email, password: password}, this.callBack.bind(this));
-
-        /*firebaseUtils.createNewUser({email: email, password: password}, function (err) {
-            if (err) {
-                console.log('ERROR: ' + err);
-            }
-        }.bind(this));
-*/
-
-        /*if(this.state.confirmPassword){
-            this.props.actions.loadPage('/login');
-        }*/
     }
 
     render() {

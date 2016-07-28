@@ -12,3 +12,12 @@ export function loadPage(url) {
         dispatch(pushState(null, url));
     }
 }
+
+export function selectProject(projectId){
+    return dispatch => {
+        dispatch ({
+            type: "SELECTED_PROJECT_ID",
+            payload: projectId
+        })
+    }
+}

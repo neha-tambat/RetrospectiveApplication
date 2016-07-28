@@ -16,12 +16,15 @@ class AppHeader extends React.Component {
     constructor() {
         super();
         this.state = {
-
+            projectName: null,
+            projectId: null
         };
     }
 
     projectNameChange(event){
-        this.setState({projectName: event.target.value});
+        console.log("projectId:", event.target.id);
+        this.props.actions.selectProject({projectName: event.target.value, projectId: event.target.id});
+        this.setState({projectName: event.target.value, projectId: event.target.id});
     }
 
     logout(event){
@@ -51,11 +54,11 @@ class AppHeader extends React.Component {
                     <FormGroup controlId="formControlsProjectName">
                         <FormControl componentClass="select" placeholder="Project Name" onChange={this.projectNameChange.bind(this)}>
                             <option value="select">Project Name</option>
-                            <option value="peopleadmin">PeopleAdmin</option>
-                            <option value="fuelquest">FuelQuest</option>
-                            <option value="qsi">QSI</option>
-                            <option value="chartspan">ChartSpan</option>
-                            <option value="stepone">StepOne</option>
+                            <option id="p1" value="peopleadmin">PeopleAdmin</option>
+                            <option id="p2" value="fuelquest">FuelQuest</option>
+                            <option id="p3" value="qsi">QSI</option>
+                            <option id="p4" value="chartspan">ChartSpan</option>
+                            <option id="p5" value="stepone">StepOne</option>
                         </FormControl>
                     </FormGroup>
                 </Col>
