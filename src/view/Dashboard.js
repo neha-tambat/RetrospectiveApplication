@@ -28,69 +28,27 @@ class Dashboard extends React.Component {
     }
 
     componentWillMount(){
-        var firebaseRef = firebase.database().ref('retrospectives/' + this.state.matchedProjectIDKey + 'notes');
+        var firebaseRef = firebase.database().ref('retrospectives');
         //this.bindAsArray(firebaseRef.limitToLast(25), 'retrospectives/notes');
 
-        this.firebaseRef = firebase.database().ref('retrospectives/' + this.state.matchedProjectIDKey + 'notes');
+        this.firebaseRef = firebase.database().ref('retrospectives');
 
         this.firebaseRef.limitToLast(25).on('value', function(dataSnapshot) {
-            console.log("Tree for notes : ", 'retrospectives/' + this.state.matchedProjectIDKey + 'notes');
-            var notes = [];
+            console.log("Tree for notes : ", 'retrospectives');
+            var retrospectives = [];
             dataSnapshot.forEach(function(childSnapshot) {
-                var note = childSnapshot.val();
-                note['.key'] = childSnapshot.key;
-                notes.push(note);
+                var retrospective = childSnapshot.val();
+                retrospective['.key'] = childSnapshot.key;
+                retrospectives.push(retrospective);
             }.bind(this));
 
-            console.log("notes : ", notes);
+            console.log("retrospectives : ", retrospectives);
 
             this.setState({
-                notes: notes
+                retrospectives: retrospectives
             });
         }.bind(this));
 
-
-        // code to handle new child.
-        this.firebaseRef.on('child_added', function(childSnapshot, prevChildKey) {
-            /*var notes = [];
-            var newNote = childSnapshot.val();
-            newNote['.key'] = childSnapshot.key;
-            notes.push(newNote);
-
-            this.setState({
-                notes: notes
-            });*/
-        }.bind(this));
-
-
-        // code to handle child removal.
-        this.firebaseRef.on('child_removed', function(oldChildSnapshot) {
-            /*var note = oldChildSnapshot.val();
-            note['.key'] = oldChildSnapshot.key;
-            var removed_note = notes.map((data,key) => {
-
-            });
-
-            this.setState({
-                notes: notes
-            });*/
-        }.bind(this));
-
-
-        // code to handle child data changes.
-        this.firebaseRef.on('child_changed', function(childSnapshot, prevChildKey) {
-            /*var changeNote = childSnapshot.val();
-            changeNote['.key'] = childSnapshot.key;
-            var updated_note = notes.map((data, index) => {
-                if(data.key == prevChildKey){
-
-                }
-            });
-
-            this.setState({
-                notes: updated_note
-            });*/
-        }.bind(this));
     }
 
     componentWillUnmount() {
@@ -112,17 +70,44 @@ class Dashboard extends React.Component {
             }
     }
 
+    addNotesToProject(matchedProjectIDKey){
+        var firebaseRef1 = firebase.database().ref('retrospectives/' + this.state.matchedProjectIDKey + '/notes');
+        //this.bindAsArray(firebaseRef.limitToLast(25), 'retrospectives/notes');
+
+        this.firebaseRef1 = firebase.database().ref('retrospectives/' + this.state.matchedProjectIDKey + '/notes');
+
+        this.firebaseRef1.limitToLast(25).on('value', function(dataSnapshot) {
+            console.log("Tree for notes : ", 'retrospectives/' + this.state.matchedProjectIDKey + '/notes');
+            var notes = [];
+            dataSnapshot.forEach(function(childSnapshot) {
+                var note = childSnapshot.val();
+                note['.key'] = childSnapshot.key;
+                notes.push(note);
+            }.bind(this));
+
+            console.log("notes : ", notes);
+
+            this.setState({
+                notes: notes
+            });
+        }.bind(this));
+    }
+
     onSubmit(event){
         event.preventDefault();
+        var matchedProjectIDKey = null;
         let  continueObject, startObject, stopObject;
         var selected_project_id = this.props.selected_project_id;
 
-        for(var index=0; index <= this.state.retrospectives.length; index++){
-            if(this.state.retrospectives[index].project_id.toLowerCase() == selected_project_id.toLowerCase()){
-                var matchedProjectIDKey = this.state.retrospectives[index]['.key'];
-                break;
+        if(this.state.retrospectives.length != 0){
+            for(var index=0; index <= this.state.retrospectives.length; index++){
+                if(this.state.retrospectives[index].project_id.toLowerCase() == selected_project_id.toLowerCase()){
+                    matchedProjectIDKey = this.state.retrospectives[index]['.key'];
+                    break;
+                }
             }
         }
+
         console.log("matchedProjectIDKey : ", matchedProjectIDKey);
         this.state.matchedProjectIDKey = matchedProjectIDKey;
 
@@ -138,51 +123,61 @@ class Dashboard extends React.Component {
 
         if(startObject == undefined){
             if(stopObject == undefined){
-                this.firebaseRef.push({
+                this.addNotesToProject(matchedProjectIDKey);
+                this.firebaseRef1.push({
                     continueNotes:continueObject
                 });
             }else if(continueObject == undefined){
-                this.firebaseRef.push({
+                this.addNotesToProject(matchedProjectIDKey);
+                this.firebaseRef1.push({
                     stopNotes: stopObject
                 });
             }else {
-                this.firebaseRef.push({
+                this.addNotesToProject(matchedProjectIDKey);
+                this.firebaseRef1.push({
                     stopNotes: stopObject,
                     continueNotes:continueObject
                 });
             }
         }else if(stopObject == undefined){
             if(startObject == undefined){
-                this.firebaseRef.push({
+                this.addNotesToProject(matchedProjectIDKey);
+                this.firebaseRef1.push({
                     continueNotes:continueObject
                 });
             }else if(continueObject == undefined){
-                this.firebaseRef.push({
+                this.addNotesToProject(matchedProjectIDKey);
+                this.firebaseRef1.push({
                     startNotes:startObject
                 });
             }else {
-                this.firebaseRef.push({
+                this.addNotesToProject(matchedProjectIDKey);
+                this.firebaseRef1.push({
                     startNotes:startObject,
                     continueNotes:continueObject
                 });
             }
         }else if(continueObject == undefined){
             if(startObject == undefined){
-                this.firebaseRef.push({
+                this.addNotesToProject(matchedProjectIDKey);
+                this.firebaseRef1.push({
                     stopNotes: stopObject
                 });
             }else if(stopObject == undefined){
-                this.firebaseRef.push({
+                this.addNotesToProject(matchedProjectIDKey);
+                this.firebaseRef1.push({
                     startNotes:startObject
                 });
             }else {
-                this.firebaseRef.push({
+                this.addNotesToProject(matchedProjectIDKey);
+                this.firebaseRef1.push({
                     startNotes:startObject,
                     stopNotes: stopObject
                 });
             }
         }else {
-            this.firebaseRef.push({
+            this.addNotesToProject(matchedProjectIDKey);
+            this.firebaseRef1.push({
                 startNotes:startObject,
                 stopNotes: stopObject,
                 continueNotes:continueObject

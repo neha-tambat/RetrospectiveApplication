@@ -53,6 +53,10 @@ class LoggedInUserLandingPage extends React.Component {
 
     }
 
+    left_Drawer(){
+        this.props.actions.leftDrawer();
+    }
+
     handleSelect(selectedKey) {
         var tab;
         //alert('selected ' + selectedKey);
@@ -127,24 +131,54 @@ class LoggedInUserLandingPage extends React.Component {
 
 
     render(){
+        var {leftDrawer} = this.props;
+        var icon = null;
+        var leftDrawerColSize = null;
+        var contentSize = null;
+        var navItems = null;
+        console.log("leftDrawer : ", leftDrawer);
+        if(leftDrawer){
+            icon = "glyphicon glyphicon-chevron-left";
+            leftDrawerColSize = 2;
+            contentSize = 10;
+            navItems = (
+                <Nav bsStyle="pills" stacked activeKey={this.state.menuIndex} onSelect={this.handleSelect.bind(this)}>
+                    <NavItem eventKey={1} href="#myProfile"> <span style={{color:"white"}}>My Profile</span> </NavItem>
+                    <NavItem eventKey={2} href="#ongoingRetro"> <span style={{color:"white"}}>Ongoing Retrospective</span> </NavItem>
+                    <NavItem eventKey={3} href="#pastRetro"> <span style={{color:"white"}}>Past Retrospective</span> </NavItem>
+                    <NavItem eventKey={4} href="#teamManage"> <span style={{color:"white"}}>Team Manage</span> </NavItem>
+                    <NavItem eventKey={5} href="#createSprintRetro"> <span style={{color:"white"}}>Create Sprint Retrospective</span> </NavItem>
+                </Nav>
+            );
+
+        }else {
+            icon = "glyphicon glyphicon-menu-hamburger";
+            leftDrawerColSize = 1;
+            contentSize = 11;
+            navItems=(
+                <Nav bsStyle="pills" stacked activeKey={this.state.menuIndex} onSelect={this.handleSelect.bind(this)}>
+                    <NavItem eventKey={1} href="#myProfile"> <span style={{color:"white"}} className="glyphicon glyphicon-user"> </span> </NavItem>
+                    <NavItem eventKey={2} href="#ongoingRetro"> <span style={{color:"white"}} className="glyphicon glyphicon-th-list"> </span> </NavItem>
+                    <NavItem eventKey={3} href="#pastRetro"> <span style={{color:"white"}} className="glyphicon glyphicon-eye-open"> </span> </NavItem>
+                    <NavItem eventKey={4} href="#teamManage"> <span style={{color:"white"}} className="glyphicon glyphicon-th"> </span> </NavItem>
+                    <NavItem eventKey={5} href="#createSprintRetro"> <span style={{color:"white"}} className="glyphicon glyphicon-plus"> </span> </NavItem>
+                </Nav>
+            );
+        }
         return(
             <Grid style={{backgroundColor: "#E6E6E6", textAlign: "center", margin: 0, width: "100%"}}>
                 <AppHeader />
                 <Row className="clearfix">
-                    <Col xs={3} md={3} >
-                        <Nav bsStyle="pills" stacked style={{backgroundColor:"black"}} activeKey={this.state.menuIndex} onSelect={this.handleSelect.bind(this)}>
-                            <NavItem eventKey={0} >
-                                <Button type="button" className="glyphicon glyphicon-menu-hamburger" style={{backgroundColor:"black",color:"white"}}> </Button>
-                            </NavItem>
-                            <NavItem eventKey={1} href="#myProfile"> <span style={{color:"white"}}>My Profile</span> </NavItem>
-                            <NavItem eventKey={2} href="#ongoingRetro"> <span style={{color:"white"}}>Ongoing Retrospective</span> </NavItem>
-                            <NavItem eventKey={3} href="#pastRetro"> <span style={{color:"white"}}>Past Retrospective</span> </NavItem>
-                            <NavItem eventKey={4} href="#teamManage"> <span style={{color:"white"}}>Team Manage</span> </NavItem>
-                            <NavItem eventKey={5} href="#createSprintRetro"> <span style={{color:"white"}}>Create Sprint Retrospective</span> </NavItem>
-                        </Nav>
+                    <Col xs={leftDrawerColSize} md={leftDrawerColSize} style={{backgroundColor:"black"}}>
+                        <Row>
+                            <span className={icon} onClick={this.left_Drawer.bind(this)} style={{color:"white",cursor:'pointer'}}> </span>
+                        </Row>
+                        <Row>
+                            {navItems}
+                        </Row>
                     </Col>
 
-                    <Col xs={9} md={9} style={{backgroundColor:"#E6E6E6",marginTop:"10px"}} >
+                    <Col xs={contentSize} md={contentSize} style={{backgroundColor:"#E6E6E6",marginTop:"10px"}} >
                         <Row style={{margin:"20px", marginLeft:"1200px"}}>
                             <Button type="button" className="createProject" onClick={this.createProject.bind(this)} style={{color:"white", backgroundColor:"red"}}> Create Project </Button>
                         </Row>
@@ -170,7 +204,7 @@ class LoggedInUserLandingPage extends React.Component {
 
 
 const mapStateToProps = (state) => ({
-
+    leftDrawer: state.scrums.leftDrawer
 });
 
 const mapDispatchToProps = (dispatch) => ({
