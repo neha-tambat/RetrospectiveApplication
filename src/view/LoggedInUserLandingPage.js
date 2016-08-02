@@ -24,8 +24,7 @@ class LoggedInUserLandingPage extends React.Component {
             show : false,
             createEmployee: false,
             modalBody_createEmployee: 'Confirm Details...',
-            headerMsg : 'Create Project',
-            matchedKey: null
+            headerMsg : 'Create Project'
         };
     }
 
@@ -51,29 +50,6 @@ class LoggedInUserLandingPage extends React.Component {
                 projects: projects
             });
         }.bind(this));
-
-
-
-       // if(this.state.matchedKey != null){
-            var firebaseRef1 = firebase.database().ref('projects/'+ this.state.matchedKey +'/team');
-            this.firebaseRef1 = firebase.database().ref('projects/'+ this.state.matchedKey +'/team');
-
-            this.firebaseRef1.limitToLast(25).on('value', function (dataSnapshot) {
-                console.log("Tree for team : " , 'projects/'+ this.state.matchedKey +'/team');
-                var team = [];
-                dataSnapshot.forEach(function (childSnapshot) {
-                    var teamMate = childSnapshot.val();
-                    teamMate['.key'] = childSnapshot.key;
-                    team.push(teamMate);
-                }.bind(this));
-
-                console.log('team', team);
-
-                this.setState({
-                    team: team
-                });
-            }.bind(this));
-       // }
 
     }
 
@@ -103,6 +79,29 @@ class LoggedInUserLandingPage extends React.Component {
         this.setState({show:false});
     }
 
+    addMemberToDatabase(matchedKey){
+        if(matchedKey != null){
+            var firebaseRef1 = firebase.database().ref('projects/'+ matchedKey +'/team');
+            this.firebaseRef1 = firebase.database().ref('projects/'+ matchedKey +'/team');
+
+            this.firebaseRef1.limitToLast(25).on('value', function (dataSnapshot) {
+                console.log("Tree for team : " , 'projects/'+ matchedKey +'/team');
+                var team = [];
+                dataSnapshot.forEach(function (childSnapshot) {
+                    var teamMate = childSnapshot.val();
+                    teamMate['.key'] = childSnapshot.key;
+                    team.push(teamMate);
+                }.bind(this));
+
+                console.log('team', team);
+
+                this.setState({
+                    team: team
+                });
+            }.bind(this));
+        }
+    }
+
     modalSubmitCreateProject(event,modalTab){
         console.log("ModalTab : ", modalTab);
         console.log("Event : " , event);
@@ -110,33 +109,20 @@ class LoggedInUserLandingPage extends React.Component {
         if(modalTab == "Create Project"){
             this.firebaseRef.push(event);
         }else if(modalTab == "Add Member"){
-            /*var matchedKey = this.state.projects.map(data => {
-               if(data.project_name.toLowerCase() == event.teamMemberProjectName.toLowerCase()){
-                   var key = data['.key'];
-                   return key;
-               }
-            });
-            for(var index=0; index <= matchedKey.length; index++){
-                if(matchedKey[index] != undefined){
-                    var filtered_matchedKey = matchedKey[index];
-                    break;
-                }
-            }*/
 
             for(var index=0; index <= this.state.projects.length; index++){
-                if(this.state.projects[index].project_id.toLowerCase() == event.teamMemberProjectName.toLowerCase()){
+                if(this.state.projects[index].project_name.toLowerCase() == event.teamMemberProjectName.toLowerCase()){
                     var matchedKey = this.state.projects[index]['.key'];
                     break;
                 }
             }
 
-            this.state.matchedKey = matchedKey;
             console.log("matchedKey : ", matchedKey);
+            this.addMemberToDatabase(matchedKey);
             this.firebaseRef1.push(event);
         }
 
-        console.log("this.state.projects : ", this.state.projects);
-        this.setState({show:false, createEmployee: false, matchedKey: matchedKey});
+        this.setState({show:false, createEmployee: false});
     }
 
 
