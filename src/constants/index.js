@@ -7,6 +7,7 @@ import {createConstants} from '../utils';
 export default createConstants(
 
     'SELECTED_PROJECT_ID',
-    'LEFT_DRAWER'
+    'LEFT_DRAWER',
+    'WINDOW_SIZE'
 
 );

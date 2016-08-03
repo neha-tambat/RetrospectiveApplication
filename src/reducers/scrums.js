@@ -4,10 +4,12 @@
 import {createReducer} from '../utils';
 import {pushState} from 'redux-router';
 
-import {SELECTED_PROJECT_ID,LEFT_DRAWER} from '../constants/index';
+import {SELECTED_PROJECT_ID,LEFT_DRAWER,WINDOW_SIZE} from '../constants/index';
 
 const initialState = {
 
+    windowWidth: null,
+    windowHeight:null,
     selected_project_id: null,
     selected_project_name: null,
     leftDrawer : true
@@ -25,6 +27,12 @@ export default createReducer(initialState, {
     [LEFT_DRAWER] : state => {
         var _state = _.cloneDeep(state);
         _state.leftDrawer = !state.leftDrawer;
+        return _state;
+    },
+    [WINDOW_SIZE]: state =>{
+        var _state = _.cloneDeep(state);
+        _state.windowWidth = window.innerWidth;
+        _state.windowHeight = window.innerHeight;
         return _state;
     }
 

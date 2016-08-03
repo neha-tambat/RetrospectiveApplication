@@ -20,9 +20,9 @@ class MyProfile extends React.Component {
 
     render(){
         return(
-            <Grid style={{margin : "40px"}}>
+            <Grid>
                 <Row style={{border:"2px solid black", width:"400px"}}>
-                    <form style={{margin:"20px"}}>
+                    <form style={{margin:"20px",textAlign:"left"}}>
                         <FormGroup controlId="formControlsUserName">
                             <ControlLabel>Username</ControlLabel>
                             <FormControl type="text"> </FormControl>
