@@ -26,10 +26,14 @@ class SignUpSignInPage extends React.Component {
 
         };
     }
+    componentWillMount(){
+        this.props.actions.windowSize();
+    }
 
     render(){
+        var {windowWidth,windowHeight} = this.props;
         return(
-            <Grid style={{backgroundColor: "#E6E6E6", textAlign: "center", margin: 0, width: "100%"}}>
+            <Grid style={{backgroundColor: "#E6E6E6", textAlign: "center", margin: 0, width: "100%", height:windowHeight}}>
 
                 <SignUpSignInPageHeader />
 
@@ -46,7 +50,8 @@ class SignUpSignInPage extends React.Component {
 }
 
 const mapStateToProps = (state) => ({
-
+    windowWidth: state.scrums.windowWidth,
+    windowHeight: state.scrums.windowHeight
 });
 
 const mapDispatchToProps = (dispatch) => ({

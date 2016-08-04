@@ -28,6 +28,9 @@ class LoginPage extends React.Component {
     }
 
     componentWillMount() {
+
+        this.props.actions.windowSize();
+
         var firebaseRef = firebase.database().ref('retrospective-application/notes');
        // this.bindAsArray(firebaseRef.limitToLast(25), 'notes');
 
@@ -67,9 +70,10 @@ class LoginPage extends React.Component {
     }
 
     render() {
+        var {windowWidth,windowHeight} = this.props;
         var errors = this.state.error ? <p> {this.state.error} </p> : '';
         return (
-            <Grid style={{backgroundColor: "#E6E6E6", textAlign: "center", margin: 0, width: "100%"}}>
+            <Grid style={{backgroundColor: "#E6E6E6", textAlign: "center", margin: 0, width: "100%", height:windowHeight}}>
 
                 <SignUpSignInPageHeader />
 
@@ -97,7 +101,8 @@ class LoginPage extends React.Component {
 }
 
 const mapStateToProps = (state) => ({
-
+    windowWidth: state.scrums.windowWidth,
+    windowHeight: state.scrums.windowHeight
 });
 
 const mapDispatchToProps = (dispatch) => ({

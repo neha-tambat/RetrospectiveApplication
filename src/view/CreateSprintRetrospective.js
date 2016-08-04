@@ -89,23 +89,28 @@ class CreateSprintRetrospective extends React.Component {
 
     render(){
         return(
-            <Grid style={{textAlign:"center", margin : "40px"}}>
+            <Grid style={{textAlign:"center"}}>
                 <Row style={{border:"2px solid black", width:"400px"}}>
-                    <form style={{margin:"20px"}}>
+                    <form style={{margin:"20px",textAlign:"left"}}>
                         <FormGroup controlId="formControlsScrumMasterName">
-                            <FormControl type="text" placeholder="Scrum Master Name" onChange={this.scrumMasterNameChange.bind(this)}/>
+                            <ControlLabel>Scrum Master Name</ControlLabel>
+                            <FormControl type="text" onChange={this.scrumMasterNameChange.bind(this)}/>
                         </FormGroup>
                         <FormGroup controlId="formControlsSprintTitle">
-                            <FormControl type="text" placeholder="Sprint Title" onChange={this.sprintTitleChange.bind(this)}/>
+                            <ControlLabel>Sprint Title</ControlLabel>
+                            <FormControl type="text" onChange={this.sprintTitleChange.bind(this)}/>
                         </FormGroup>
                         <FormGroup controlId="formControlsStartDate">
-                            <FormControl type="date" placeholder="Start Date" onChange={this.startDateChange.bind(this)}/>
+                            <ControlLabel>Start Date</ControlLabel>
+                            <FormControl type="date" onChange={this.startDateChange.bind(this)}/>
                         </FormGroup>
                         <FormGroup controlId="formControlsEndDate">
-                            <FormControl type="date" placeholder="End Date" onChange={this.endDateChange.bind(this)}/>
+                            <ControlLabel>End Date</ControlLabel>
+                            <FormControl type="date" onChange={this.endDateChange.bind(this)}/>
                         </FormGroup>
                         <FormGroup controlId="formControlsRetrospectiveTime">
-                            <FormControl type="time" placeholder="Retrospective Time" onChange={this.retrospectiveTimeChange.bind(this)}/>
+                            <ControlLabel>Retrospective Time</ControlLabel>
+                            <FormControl type="time" onChange={this.retrospectiveTimeChange.bind(this)}/>
                         </FormGroup>
 
                         <Button type="submit" style={{backgroundColor:"#FF0000", width:"150px"}} onClick={this.registerScrum.bind(this)} >

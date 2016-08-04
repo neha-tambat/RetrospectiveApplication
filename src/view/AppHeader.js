@@ -56,16 +56,15 @@ class AppHeader extends React.Component {
 
     }
 
-    logout(event){
-        firebase.auth().signOut().then(function() {
-            // Sign-out successful.
-            console.log("Logged out successfully.");
-        }, function(error) {
-            // An error happened.
-            console.log("Error: ", error);
-        });
+    callBack(res){
+        console.log("callBack : ", res);
+        //alert('Registered email is : ' + res.providerData[res.providerData.length -1].email);
+        this.props.actions.loadPage('/login');
+    }
 
-        //this.props.actions.loadPage('/login');
+
+    logout(event){
+        firebaseUtils.SignOut(this.callBack.bind(this));
     }
 
     render(){
@@ -97,7 +96,7 @@ class AppHeader extends React.Component {
                 <Col xs={1} md={1} style={{marginTop:"20px"}}>
                     <span className="glyphicon glyphicon-log-out"
                           style={{cursor:'pointer',textAlign:"center",fontSize:"40px"}}
-                          onClick={this.logout.bind(this)}> </span>
+                              onClick={this.logout.bind(this)}> </span>
                 </Col>
             </Row>
         );

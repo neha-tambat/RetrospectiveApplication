@@ -34,7 +34,8 @@ if (app.get("env") === "development") {
         return res.send({
             message: err.message,
             status: err.status,
-            stack: err.stack
+            stack: err.stack,
+            debug: true
         });
     });
 }
