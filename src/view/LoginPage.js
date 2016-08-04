@@ -57,6 +57,7 @@ class LoginPage extends React.Component {
     callBack(res){
         console.log("callBack : ", res);
         alert('Login with email : ' + res.providerData[res.providerData.length -1].email);
+        localStorage.setItem("firebase:auth", true);
         this.props.actions.loadPage('/loginSuccess');
     }
     loginAccount(){

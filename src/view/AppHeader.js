@@ -11,6 +11,7 @@ import {connect} from 'react-redux';
 import * as scrumsActionCreator from '../actions/scrums/index';
 import {Navbar, Nav,NavItem,Input,Image,Button,Grid,Row,Col,FormGroup,FormControl,ControlLabel} from 'react-bootstrap';
 import firebaseUtils from '../utils/firebaseUtils';
+import firebaseInit from '../firebase/firebaseInit.js';
 
 class AppHeader extends React.Component {
     constructor() {
@@ -21,10 +22,38 @@ class AppHeader extends React.Component {
         };
     }
 
+    componentWillMount(){
+        //this.props.actions.loadPage('/loginSuccess/ongoingRetro');
+        //this.bindAsArray(firebaseRef.limitToLast(25), 'projects');
+        this.firebaseRef = firebaseInit.database().ref('projects');
+
+        this.firebaseRef.limitToLast(25).on('value', function (dataSnapshot) {
+            var projects = [];
+            var project_dropdown = document.getElementById('project_dropdown');
+            dataSnapshot.forEach(function (childSnapshot) {
+                var project = childSnapshot.val();
+                project['.key'] = childSnapshot.key;
+                projects.push(project);
+                var option = document.createElement("option");
+                option.id = childSnapshot.key;
+                var content = document.createTextNode(project.project_name);
+                option.appendChild(content);
+                project_dropdown.appendChild(option);
+            }.bind(this));
+
+            console.log('projects', projects);
+
+            this.setState({
+                projects: projects
+            });
+        }.bind(this));
+    }
+
     projectNameChange(event){
         console.log("projectId:", event.target.id);
-        this.props.actions.selectProject({projectName: event.target.value, projectId: event.target.id});
-        this.setState({projectName: event.target.value, projectId: event.target.id});
+        this.props.actions.selectProject({projectName: event.target.value, projectId: event.target.selectedOptions[0].id});
+        this.setState({projectName: event.target.value, projectId: event.target.selectedOptions[0].id});
+
     }
 
     logout(event){
@@ -52,13 +81,8 @@ class AppHeader extends React.Component {
                 </Col>
                 <Col xs={2} md={2} style={{marginTop:"20px"}}>
                     <FormGroup controlId="formControlsProjectName">
-                        <FormControl componentClass="select" placeholder="Project Name" onChange={this.projectNameChange.bind(this)}>
-                            <option value="select">Project Name</option>
-                            <option id="p1" value="peopleadmin">PeopleAdmin</option>
-                            <option id="p2" value="fuelquest">FuelQuest</option>
-                            <option id="p3" value="qsi">QSI</option>
-                            <option id="p4" value="chartspan">ChartSpan</option>
-                            <option id="p5" value="stepone">StepOne</option>
+                        <FormControl id='project_dropdown' componentClass="select" placeholder="Project Name" onChange={this.projectNameChange.bind(this)}>
+
                         </FormControl>
                     </FormGroup>
                 </Col>

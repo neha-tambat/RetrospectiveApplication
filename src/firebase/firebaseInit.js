@@ -5,14 +5,14 @@
 import firebase from 'firebase';
 
 var firebaseConfig = {
-    apiKey: "AIzaSyA-5VJlB6cMR_YxZw_4lcLT9ZedfkhQf9A",
-    authDomain: "retrospective-application.firebaseapp.com",
-    databaseURL: "https://retrospective-application.firebaseio.com",
-    storageBucket: ""
+    apiKey: "AIzaSyBw6JlERe5qMUs_GE1Y7BsF12lkNWwaC6I",
+    authDomain: "liveretro-8d6d4.firebaseapp.com",
+    databaseURL: "https://liveretro-8d6d4.firebaseio.com",
+    storageBucket: "liveretro-8d6d4.appspot.com"
 };
 
 var firebaseInit = firebase.initializeApp(firebaseConfig);
 /*module.exports.firebaseInit = firebaseInit.database();*/
 
-export default firebaseInit = firebaseInit.database();
+export default firebaseInit = firebaseInit;
 

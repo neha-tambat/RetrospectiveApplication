@@ -6,15 +6,9 @@ let ref = new Firebase(dbUrl);*/
 var cachedUser = null;
 import firebase from 'firebase';
 import { checkHttpStatus, parseJSON } from '../utils/index';
+import firebaseInit from '../firebase/firebaseInit.js';
 
-var config = {
-  apiKey: "AIzaSyA-5VJlB6cMR_YxZw_4lcLT9ZedfkhQf9A",
-  authDomain: "retrospective-application.firebaseapp.com",
-  databaseURL: "https://retrospective-application.firebaseio.com",
-  storageBucket: "retrospective-application.appspot.com",
-};
-
-const FirebaseObject = firebase.initializeApp(config, 'RectroApp');
+const FirebaseObject = firebaseInit;
 
 var addNewUserToFB = function(newUser){
   var key = newUser.uid;
@@ -85,33 +79,15 @@ var genErrorMsg = function(e) {
 FirebaseObject.auth().onAuthStateChanged(function(userObj) {
   if (userObj) {
     // User is signed in.
-   return userObj;
-
+    //localStorage.setItem("firebase:auth", {"email": userObj.email, "refreshToken": userObj.refreshToken});
   } else {
     // No user is signed in.
   }
 });
 
 var firebaseUtils = {
- /* createUser: function(user, cb) {
-    FirebaseObject.createUser(user, function(err) {
-      if (err) {
-        var message = genErrorMsg(err);
-        console.log(message);
-        cb(message);
-      } else {
-          this.loginWithPW(user, function(authData){
-            addNewUserToFB({
-              email: user.email,
-              uid: authData.uid,
-              token: authData.token
-            });
-          }, cb);
-      }
-    }.bind(this));
-  },*/
 
-  createNewUser: function(user, callBack) {
+  createNewwUser: function(user, callBack) {
     FirebaseObject.auth().createUserWithEmailAndPassword(user.email, user.password)
         .then(response => {
           callBack (response);
@@ -138,61 +114,9 @@ var firebaseUtils = {
           return error;
         });
   },
-
-  loginWithPass: function(userObj, cb, cbOnRegister){
-    firebase.auth().signInWithEmailAndPassword(userObj.email, userObj.password).catch(function(error, authData) {
-     if(error){
-       // Handle Errors here.
-       var errorCode = error.code;
-       var errorMessage = error.message;
-       var message = genErrorMsg(err);
-       if (cbOnRegister) {
-         cbOnRegister(message);
-       } else {
-         cb && cb(message)
-       }
-       console.log(message);
-     }else {
-       authData.email = userObj.email;
-       cachedUser = authData;
-       this.onChange(true);
-       if (cbOnRegister) {
-         cb(authData);
-         cbOnRegister(false);
-       } else {
-         cb(false);
-       }
-     }
-    }.bind(this));
-  },
-
-
-  loginWithPW: function(userObj, cb, cbOnRegister){
-    FirebaseObject.authWithPassword(userObj, function(err, authData){
-      if (err) {
-        var message = genErrorMsg(err);
-        if (cbOnRegister) {
-          cbOnRegister(message);
-        } else {
-          cb && cb(message)
-        }
-        console.log(message);
-      } else {
-        authData.email = userObj.email;
-        cachedUser = authData;
-        this.onChange(true);
-        if (cbOnRegister) {
-          cb(authData);
-          cbOnRegister(false);
-        } else {
-          cb(false);
-        }
-      }
-    }.bind(this));
-  },
   isLoggedIn: function(){
-  //  return cachedUser && true || FirebaseObject.getAuth() || false;
-    return true;
+      //return cachedUser && true || FirebaseObject.auth().currentUser || false;
+      return localStorage.getItem("firebase:auth");
   },
 
   logout: function(){

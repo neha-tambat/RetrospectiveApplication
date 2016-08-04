@@ -8,7 +8,7 @@ import { pushState } from 'redux-router';
 import {connect} from 'react-redux';
 import * as scrumsActionCreator from '../actions/scrums/index';
 import {Navbar, Nav,NavItem,Input,Image,Tab,TabContainer,TabContent,TabPane,Button,Grid,Row,Col,FormGroup,FormControl,ControlLabel} from 'react-bootstrap';
-
+import firebaseInit from '../firebase/firebaseInit.js';
 
 class CreateProject extends React.Component {
     constructor() {

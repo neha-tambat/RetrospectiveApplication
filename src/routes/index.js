@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Route,Router, DefaultRoute,IndexRoute, NotFoundRoute, Redirect} from 'react-router';
+import { Route, Router, DefaultRoute, IndexRoute, NotFoundRoute, Redirect} from 'react-router';
 
 import Dashboard from '../view/Dashboard';
 import Main from '../view/Main';
@@ -16,6 +16,8 @@ import CreateProject from '../view/CreateProject';
 import CreateSprintRetrospective from '../view/CreateSprintRetrospective';
 import OngoingRetrospectiveDetails from '../view/OngoingRetrospectiveDetails';
 import MyProfile from '../view/MyProfile';
+
+import useBasename from 'history/lib/useBasename'
 
 var Routes = (
     <Router>

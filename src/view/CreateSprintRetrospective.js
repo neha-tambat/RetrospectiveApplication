@@ -81,7 +81,7 @@ class CreateSprintRetrospective extends React.Component {
             sprint_start_date: this.state.startDate,
             sprint_end_date: this.state.endDate,
             retrospective_time: this.state.retrospectiveTime,
-            project_id: this.props.selected_project_id
+            project_id: this.state.selected_project_id
         };
         this.firebaseRef.push(retroRegister);
     }

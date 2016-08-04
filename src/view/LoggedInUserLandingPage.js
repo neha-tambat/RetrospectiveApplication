@@ -31,25 +31,7 @@ class LoggedInUserLandingPage extends React.Component {
     componentWillMount(){
         this.props.actions.loadPage('/loginSuccess/ongoingRetro');
 
-
-        var firebaseRef = firebase.database().ref('projects');
-        //this.bindAsArray(firebaseRef.limitToLast(25), 'projects');
-        this.firebaseRef = firebase.database().ref('projects');
-
-        this.firebaseRef.limitToLast(25).on('value', function (dataSnapshot) {
-            var projects = [];
-            dataSnapshot.forEach(function (childSnapshot) {
-                var project = childSnapshot.val();
-                project['.key'] = childSnapshot.key;
-                projects.push(project);
-            }.bind(this));
-
-            console.log('projects', projects);
-
-            this.setState({
-                projects: projects
-            });
-        }.bind(this));
+        this.firebaseRef = firebaseInit.database().ref('projects');
 
     }
 
@@ -107,7 +89,14 @@ class LoggedInUserLandingPage extends React.Component {
         console.log("Event : " , event);
 
         if(modalTab == "Create Project"){
-            this.firebaseRef.push(event);
+            var user = firebase.auth().currentUser;
+            if (user) {
+                event.user_id = user.uid;
+                this.firebaseRef.push(event);
+            }
+            else{
+                alert("Login to application before creating Application");
+            }
         }else if(modalTab == "Add Member"){
 
             for(var index=0; index <= this.state.projects.length; index++){
