@@ -20,8 +20,8 @@ export default createReducer(initialState, {
 
     [SELECTED_PROJECT_ID]: (state, payload) =>{
         var _state = _.cloneDeep(state);
-        _state.selected_project_id = payload.projectName;
-        _state.selected_project_name = payload.projectId;
+        _state.selected_project_id = payload.projectId;
+        _state.selected_project_name = payload.projectName;
         return _state;
     },
     [LEFT_DRAWER] : state => {

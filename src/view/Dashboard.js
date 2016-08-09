@@ -23,7 +23,7 @@ class Dashboard extends React.Component {
         this.state = {
             warningShow: false,
             WaringHeaderMsg : 'Error',
-            modalBody_warning: 'Selected project is not present in database.',
+            modalBody_warning: 'The data related to this project is empty or selected project is not present in database.',
             name : "",
             start: "", stop: "", continue: "",
             notes:[], retrospectives: []
@@ -74,13 +74,13 @@ class Dashboard extends React.Component {
     }
 
     addNotesToProject(matchedProjectIDKey){
-        var firebaseRef1 = firebase.database().ref('retrospectives/' + this.state.matchedProjectIDKey + '/notes');
+        var firebaseRef1 = firebase.database().ref('retrospectives/' + matchedProjectIDKey + '/notes');
         //this.bindAsArray(firebaseRef.limitToLast(25), 'retrospectives/notes');
 
-        this.firebaseRef1 = firebase.database().ref('retrospectives/' + this.state.matchedProjectIDKey + '/notes');
+        this.firebaseRef1 = firebase.database().ref('retrospectives/' + matchedProjectIDKey + '/notes');
 
         this.firebaseRef1.limitToLast(25).on('value', function(dataSnapshot) {
-            console.log("Tree for notes : ", 'retrospectives/' + this.state.matchedProjectIDKey + '/notes');
+            console.log("Tree for notes : ", 'retrospectives/' + matchedProjectIDKey + '/notes');
             var notes = [];
             dataSnapshot.forEach(function(childSnapshot) {
                 var note = childSnapshot.val();
@@ -204,7 +204,7 @@ class Dashboard extends React.Component {
         this.setState({warningShow: false});
     }
     modalSubmit(){
-        console.log("Error message : Selected project is not present in database.");
+        console.log("Error message : The data related to this project is empty or selected project is not present in database.");
         this.setState({warningShow: false});
     }
 

@@ -11,14 +11,40 @@ import {connect} from 'react-redux';
 import * as scrumsActionCreator from '../actions/scrums/index';
 import {Navbar, Nav,NavItem,Input,Image,Button,Grid,Row,Col,FormGroup,FormControl,ControlLabel} from 'react-bootstrap';
 import firebaseUtils from '../utils/firebaseUtils';
+import firebase from 'firebase';
+import database from 'firebase/database';
+import auth from 'firebase/auth';
+import firebaseInit from '../firebase/firebaseInit';
 
 class AppHeader extends React.Component {
     constructor() {
         super();
         this.state = {
+            projects: [],
             projectName: null,
             projectId: null
         };
+    }
+
+    componentWillMount() {
+        var firebaseRef = firebase.database().ref('projects');
+        this.firebaseRef = firebase.database().ref('projects');
+
+        this.firebaseRef.limitToLast(25).on('value', function (dataSnapshot) {
+            console.log("Tree for projects : ", 'projects');
+            var projects = [];
+            dataSnapshot.forEach(function (childSnapshot) {
+                var project = childSnapshot.val();
+                project['.key'] = childSnapshot.key;
+                projects.push(project);
+            }.bind(this));
+
+            console.log("projects : ", projects);
+
+            this.setState({
+                projects: projects
+            });
+        }.bind(this));
     }
 
     projectNameChange(event){
@@ -39,6 +65,19 @@ class AppHeader extends React.Component {
     }
 
     render(){
+
+        var {projects} = this.state;
+
+        var projectList = projects.map(data => {
+            console.log("Projects : ", data);
+            var projectName = data.project_name;
+            return(
+                <option id="p1" value={projectName.toLowerCase()}>{projectName}</option>
+            );
+        });
+
+        console.log("ProjectList : ", projectList);
+
         return(
             <Row style={{backgroundColor:"#FF0000"}}>
                 <Col xs={3} md={3} style={{marginTop:"10px"}}>
@@ -53,11 +92,7 @@ class AppHeader extends React.Component {
                     <FormGroup controlId="formControlsProjectName">
                         <FormControl componentClass="select" placeholder="Project Name" onChange={this.projectNameChange.bind(this)}>
                             <option value="select">Project Name</option>
-                            <option id="p1" value="peopleadmin">PeopleAdmin</option>
-                            <option id="p2" value="fuelquest">FuelQuest</option>
-                            <option id="p3" value="qsi">QSI</option>
-                            <option id="p4" value="chartspan">ChartSpan</option>
-                            <option id="p5" value="stepone">StepOne</option>
+                            {projectList}
                         </FormControl>
                     </FormGroup>
                 </Col>

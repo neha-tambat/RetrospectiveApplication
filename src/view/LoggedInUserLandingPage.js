@@ -76,7 +76,7 @@ class LoggedInUserLandingPage extends React.Component {
             }else if(selectedKey == "3"){
                 tab = "pastRetro";
             }else if(selectedKey == "4"){
-                tab = "teamManage";
+                tab = "projectManage";
             }else if(selectedKey == "5"){
                 tab = "createSprintRetro";
             }
@@ -149,7 +149,7 @@ class LoggedInUserLandingPage extends React.Component {
 
 
     render(){
-        var {leftDrawer,windowWidth,windowHeight,selected_project_id} = this.props;
+        var {leftDrawer,windowWidth,windowHeight,selected_project_id,selected_project_name} = this.props;
         console.log("windowWidth : ",windowWidth);
         console.log("windowHeight : ",windowHeight);
 
@@ -167,7 +167,7 @@ class LoggedInUserLandingPage extends React.Component {
                     <NavItem eventKey={1} href="#myProfile"> <span style={{color:"white"}}>My Profile</span> </NavItem>
                     <NavItem eventKey={2} href="#ongoingRetro"> <span style={{color:"white"}}>Ongoing Retrospective</span> </NavItem>
                     <NavItem eventKey={3} href="#pastRetro"> <span style={{color:"white"}}>Past Retrospective</span> </NavItem>
-                    <NavItem eventKey={4} href="#teamManage"> <span style={{color:"white"}}>Team Manage</span> </NavItem>
+                    <NavItem eventKey={4} href="#projectManage"> <span style={{color:"white"}}>Manage Project</span> </NavItem>
                     <NavItem eventKey={5} href="#createSprintRetro"> <span style={{color:"white"}}>Create Sprint Retrospective</span> </NavItem>
                 </Nav>
             );
@@ -181,7 +181,7 @@ class LoggedInUserLandingPage extends React.Component {
                     <NavItem eventKey={1} href="#myProfile"> <span style={{color:"white"}} className="glyphicon glyphicon-user"> </span> </NavItem>
                     <NavItem eventKey={2} href="#ongoingRetro"> <span style={{color:"white"}} className="glyphicon glyphicon-th-list"> </span> </NavItem>
                     <NavItem eventKey={3} href="#pastRetro"> <span style={{color:"white"}} className="glyphicon glyphicon-eye-open"> </span> </NavItem>
-                    <NavItem eventKey={4} href="#teamManage"> <span style={{color:"white"}} className="glyphicon glyphicon-th"> </span> </NavItem>
+                    <NavItem eventKey={4} href="#projectManage"> <span style={{color:"white"}} className="glyphicon glyphicon-th"> </span> </NavItem>
                     <NavItem eventKey={5} href="#createSprintRetro"> <span style={{color:"white"}} className="glyphicon glyphicon-plus"> </span> </NavItem>
                 </Nav>
             );
@@ -203,7 +203,7 @@ class LoggedInUserLandingPage extends React.Component {
                         <Row style={{margin:"20px", marginLeft:"1200px"}}>
                             <Button type="button" className="createProject" onClick={this.createProject.bind(this)} style={{color:"white", backgroundColor:"red"}}> Create Project </Button>
                         </Row>
-                        <Row>
+                        <Row style={{margin:'20px', width:'1410px'}}>
                             {this.props.children}
                         </Row>
                     </Col>
@@ -237,7 +237,9 @@ const mapStateToProps = (state) => ({
     leftDrawer: state.scrums.leftDrawer,
     windowWidth: state.scrums.windowWidth,
     windowHeight: state.scrums.windowHeight,
-    selected_project_id: state.scrums.selected_project_id
+    selected_project_id: state.scrums.selected_project_id,
+    selected_project_name: state.scrums.selected_project_name
+
 });
 
 const mapDispatchToProps = (dispatch) => ({

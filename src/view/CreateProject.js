@@ -34,9 +34,11 @@ class CreateProject extends React.Component {
                 <Row style={{border : "2px solid black",width:"600px"}}>
                     <form style={{margin:"20px"}}>
                         <FormGroup controlId="formControlsProjectName">
-                            <FormControl type="text" placeholder="Project Name" onChange={this.projectNameCreationChange.bind(this)}/>
+                            <ControlLabel>Project Name</ControlLabel>
+                            <FormControl type="text" onChange={this.projectNameCreationChange.bind(this)}/>
                         </FormGroup>
                         <FormGroup controlId="formControlsProjectInfo">
+                            <ControlLabel>Description</ControlLabel>
                             <FormControl type="text" componentClass="textarea" placeholder="Additional info about project" onChange={this.additionalProjectInfoChange.bind(this)}/>
                         </FormGroup>
                         <Button type="submit" style={{backgroundColor:"#FF0000", width:"150px"}} onClick={this.createProject.bind(this)} >

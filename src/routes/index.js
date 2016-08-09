@@ -16,6 +16,8 @@ import CreateProject from '../view/CreateProject';
 import CreateSprintRetrospective from '../view/CreateSprintRetrospective';
 import OngoingRetrospectiveDetails from '../view/OngoingRetrospectiveDetails';
 import MyProfile from '../view/MyProfile';
+import PastRetrospectives from '../view/PastRetrospectives';
+import ManageProject from '../view/ManageProject';
 
 var Routes = (
     <Router>
@@ -27,8 +29,10 @@ var Routes = (
                 <IndexRoute component={OngoingRetrospectiveDetails} />
                 <Route path="ongoingRetro" component={OngoingRetrospectiveDetails} />
                 <Route path="myProfile" component={MyProfile} />
-                <Route path="createProject" component={CreateProject} />
+                <Route path="pastRetro" component={PastRetrospectives} />
+                <Route path="projectManage" component={ManageProject} />
                 <Route path="createSprintRetro" component={CreateSprintRetrospective} />
+                <Route path="createProject" component={CreateProject} />
                 <Route path="main" component={Main}/>
                 <Route path="dashboard" component={Dashboard}/>
             </Route>
