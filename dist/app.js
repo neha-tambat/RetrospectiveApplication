@@ -84112,8 +84112,8 @@
 	
 	exports['default'] = (0, _utils.createReducer)(initialState, (_createReducer = {}, _defineProperty(_createReducer, _constantsIndex.SELECTED_PROJECT_ID, function (state, payload) {
 	    var _state = _.cloneDeep(state);
-	    _state.selected_project_id = payload.projectName;
-	    _state.selected_project_name = payload.projectId;
+	    _state.selected_project_id = payload.projectId;
+	    _state.selected_project_name = payload.projectName;
 	    return _state;
 	}), _defineProperty(_createReducer, _constantsIndex.LEFT_DRAWER, function (state) {
 	    var _state = _.cloneDeep(state);
@@ -107915,7 +107915,7 @@
 	                sprint_start_date: this.state.startDate,
 	                sprint_end_date: this.state.endDate,
 	                retrospective_time: this.state.retrospectiveTime,
-	                project_id: this.state.selected_project_id
+	                project_id: this.props.selected_project_id
 	            };
 	            this.firebaseRef.push(retroRegister);
 	        }
