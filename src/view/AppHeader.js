@@ -16,6 +16,8 @@ import database from 'firebase/database';
 import auth from 'firebase/auth';
 import firebaseInit from '../firebase/firebaseInit';
 
+import ProjectList from './ProjectList';
+
 class AppHeader extends React.Component {
     constructor() {
         super();
@@ -49,8 +51,8 @@ class AppHeader extends React.Component {
 
     projectNameChange(event){
         console.log("projectId:", event.target.id);
-        this.props.actions.selectProject({projectName: event.target.value, projectId: event.target.id});
-        this.setState({projectName: event.target.value, projectId: event.target.id});
+        this.props.actions.selectProject({projectName: event.target.value, projectId: event.target.selectedOptions[0].id});
+        this.setState({projectName: event.target.value, projectId: event.target.selectedOptions[0].id});
     }
 
     callBack(res){
@@ -72,7 +74,7 @@ class AppHeader extends React.Component {
             console.log("Projects : ", data);
             var projectName = data.project_name;
             return(
-                <option id="p1" value={projectName.toLowerCase()}>{projectName}</option>
+                <option id={data['.key']} value={projectName.toLowerCase()}>{projectName}</option>
             );
         });
 

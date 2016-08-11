@@ -6,15 +6,11 @@ let ref = new Firebase(dbUrl);*/
 var cachedUser = null;
 import firebase from 'firebase';
 import { checkHttpStatus, parseJSON } from '../utils/index';
+import firebaseInit from '../firebase/firebaseInit.js';
 
-var config = {
-  apiKey: "AIzaSyA-5VJlB6cMR_YxZw_4lcLT9ZedfkhQf9A",
-  authDomain: "retrospective-application.firebaseapp.com",
-  databaseURL: "https://retrospective-application.firebaseio.com",
-  storageBucket: "retrospective-application.appspot.com",
-};
 
-const FirebaseObject = firebase.initializeApp(config, 'RectroApp');
+
+const FirebaseObject = firebaseInit;
 
 var addNewUserToFB = function(newUser){
   var key = newUser.uid;

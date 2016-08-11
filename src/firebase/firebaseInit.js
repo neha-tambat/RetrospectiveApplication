@@ -14,5 +14,5 @@ var firebaseConfig = {
 var firebaseInit = firebase.initializeApp(firebaseConfig);
 /*module.exports.firebaseInit = firebaseInit.database();*/
 
-export default firebaseInit = firebaseInit.database();
+export default firebaseInit = firebaseInit;
 
