@@ -2,7 +2,7 @@
  * Created by nehat on 7/19/2016.
  */
 
-var React = require('react');
+import React from 'react';
 import { bindActionCreators } from 'redux';
 import { pushState } from 'redux-router';
 import {connect} from 'react-redux';
@@ -89,23 +89,28 @@ class CreateSprintRetrospective extends React.Component {
 
     render(){
         return(
-            <Grid style={{textAlign:"center", margin : "40px"}}>
-                <Row style={{border:"2px solid black", width:"400px"}}>
-                    <form style={{margin:"20px"}}>
+            <Grid style={{margin:"100px"}}>
+                <Row>
+                    <form className="retrospective-form">
                         <FormGroup controlId="formControlsScrumMasterName">
-                            <FormControl type="text" placeholder="Scrum Master Name" onChange={this.scrumMasterNameChange.bind(this)}/>
+                            <ControlLabel>Scrum Master Name</ControlLabel>
+                            <FormControl type="text" onChange={this.scrumMasterNameChange.bind(this)}/>
                         </FormGroup>
                         <FormGroup controlId="formControlsSprintTitle">
-                            <FormControl type="text" placeholder="Sprint Title" onChange={this.sprintTitleChange.bind(this)}/>
+                            <ControlLabel>Sprint Title</ControlLabel>
+                            <FormControl type="text" onChange={this.sprintTitleChange.bind(this)}/>
                         </FormGroup>
                         <FormGroup controlId="formControlsStartDate">
-                            <FormControl type="date" placeholder="Start Date" onChange={this.startDateChange.bind(this)}/>
+                            <ControlLabel>Start Date</ControlLabel>
+                            <FormControl type="date" onChange={this.startDateChange.bind(this)}/>
                         </FormGroup>
                         <FormGroup controlId="formControlsEndDate">
-                            <FormControl type="date" placeholder="End Date" onChange={this.endDateChange.bind(this)}/>
+                            <ControlLabel>End Date</ControlLabel>
+                            <FormControl type="date" onChange={this.endDateChange.bind(this)}/>
                         </FormGroup>
                         <FormGroup controlId="formControlsRetrospectiveTime">
-                            <FormControl type="time" placeholder="Retrospective Time" onChange={this.retrospectiveTimeChange.bind(this)}/>
+                            <ControlLabel>Retrospective Time</ControlLabel>
+                            <FormControl type="time" onChange={this.retrospectiveTimeChange.bind(this)}/>
                         </FormGroup>
 
                         <Button type="submit" style={{backgroundColor:"#FF0000", width:"150px"}} onClick={this.registerScrum.bind(this)} >
@@ -119,7 +124,8 @@ class CreateSprintRetrospective extends React.Component {
 }
 
 const mapStateToProps = (state) => ({
-    selected_project_id: state.scrums.selected_project_id
+    selected_project_id: state.scrums.selected_project_id,
+    selected_project_name: state.scrums.selected_project_name
 });
 
 const mapDispatchToProps = (dispatch) => ({

@@ -139,6 +139,19 @@ var firebaseUtils = {
         });
   },
 
+  SignOut: function(callBack){
+    FirebaseObject.auth().signOut()
+        .then((response) => {
+          callBack(response)
+        })
+        .catch(function(error){
+          var errorCode = error.code;
+          var errorMessage = error.message;
+          console.log("Error code: " + errorCode + " Error message: " + errorMessage);
+          return error;
+        })
+  },
+
   loginWithPass: function(userObj, cb, cbOnRegister){
     firebase.auth().signInWithEmailAndPassword(userObj.email, userObj.password).catch(function(error, authData) {
      if(error){

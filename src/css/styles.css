@@ -1,0 +1,92 @@
+body{
+    background-color: #999988;
+}
+
+.logo{
+    width: 305px;
+    height: 60px;
+    background-image: url("../images/synerzip.png");
+}
+
+.main-image{
+    width: 100%;
+    height: 1320px;
+    display: inline-block;
+    background-image: url("../images/main.png");
+    background-size: contain;
+    background-repeat: no-repeat;
+}
+
+.container-page{
+    background-color: #ffffff ;
+    width: 100%;
+    height: 900px;
+}
+
+.container-all{
+    width: 1930px;
+}
+
+.leftDrawer{
+    background-color: #000000;
+    height: 900px;
+}
+
+.signUp-form{
+    background-color: #ffffff;
+    box-shadow: 5px 5px 5px;
+    border-radius: 10px;
+    padding: 30px;
+}
+
+.login-form{
+    background-color: #ffffff;
+    box-shadow: 5px 5px 5px;
+    border-radius: 10px;
+    padding: 30px;
+}
+
+.signUp-button{
+    background-color: #FF0000;
+    width: 500px;
+}
+
+.createProject-form{
+    background-color: #E6E6E6;
+    border-radius: 10px;
+    width: 600px;
+    margin-left: 325px;
+    padding: 30px;
+}
+
+.myProfile-form{
+    background-color: #E6E6E6;
+    border-radius: 10px;
+    width: 600px;
+    margin-left: 325px;
+    padding: 30px;
+    text-align: left;
+}
+
+.retrospective-form{
+    background-color: #E6E6E6;
+    border-radius: 10px;
+    width: 600px;
+    margin-left: 325px;
+    padding: 30px;
+    text-align: left;
+}
+
+.table-header{
+    background-color: #000000;
+    color: #ffffff;
+}
+
+.project-table{
+    margin: 50px;
+}
+
+.button{
+    background-color: #000000;
+    color: #ffffff;
+}

@@ -1,3 +1,4 @@
+/*
 import React from 'react';
 var ReactToastr = require("react-toastr");
 import { connect } from 'react-redux';
@@ -80,4 +81,4 @@ const mapStateToProps = (state) => ({
 });
 
 
-export default connect(mapStateToProps)(CoreLayout);
+export default connect(mapStateToProps)(CoreLayout);*/

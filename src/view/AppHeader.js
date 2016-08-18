@@ -2,22 +2,28 @@
  * Created by nehat on 7/18/2016.
  */
 
-var React = require('react');
-var RegisterFormLeftPanel = require('./RegisterFormLeftPanel');
-var RegisterFormRightPanel = require('./RegisterFormRightPanel');
+import React from 'react';
 import { bindActionCreators } from 'redux';
 import { pushState } from 'redux-router';
 import {connect} from 'react-redux';
 import * as scrumsActionCreator from '../actions/scrums/index';
-import {Navbar, Nav,NavItem,Input,Image,Button,Grid,Row,Col,FormGroup,FormControl,ControlLabel} from 'react-bootstrap';
+import {Navbar, Nav,NavItem,Input,Image,Button,Grid,Row,Col,FormGroup,FormControl,ControlLabel,
+    MenuItem,Clearfix,SplitButton,Dropdown,DropdownButton,NavDropdown} from 'react-bootstrap';
 import firebaseUtils from '../utils/firebaseUtils';
+import firebase from 'firebase';
+import database from 'firebase/database';
+import auth from 'firebase/auth';
+import firebaseInit from '../firebase/firebaseInit';
+import ProjectList from './ProjectList';
 
 class AppHeader extends React.Component {
     constructor() {
         super();
         this.state = {
+            projects: [],
             projectName: null,
-            projectId: null
+            projectId: null,
+            userIconClick : false
         };
     }
 
@@ -28,52 +34,89 @@ class AppHeader extends React.Component {
     }
 
     logout(event){
-        firebase.auth().signOut().then(function() {
-            // Sign-out successful.
-            console.log("Logged out successfully.");
-        }, function(error) {
-            // An error happened.
-            console.log("Error: ", error);
-        });
+        this.props.logout();
+    }
 
-        //this.props.actions.loadPage('/login');
+    left_Drawer(){
+        this.props.actions.leftDrawer();
+    }
+
+    handleUser(){
+        this.setState({userIconClick : true});
+    }
+
+    createProject(){
+        this.props.createProject();
+        this.setState({userIconClick : false});
+    }
+    manageProject(){
+        this.props.manageProject();
+        this.setState({userIconClick : false});
+    }
+    myProfile(){
+        this.props.myProfile();
+        this.setState({userIconClick : false});
     }
 
     render(){
+        var {userIconClick} = this.state;
+        var {leftDrawer} = this.props;
+        var userIconClickList = null;
+
+        var leftDrawerIcon = leftDrawer ? "glyphicon glyphicon-chevron-left" : "glyphicon glyphicon-menu-hamburger";
+
+        if(userIconClick){
+            userIconClickList = (
+                <Clearfix style={{margin:'10px', padding:'10px',width:'200px'}}>
+                    <MenuItem>
+                        <Row>
+                            <Col xs={5} md={5}>
+                                <Image src="../images/common.jpg" circle circle style={{width:"60px", height:"60px"}} />
+                            </Col>
+                            <Col xs={7} md={7}>
+                                <Row>
+                                    UserName
+                                </Row>
+                                <Row>
+                                    user@gmail.com
+                                </Row>
+                                <Row>
+                                    <Button style={{color:'white', backgroundColor:'black'}} onClick={this.myProfile.bind(this)}> My Profile </Button>
+                                </Row>
+                            </Col>
+                        </Row>
+                    </MenuItem>
+                    <MenuItem divider />
+                    <MenuItem style={{cursor:'pointer'}} onClick={this.createProject.bind(this)}> Create Project </MenuItem>
+                    <MenuItem style={{cursor:'pointer'}} onClick={this.manageProject.bind(this)}> Manage Project </MenuItem>
+                    <MenuItem divider />
+                    <MenuItem style={{cursor:'pointer'}} onClick={this.logout.bind(this)}> Sign Out </MenuItem>
+                </Clearfix>
+            );
+        }
+
         return(
             <Row style={{backgroundColor:"#FF0000"}}>
-                <Col xs={3} md={3} style={{marginTop:"10px"}}>
-                    <FormGroup controlId="formControlsUserImage">
-                        <Image src="../images/logo.png" style={{width:"200px", height:"50px"}} />
-                    </FormGroup>
-                </Col>
-                <Col xs={4} md={4} style={{ color:"white",fontSize:30, marginTop:"20px"}}>
-                    <strong> LiveRetro </strong>
-                </Col>
-                <Col xs={2} md={2} style={{marginTop:"20px"}}>
-                    <FormGroup controlId="formControlsProjectName">
-                        <FormControl componentClass="select" placeholder="Project Name" onChange={this.projectNameChange.bind(this)}>
-                            <option value="select">Project Name</option>
-                            <option id="p1" value="peopleadmin">PeopleAdmin</option>
-                            <option id="p2" value="fuelquest">FuelQuest</option>
-                            <option id="p3" value="qsi">QSI</option>
-                            <option id="p4" value="chartspan">ChartSpan</option>
-                            <option id="p5" value="stepone">StepOne</option>
-                        </FormControl>
-                    </FormGroup>
-                </Col>
-                <Col xs={1} md={1} style={{marginTop:"10px"}}>
-                    <FormGroup controlId="formControlsUserImage">
-                        <Image src="../images/common.jpg" style={{width:"50px", height:"50px"}} />
-                    </FormGroup>
-                </Col>
-                <Col xs={1} md={1} style={{marginTop:"25px",fontSize:15}}>
-                    <strong> Username </strong>
+                <Col xs={2} md={2}>
+                    <Image src="../images/synerzip.png" style={{width:"305px", height:"60px"}} />
                 </Col>
                 <Col xs={1} md={1} style={{marginTop:"20px"}}>
-                    <span className="glyphicon glyphicon-log-out"
-                          style={{cursor:'pointer',textAlign:"center",fontSize:"40px"}}
-                          onClick={this.logout.bind(this)}> </span>
+                    <div className={leftDrawerIcon}
+                         style={{cursor:'pointer',textAlign:"center",fontSize:"20px", color:'white'}}
+                         onClick={this.left_Drawer.bind(this)}> </div>
+                </Col>
+                <Col xs={5} md={5} style={{ color:"white",fontSize:20, marginTop:"20px"}}>
+                    <strong> LiveRetro </strong>
+                </Col>
+                <Col xs={2} md={2} style={{marginTop:"10px"}}>
+                   <ProjectList />
+                </Col>
+                <Col xs={2} md={2}>
+                    <NavDropdown title={<Image src="../images/common.jpg" circle style={{width:"60px", height:"60px"}} />}
+                                 id="top-menu-user"
+                                 onClick={this.handleUser.bind(this)} >
+                            {userIconClickList}
+                    </NavDropdown>
                 </Col>
             </Row>
         );
@@ -82,7 +125,7 @@ class AppHeader extends React.Component {
 
 
 const mapStateToProps = (state) => ({
-
+    leftDrawer: state.scrums.leftDrawer
 });
 
 const mapDispatchToProps = (dispatch) => ({

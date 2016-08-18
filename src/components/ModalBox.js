@@ -6,6 +6,7 @@ let ReactDom = require('react-dom');
 let Bootstrap = require('react-bootstrap');
 let _ = require('lodash');
 import {Panel,Input,ButtonInput,Popover,Button,Modal,ModalBody,ModalFooter,ModalHeader,ModalTitle,Grid,Row,Col,FormGroup,FormControl,ControlLabel} from 'react-bootstrap';
+import ProjectList from '../view/ProjectList';
 
 export default class ModalBox extends React.Component {
     constructor(props) {
@@ -114,16 +115,7 @@ export default class ModalBox extends React.Component {
         var addTeamMembers = (
             <div style={{border : "2px solid black",margin:"100px", width:600}}>
                 <form style={{margin:"20px"}}>
-                    <FormGroup controlId="formControlsProjectName">
-                        <FormControl componentClass="select" placeholder="Project Name" onChange={this.projectNameChange.bind(this)}>
-                            <option value="select">Project Name</option>
-                            <option value="peopleadmin">PeopleAdmin</option>
-                            <option value="fuelquest">FuelQuest</option>
-                            <option value="qsi">QSI</option>
-                            <option value="chartspan">ChartSpan</option>
-                            <option value="stepone">StepOne</option>
-                        </FormControl>
-                    </FormGroup>
+                    <ProjectList />
                     <FormGroup controlId="formControlsEmployeeName">
                         <FormControl type="text" placeholder="Employee Name"
                                      onChange={this.employeeNameChange.bind(this)}/>

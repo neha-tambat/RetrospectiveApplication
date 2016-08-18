@@ -2,9 +2,7 @@
  * Created by nehat on 7/15/2016.
  */
 
-var React = require('react');
-var RegisterFormLeftPanel = require('./RegisterFormLeftPanel');
-var RegisterFormRightPanel = require('./RegisterFormRightPanel');
+import React from 'react';
 import { bindActionCreators } from 'redux';
 import { pushState } from 'redux-router';
 import {connect} from 'react-redux';
@@ -15,7 +13,6 @@ import database from 'firebase/database';
 import auth from 'firebase/auth';
 import firebaseInit from '../firebase/firebaseInit';
 
-import SignUpSignInPageContent from './SignUpSignInPageContent';
 import SignUpSignInPageHeader from './SignUpSignInPageHeader';
 
 class SignUpSignInPage extends React.Component {
@@ -26,27 +23,37 @@ class SignUpSignInPage extends React.Component {
 
         };
     }
+    componentWillMount(){
+        this.props.actions.windowSize();
+    }
+
+    handleSignUp(){
+        this.props.actions.loadPage('/signUp');
+    }
+
+    handleLogin(){
+        this.props.actions.loadPage('/login');
+    }
 
     render(){
+        var {windowWidth,windowHeight} = this.props;
         return(
-            <Grid style={{backgroundColor: "#E6E6E6", textAlign: "center", margin: 0, width: "100%"}}>
+            <div style={{textAlign: "center"}}>
 
-                <SignUpSignInPageHeader />
+                <SignUpSignInPageHeader handleSignUp={this.handleSignUp.bind(this)} handleLogin={this.handleLogin.bind(this)} />
 
-                <SignUpSignInPageContent />
-
-                <Row>
+                <div  className="main-image">
                     {this.props.children}
-                </Row>
+                </div>
 
-
-            </Grid>
+            </div>
         );
     }
 }
 
 const mapStateToProps = (state) => ({
-
+    windowWidth: state.scrums.windowWidth,
+    windowHeight: state.scrums.windowHeight
 });
 
 const mapDispatchToProps = (dispatch) => ({

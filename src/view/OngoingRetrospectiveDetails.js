@@ -8,18 +8,34 @@ import { pushState } from 'redux-router';
 import {connect} from 'react-redux';
 import * as scrumsActionCreator from '../actions/scrums/index';
 import {Navbar, Nav,NavItem,Input,Image,Tab,TabContainer,TabContent,TabPane,Button,Grid,Row,Col,FormGroup,FormControl,ControlLabel} from 'react-bootstrap';
-
+import WarningModalBox from '../components/WarningModalBox';
 
 class OngoingRetrospectiveDetails extends React.Component {
     constructor() {
         super();
         this.state = {
-
+            warningShow: false,
+            WaringHeaderMsg : 'Warning',
+            modalBody_warning: 'Select project first and proceed.'
         };
     }
 
     handleSelectRetro(event){
-        this.props.actions.loadPage('loginSuccess/dashboard');
+        if(this.props.selected_project_id == null){
+            //alert("Please select project.");
+            this.setState({warningShow: true});
+        }else {
+            this.props.actions.loadPage('/dashboard');
+        }
+    }
+
+    onWarningHide(){
+        this.setState({warningShow: false});
+    }
+
+    modalSubmit(){
+        console.log("Warning message : Select project first and proceed.");
+        this.setState({warningShow: false});
     }
 
     render(){
@@ -31,13 +47,25 @@ class OngoingRetrospectiveDetails extends React.Component {
                 <Row>
                     <a onClick={this.handleSelectRetro.bind(this)}> Retrospective 2 </a>
                 </Row>
+                <Row>
+                    <WarningModalBox
+                        showModal={this.state.warningShow}
+                        onWarningHide={this.onWarningHide.bind(this)}
+                        headerMsg= {this.state.WaringHeaderMsg}
+                        modalbody={this.state.modalBody_warning}
+                        onWarningModalSubmit ={this.modalSubmit.bind(this)}
+                    />
+                </Row>
             </Grid>
         );
     }
 }
 
 const mapStateToProps = (state) => ({
-
+    windowWidth: state.scrums.windowWidth,
+    windowHeight: state.scrums.windowHeight,
+    selected_project_id: state.scrums.selected_project_id,
+    selected_project_name: state.scrums.selected_project_name
 });
 
 const mapDispatchToProps = (dispatch) => ({
