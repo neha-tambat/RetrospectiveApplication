@@ -22,7 +22,7 @@ class LoggedInUserLandingPage extends React.Component {
         super();
         this.state = {
             projects: [], team:[],
-            menuIndex: 1,
+            menuIndex: 2,
             show : false,
             warningShow: false,
             createEmployee: false,
@@ -67,11 +67,11 @@ class LoggedInUserLandingPage extends React.Component {
             var tab;
             //alert('selected ' + selectedKey);
             if(selectedKey == "1"){
-                tab = "ongoingRetro";
-            }else if(selectedKey == "2"){
-                tab = "pastRetro";
-            }else if(selectedKey == "3"){
                 tab = "createSprintRetro";
+            }else if(selectedKey == "2"){
+                tab = "ongoingRetro";
+            }else if(selectedKey == "3"){
+                tab = "pastRetro";
             }
 
             this.props.actions.loadPage('/'+tab);
@@ -86,28 +86,7 @@ class LoggedInUserLandingPage extends React.Component {
         this.setState({warningShow: false});
     }
 
-    addMemberToDatabase(matchedKey){
-        if(matchedKey != null){
-            var firebaseRef1 = firebase.database().ref('projects/'+ matchedKey +'/team');
-            this.firebaseRef1 = firebase.database().ref('projects/'+ matchedKey +'/team');
 
-            this.firebaseRef1.limitToLast(25).on('value', function (dataSnapshot) {
-                console.log("Tree for team : " , 'projects/'+ matchedKey +'/team');
-                var team = [];
-                dataSnapshot.forEach(function (childSnapshot) {
-                    var teamMate = childSnapshot.val();
-                    teamMate['.key'] = childSnapshot.key;
-                    team.push(teamMate);
-                }.bind(this));
-
-                console.log('team', team);
-
-                this.setState({
-                    team: team
-                });
-            }.bind(this));
-        }
-    }
 
     modalSubmitCreateProject(event,modalTab){
         console.log("ModalTab : ", modalTab);
@@ -154,9 +133,9 @@ class LoggedInUserLandingPage extends React.Component {
         //alert('Registered email is : ' + res.providerData[res.providerData.length -1].email);
         this.props.actions.loadPage('/login');
     }
-    manageTeam(){
+    /*manageTeam(){
         this.props.actions.loadPage('/manageTeam');
-    }
+    }*/
 
     render(){
         var {leftDrawer,windowWidth,windowHeight,selected_project_id,selected_project_name} = this.props;
@@ -202,9 +181,9 @@ class LoggedInUserLandingPage extends React.Component {
                 <Col xs={2} md={2} className="leftDrawer" >
                     <Row>
                         <Nav bsStyle="pills" stacked activeKey={this.state.menuIndex} onSelect={this.handleSelect.bind(this)}>
-                            <NavItem eventKey={1} href="#ongoingRetro"> <span style={{color:"white"}}>Ongoing Retrospective</span> </NavItem>
-                            <NavItem eventKey={2} href="#pastRetro"> <span style={{color:"white"}}>Past Retrospective</span> </NavItem>
-                            <NavItem eventKey={3} href="#createSprintRetro"> <span style={{color:"white"}}>Create Sprint Retrospective</span> </NavItem>
+                            <NavItem eventKey={1} href="#createSprintRetro"> <span style={{color:"white"}}>Create Sprint Retrospective</span> </NavItem>
+                            <NavItem eventKey={2} href="#ongoingRetro"> <span style={{color:"white"}}>Ongoing Retrospective</span> </NavItem>
+                            <NavItem eventKey={3} href="#pastRetro"> <span style={{color:"white"}}>Past Retrospective</span> </NavItem>
                         </Nav>
                     </Row>
                 </Col>

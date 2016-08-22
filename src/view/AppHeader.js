@@ -20,7 +20,7 @@ class AppHeader extends React.Component {
     constructor() {
         super();
         this.state = {
-            projects: [],
+            users: [],
             projectName: null,
             projectId: null,
             userIconClick : false
@@ -60,28 +60,29 @@ class AppHeader extends React.Component {
 
     render(){
         var {userIconClick} = this.state;
-        var {leftDrawer} = this.props;
+        var {leftDrawer,loggedInUserDetails} = this.props;
         var userIconClickList = null;
 
         var leftDrawerIcon = leftDrawer ? "glyphicon glyphicon-chevron-left" : "glyphicon glyphicon-menu-hamburger";
 
         if(userIconClick){
             userIconClickList = (
-                <Clearfix style={{margin:'10px', padding:'10px',width:'200px'}}>
+                <Clearfix style={{margin:'10px', padding:'10px',width:'250px'}}>
                     <MenuItem>
                         <Row>
-                            <Col xs={5} md={5}>
-                                <Image src="../images/common.jpg" circle circle style={{width:"60px", height:"60px"}} />
+                            <Col xs={4} md={4}>
+                                <Image src="../images/common.jpg" circle circle style={{width:"50px", height:"50px"}} />
                             </Col>
-                            <Col xs={7} md={7}>
-                                <Row>
-                                    UserName
+                            <Col xs={8} md={8}>
+                                <Row style={{marginBottom:'10px'}}>
+                                    {loggedInUserDetails.full_name}
                                 </Row>
-                                <Row>
-                                    user@gmail.com
+                                <Row style={{marginBottom:'10px'}}>
+                                    {loggedInUserDetails.email}
                                 </Row>
-                                <Row>
-                                    <Button style={{color:'white', backgroundColor:'black'}} onClick={this.myProfile.bind(this)}> My Profile </Button>
+                                <Row style={{marginBottom:'10px'}}>
+                                    <Button style={{color:'white', backgroundColor:'black'}} id={loggedInUserDetails}
+                                            onClick={this.myProfile.bind(this)}> My Profile </Button>
                                 </Row>
                             </Col>
                         </Row>
@@ -125,7 +126,8 @@ class AppHeader extends React.Component {
 
 
 const mapStateToProps = (state) => ({
-    leftDrawer: state.scrums.leftDrawer
+    leftDrawer: state.scrums.leftDrawer,
+    loggedInUserDetails: state.scrums.loggedInUserDetails
 });
 
 const mapDispatchToProps = (dispatch) => ({

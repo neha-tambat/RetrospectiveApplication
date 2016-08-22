@@ -58,6 +58,11 @@ gulp.task('style', function() {
         .pipe(gulp.dest(distPath));
 });
 
+/*gulp.task('styleFontAwesome', function(){
+    return gulp.src(modulesPath + '/font-awesome/css/font-awesome.css')
+        .pipe(gulp.dest(distPath + '/css/'));
+});*/
+
 gulp.task('clear', function() {
     return rimraf.sync(distPath);
 });

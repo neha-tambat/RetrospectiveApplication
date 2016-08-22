@@ -49,8 +49,8 @@ class PastRetrospectives extends React.Component {
         }.bind(this));
     }
 
-    handleMore(){
-
+    handleMore(event){
+        console.log("event", event);
     }
 
     render(){
@@ -64,7 +64,6 @@ class PastRetrospectives extends React.Component {
                 }
             }
         }
-        console.log("dataList : ", dataList);
 
         var selectRowProp = {
             mode: "checkbox",  //checkbox for multi select, radio for single select.

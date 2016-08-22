@@ -4,7 +4,7 @@
 import {createReducer} from '../utils';
 import {pushState} from 'redux-router';
 
-import {SELECTED_PROJECT_ID,LEFT_DRAWER,WINDOW_SIZE} from '../constants/index';
+import {SELECTED_PROJECT_ID,LEFT_DRAWER,WINDOW_SIZE,LOGGED_IN_USER_DETAILS,PROJECT_KEY_FOR_MANAGING_TEAM} from '../constants/index';
 
 const initialState = {
 
@@ -12,7 +12,9 @@ const initialState = {
     windowHeight:null,
     selected_project_id: null,
     selected_project_name: null,
-    leftDrawer : true
+    leftDrawer : true,
+    loggedInUserDetails: null,
+    projectKeyForManageTeam: null
 };
 
 
@@ -33,6 +35,16 @@ export default createReducer(initialState, {
         var _state = _.cloneDeep(state);
         _state.windowWidth = window.innerWidth;
         _state.windowHeight = window.innerHeight;
+        return _state;
+    },
+    [LOGGED_IN_USER_DETAILS]: (state, payload) => {
+        var _state = _.cloneDeep(state);
+        _state.loggedInUserDetails = payload;
+        return _state;
+    },
+    [PROJECT_KEY_FOR_MANAGING_TEAM]: (state,payload) => {
+        var _state = _.cloneDeep(state);
+        _state.projectKeyForManageTeam = payload;
         return _state;
     }
 

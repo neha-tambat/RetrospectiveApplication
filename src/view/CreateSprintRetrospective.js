@@ -12,6 +12,7 @@ import firebase from 'firebase';
 import database from 'firebase/database';
 import auth from 'firebase/auth';
 import firebaseInit from '../firebase/firebaseInit';
+import ProjectList from './ProjectList';
 
 class CreateSprintRetrospective extends React.Component {
 
@@ -84,6 +85,7 @@ class CreateSprintRetrospective extends React.Component {
             project_id: this.props.selected_project_id
         };
         this.firebaseRef.push(retroRegister);
+        this.props.actions.loadPage('/ongoingRetro');
     }
 
 
@@ -92,6 +94,9 @@ class CreateSprintRetrospective extends React.Component {
             <Grid style={{margin:"100px"}}>
                 <Row>
                     <form className="retrospective-form">
+
+                        <ProjectList />
+
                         <FormGroup controlId="formControlsScrumMasterName">
                             <ControlLabel>Scrum Master Name</ControlLabel>
                             <FormControl type="text" onChange={this.scrumMasterNameChange.bind(this)}/>

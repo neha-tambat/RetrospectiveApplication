@@ -23,7 +23,8 @@ class LoginPage extends React.Component {
         this.state = {
             loginEmail: null,
             loginPassword: null,
-            error: false
+            error: false,
+            users:[]
         };
     }
 
@@ -31,21 +32,21 @@ class LoginPage extends React.Component {
 
         this.props.actions.windowSize();
 
-        var firebaseRef = firebase.database().ref('retrospective-application/notes');
-       // this.bindAsArray(firebaseRef.limitToLast(25), 'notes');
+        var firebaseRef = firebase.database().ref('users');
+        //this.bindAsArray(firebaseRef.limitToLast(25), 'users');
 
-        this.firebaseRef = firebase.database().ref('retrospective-application/notes');
+        this.firebaseRef = firebase.database().ref('users');
 
         this.firebaseRef.limitToLast(25).on('value', function (dataSnapshot) {
-            var notes = [];
+            var users = [];
             dataSnapshot.forEach(function (childSnapshot) {
-                var note = childSnapshot.val();
-                note['.key'] = childSnapshot.key;
-                notes.push(note);
+                var user = childSnapshot.val();
+                user['.key'] = childSnapshot.key;
+                users.push(user);
             }.bind(this));
 
             this.setState({
-                notes: notes
+                users: users
             });
         }.bind(this));
     }
@@ -59,7 +60,15 @@ class LoginPage extends React.Component {
 
     callBack(res){
         console.log("callBack : ", res);
-        alert('Login with email : ' + res.providerData[res.providerData.length -1].email);
+        var LoginWithEmail = res.providerData[res.providerData.length -1].email;
+        //alert('Login with email : ' + LoginWithEmail);
+        var LoggedInUserDetails = null;
+        for(var index=0; index < this.state.users.length; index++){
+            if(this.state.users[index].email == LoginWithEmail){
+                LoggedInUserDetails = this.state.users[index];
+            }
+        }
+        this.props.actions.loggedInUserDetails(LoggedInUserDetails);
         this.props.actions.loadPage('/ongoingRetro');
     }
     loginAccount(){

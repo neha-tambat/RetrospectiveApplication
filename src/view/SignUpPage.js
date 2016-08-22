@@ -79,20 +79,20 @@ class SignUpPage extends React.Component {
     callBack(res){
         console.log("callBack : ", res);
         alert('Registered email is : ' + res.providerData[res.providerData.length -1].email);
+        var full_name = this.state.firstName + " " + this.state.lastName;
+        this.firebaseRef.push({
+            first_name: this.state.firstName,
+            last_name: this.state.lastName,
+            full_name: full_name,
+            email: this.state.email
+        });
         this.props.actions.loadPage('/login');
     }
 
     signUp(event){
         var email = this.state.email;
         var password = this.state.password;
-        var full_name = this.state.firstName + " " + this.state.lastName;
         firebaseUtils.createNewUser({email: email, password: password}, this.callBack.bind(this));
-        this.firebaseRef.push({
-           first_name: this.state.firstName,
-            last_name: this.state.lastName,
-            full_name: full_name,
-            email: email
-        });
     }
 
     render() {

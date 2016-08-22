@@ -4,7 +4,7 @@
 
 import { checkHttpStatus, parseJSON } from '../../utils';
 import { pushState } from 'redux-router';
-import {SELECTED_PROJECT_ID,LEFT_DRAWER,WINDOW_SIZE} from '../../constants/index';
+import {SELECTED_PROJECT_ID,LEFT_DRAWER,WINDOW_SIZE,LOGGED_IN_USER_DETAILS,PROJECT_KEY_FOR_MANAGING_TEAM} from '../../constants/index';
 //import _ from 'lodash';
 
 
@@ -34,5 +34,23 @@ export function leftDrawer(){
         dispatch({
             type: "LEFT_DRAWER"
         })
+    }
+}
+
+export function loggedInUserDetails(details){
+    return dispatch => {
+        dispatch ({
+           type: "LOGGED_IN_USER_DETAILS",
+            payload: details
+        });
+    }
+}
+
+export function ManageTeamForProject_key(key){
+    return dispatch => {
+        dispatch({
+           type: "PROJECT_KEY_FOR_MANAGING_TEAM",
+            payload: key
+        });
     }
 }

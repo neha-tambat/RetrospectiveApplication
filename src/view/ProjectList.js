@@ -51,6 +51,8 @@ class ProjectList extends React.Component {
                 projectName: null,
                 projectId: null
             });
+
+            this.props.actions.loadPage('/ongoingRetro');
             this.setState({projectName: null, projectId: null});
         }else {
             console.log("projectId:", event.target.id);
@@ -69,7 +71,7 @@ class ProjectList extends React.Component {
             console.log("Projects : ", data);
             var projectName = data.project_name;
             return(
-                <option id={data['.key']} value={projectName.toLowerCase()}>{projectName}</option>
+                <option id={data['.key']} key={data['.key']} value={projectName.toLowerCase()}>{projectName}</option>
             );
         });
 

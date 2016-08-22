@@ -48,69 +48,44 @@ class ManageProject extends React.Component {
         }.bind(this));
     }
 
-    manageTeam(key){
-        this.props.manageTeam();
-        //this.props.actions.loadPage('/manageTeam');
-    }
-    remove(){
-
+    handleManageTeam(key){
+        this.props.actions.ManageTeamForProject_key(key);
+        this.props.actions.loadPage('/manageTeam');
     }
 
     render() {
         var dataList = null;
-        console.log("this.state.projects : ", this.state.projects);
         if(this.state.projects.length != 0){
             dataList = this.state.projects;
         }
 
-        var selectRowProp = {
-            mode: "checkbox",  //checkbox for multi select, radio for single select.
-            clickToSelect: true,   //click row will trigger a selection on that row.
-            bgColor: "rgb(200, 150, 150)"   //selected row background color
-        };
-
-        function manage_team(cell, row){
-            return '<Button type="submit" onClick={this.manageTeam.bind(this)}> Manage Team </Button>';
-        }
-
-        function action(cell, row){
-            return '<Button type="submit" onClick={this.remove.bind(this)}> Remove </Button>';
-        }
-
         return (
-            <Grid>
-                <Row className="project-table">
-                <BootstrapTable
-                    data={dataList}
-                    striped={true}
-                    hover={true}
-                    condensed={true}
-                    pagination={true}
-                    selectRow={selectRowProp}
-                    insertRow={true}
-                    deleteRow={true}
-                    columnFilter={true}
-                    search={true}>
-                    <TableHeaderColumn dataField="project_name"
-                                       isKey={true}
-                                       dataAlign="center"
-                                       dataSort={true}
-                                       className="table-header">Project Name</TableHeaderColumn>
-                    <TableHeaderColumn dataField="description"
-                                       dataAlign="center"
-                                       dataSort={true}
-                                       className="table-header">Description</TableHeaderColumn>
-                    <TableHeaderColumn dataField="button"
-                                       dataFormat={manage_team}
-                                       dataAlign="center"
-                                       className="table-header">Manage Team</TableHeaderColumn>
-                    <TableHeaderColumn dataField="button"
-                                       dataFormat={action}
-                                       dataAlign="center"
-                                       className="table-header">Action</TableHeaderColumn>
-                </BootstrapTable>
-                </Row>
-            </Grid>
+            <div style={{margin:"10px"}}>
+                <Table
+                    rowHeight={50}
+                    rowsCount={dataList.length}
+                    width={1500}
+                    maxHeight={500}
+                    headerHeight={50}>
+
+                    <Column
+                        header={<Cell style={{backgroundColor: '#484848', color:'#ffffff'}}> Project Name </Cell>}
+                        cell={<TextCell data={dataList} col="project_name" />}
+                        width={500}
+                    />
+                    <Column
+                        header={<Cell style={{backgroundColor: '#484848',color:'#ffffff'}}> Description </Cell>}
+                        cell={<TextCell data={dataList} col="description" />}
+                        width={500}
+                    />
+                    <Column
+                        header={<Cell style={{backgroundColor: '#484848',color:'#ffffff'}}> Action </Cell>}
+                        cell={<TextCell data={dataList} col="manage_team" handleManageTeam={this.handleManageTeam.bind(this)} />}
+                        width={500}
+                    />
+
+                </Table>
+            </div>
         );
     }
 }

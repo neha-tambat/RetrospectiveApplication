@@ -58,6 +58,13 @@ body{
     margin-left: 325px;
     padding: 30px;
 }
+.addMemberToProject-form{
+    background-color: #E6E6E6;
+    border-radius: 10px;
+    width: 600px;
+    margin-left: 325px;
+    padding: 30px;
+}
 
 .myProfile-form{
     background-color: #E6E6E6;

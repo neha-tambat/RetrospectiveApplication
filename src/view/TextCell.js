@@ -33,9 +33,12 @@ class TextCell extends React.Component {
         var key = event.target.id;
         this.props.handleEdit(key);
     }
-    handleDelete(event){
+    handle_Remove(event){
         var key = event.target.id;
-        this.props.handleDelete(key);
+        this.props.handle_Remove(key);
+    }
+    handleManageTeam(key){
+        this.props.handleManageTeam(key);
     }
 
     render() {
@@ -56,18 +59,18 @@ class TextCell extends React.Component {
                 </Cell>
             );
         }
-        if(col == "manageTeam"){
+        if(col == "manage_team"){
             return(
                 <Cell {...props}>
-                    <Button id={id} style={{backgroundColor:"#000000", color:"#ffffff"}}> Manage Team </Button>
+                    <Button id={id} style={{backgroundColor:"#000000", color:"#ffffff"}} onClick={this.handleManageTeam.bind(this,id)}> Manage Team </Button>
                 </Cell>
             );
         }
 
-        if(col == "delete"){
+        if(col == "remove"){
             return(
                 <Cell {...props} id={id} style={{cursor:'pointer',textAlign:'center',padding:"15px"}}
-                      className="glyphicon glyphicon-remove-circle center-block" onClick={this.handleDelete.bind(this)}> </Cell>
+                      className="glyphicon glyphicon-remove-circle center-block" onClick={this.handle_Remove.bind(this)}> </Cell>
             );
         }
         if(col == "edit"){

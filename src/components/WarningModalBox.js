@@ -8,7 +8,7 @@ let Bootstrap = require('react-bootstrap');
 let _ = require('lodash');
 import {Panel,Input,ButtonInput,Popover,Button,Modal,ModalBody,ModalFooter,ModalHeader,ModalTitle,Grid,Row,Col,FormGroup,FormControl,ControlLabel} from 'react-bootstrap';
 
-export default class ModalBox extends React.Component {
+export default class WarningModalBox extends React.Component {
 
     onCancel(e) {
         e.preventDefault();

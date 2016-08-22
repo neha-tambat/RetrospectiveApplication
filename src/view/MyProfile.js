@@ -19,21 +19,28 @@ class MyProfile extends React.Component {
     }
 
     render(){
+        var {loggedInUserDetails} = this.props;
+
         return(
             <Grid style={{margin:"100px"}}>
                 <Row>
                     <form className="myProfile-form">
+                        <ControlLabel style={{fontSize:"20px", marginLeft:"200px"}}> My Profile </ControlLabel>
                         <FormGroup controlId="formControlsUserName">
                             <ControlLabel>Username</ControlLabel>
-                            <FormControl type="text"> </FormControl>
+                            <FormControl type="text" value={loggedInUserDetails.full_name} />
                         </FormGroup>
                         <FormGroup controlId="formControlsFirstName">
                             <ControlLabel>Firstname</ControlLabel>
-                            <FormControl type="text"> </FormControl>
+                            <FormControl type="text" value={loggedInUserDetails.first_name} />
                         </FormGroup>
                         <FormGroup controlId="formControlsLastName">
                             <ControlLabel>Lastname</ControlLabel>
-                            <FormControl type="text"> </FormControl>
+                            <FormControl type="text" value={loggedInUserDetails.last_name} />
+                        </FormGroup>
+                        <FormGroup controlId="formControlsEmailId">
+                            <ControlLabel>Email Id</ControlLabel>
+                            <FormControl type="text" value={loggedInUserDetails.email} />
                         </FormGroup>
 
                     </form>
@@ -44,7 +51,7 @@ class MyProfile extends React.Component {
 }
 
 const mapStateToProps = (state) => ({
-
+    loggedInUserDetails: state.scrums.loggedInUserDetails
 });
 
 const mapDispatchToProps = (dispatch) => ({
