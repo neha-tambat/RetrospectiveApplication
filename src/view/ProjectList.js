@@ -65,13 +65,16 @@ class ProjectList extends React.Component {
     }
 
     render(){
+        var {projectKeyForManageTeam} = this.props;
         var {projects} = this.state;
 
         var projectList = projects.map(data => {
             console.log("Projects : ", data);
             var projectName = data.project_name;
             return(
-                <option id={data['.key']} key={data['.key']} value={projectName.toLowerCase()}>{projectName}</option>
+                <option id={data['.key']} key={data['.key']}
+                        selected={(projectKeyForManageTeam == data['.key']) ? "selected" : ""}
+                        value={projectName.toLowerCase()}>{projectName}</option>
             );
         });
 
@@ -91,7 +94,7 @@ class ProjectList extends React.Component {
 
 
 const mapStateToProps = (state) => ({
-
+    projectKeyForManageTeam: state.scrums.projectKeyForManageTeam
 });
 
 const mapDispatchToProps = (dispatch) => ({

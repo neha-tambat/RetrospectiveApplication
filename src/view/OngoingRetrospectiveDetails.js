@@ -70,7 +70,9 @@ class OngoingRetrospectiveDetails extends React.Component {
         console.log("Warning message : Select project first and proceed.");
         this.setState({warningShow: false});
     }
-    handleView(event){
+    handleView(key){
+        this.props.actions.RetrospectiveKey_selected(key);
+        this.props.actions.loadPage('/dashboard');
 
     }
 

@@ -4,7 +4,8 @@
 import {createReducer} from '../utils';
 import {pushState} from 'redux-router';
 
-import {SELECTED_PROJECT_ID,LEFT_DRAWER,WINDOW_SIZE,LOGGED_IN_USER_DETAILS,PROJECT_KEY_FOR_MANAGING_TEAM} from '../constants/index';
+import {SELECTED_PROJECT_ID,LEFT_DRAWER,WINDOW_SIZE,LOGGED_IN_USER_DETAILS,PROJECT_KEY_FOR_MANAGING_TEAM,
+    RETROSPECTIVE_KEY_SELECTED} from '../constants/index';
 
 const initialState = {
 
@@ -14,7 +15,8 @@ const initialState = {
     selected_project_name: null,
     leftDrawer : true,
     loggedInUserDetails: null,
-    projectKeyForManageTeam: null
+    projectKeyForManageTeam: null,
+    retrospectiveKey_selected: null
 };
 
 
@@ -46,7 +48,12 @@ export default createReducer(initialState, {
         var _state = _.cloneDeep(state);
         _state.projectKeyForManageTeam = payload;
         return _state;
-    }
+    },
+    [RETROSPECTIVE_KEY_SELECTED]:(state,payload) => {
+        var _state = _.cloneDeep(state);
+        _state.retrospectiveKey_selected = payload;
+        return _state;
+    },
 
 });
 

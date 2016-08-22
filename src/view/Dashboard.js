@@ -29,23 +29,22 @@ class Dashboard extends React.Component {
     }
 
     componentWillMount(){
-        var firebaseRef = firebase.database().ref('retrospectives');
+        var firebaseRef = firebase.database().ref('retrospectives/'+ this.props.retrospectiveKey_selected + '/notes');
         //this.bindAsArray(firebaseRef.limitToLast(25), 'retrospectives');
 
-        this.firebaseRef = firebase.database().ref('retrospectives');
-
+        this.firebaseRef = firebase.database().ref('retrospectives/'+ this.props.retrospectiveKey_selected + '/notes');
         this.firebaseRef.limitToLast(25).on('value', function(dataSnapshot) {
-            var retrospectives = [];
+            var notes = [];
             dataSnapshot.forEach(function(childSnapshot) {
-                var retrospective = childSnapshot.val();
-                retrospective['.key'] = childSnapshot.key;
-                retrospectives.push(retrospective);
+                var note = childSnapshot.val();
+                note['.key'] = childSnapshot.key;
+                notes.push(note);
             }.bind(this));
 
-            console.log("retrospectives : ", retrospectives);
+            console.log("notes : ", notes);
 
             this.setState({
-                retrospectives: retrospectives
+                notes: notes
             });
         }.bind(this));
     }
@@ -66,13 +65,12 @@ class Dashboard extends React.Component {
     }
 
     addNotesToDatabase(matchedProjectIDKey){
-        var firebaseRef = firebase.database().ref('retrospectives/' + matchedProjectIDKey + '/notes');
+        var firebaseRef = firebase.database().ref('retrospectives/'+ this.props.retrospectiveKey_selected + '/notes');
         //this.bindAsArray(firebaseRef.limitToLast(25), 'retrospectives/notes');
 
-        this.firebaseRef = firebase.database().ref('retrospectives/' + matchedProjectIDKey + '/notes');
+        this.firebaseRef1 = firebase.database().ref('retrospectives/'+ this.props.retrospectiveKey_selected + '/notes');
 
-        this.firebaseRef.limitToLast(25).on('value', function(dataSnapshot) {
-            console.log("Tree for notes : ", 'retrospectives/' + matchedProjectIDKey + '/notes');
+        this.firebaseRef1.limitToLast(25).on('value', function(dataSnapshot) {
             var notes = [];
             dataSnapshot.forEach(function(childSnapshot) {
                 var note = childSnapshot.val();
@@ -91,83 +89,74 @@ class Dashboard extends React.Component {
     onSubmit(event){
         event.preventDefault();
         let  continueObject, startObject, stopObject;
-        var selected_project_id = this.props.selected_project_id;
-
-        for(var index=0; index <= this.state.retrospectives.length; index++){
-            if(this.state.retrospectives[index].project_id == selected_project_id){
-                var matchedProjectIDKey = this.state.retrospectives[index]['.key'];
-                break;
-            }
-        }
-        console.log("matchedProjectIDKey : ", matchedProjectIDKey);
 
         if(this.state.start != "" ) {
-            startObject = {note : this.state.start, username: "neha"};
+            startObject = {note : this.state.start, username: this.props.loggedInUserDetails.full_name};
         }
         if(this.state.stop != ""){
-            stopObject = {note : this.state.stop, username: "neha"};
+            stopObject = {note : this.state.stop, username: this.props.loggedInUserDetails.full_name};
         }
         if(this.state.continue != ""){
-            continueObject = {note : this.state.continue, username: "neha"};
+            continueObject = {note : this.state.continue, username: this.props.loggedInUserDetails.full_name};
         }
 
         if(startObject == undefined){
             if(stopObject == undefined){
-                this.addNotesToDatabase(matchedProjectIDKey);
-                this.firebaseRef.push({
+                this.addNotesToDatabase();
+                this.firebaseRef1.push({
                     continueNotes:continueObject
                 });
             }else if(continueObject == undefined){
-                this.addNotesToDatabase(matchedProjectIDKey);
-                this.firebaseRef.push({
+                this.addNotesToDatabase();
+                this.firebaseRef1.push({
                     stopNotes: stopObject
                 });
             }else {
-                this.addNotesToDatabase(matchedProjectIDKey);
-                this.firebaseRef.push({
+                this.addNotesToDatabase();
+                this.firebaseRef1.push({
                     stopNotes: stopObject,
                     continueNotes:continueObject
                 });
             }
         }else if(stopObject == undefined){
             if(startObject == undefined){
-                this.addNotesToDatabase(matchedProjectIDKey);
-                this.firebaseRef.push({
+                this.addNotesToDatabase();
+                this.firebaseRef1.push({
                     continueNotes:continueObject
                 });
             }else if(continueObject == undefined){
-                this.addNotesToDatabase(matchedProjectIDKey);
-                this.firebaseRef.push({
+                this.addNotesToDatabase();
+                this.firebaseRef1.push({
                     startNotes:startObject
                 });
             }else {
-                this.addNotesToDatabase(matchedProjectIDKey);
-                this.firebaseRef.push({
+                this.addNotesToDatabase();
+                this.firebaseRef1.push({
                     startNotes:startObject,
                     continueNotes:continueObject
                 });
             }
         }else if(continueObject == undefined){
             if(startObject == undefined){
-                this.addNotesToDatabase(matchedProjectIDKey);
-                this.firebaseRef.push({
+                this.addNotesToDatabase();
+                this.firebaseRef1.push({
                     stopNotes: stopObject
                 });
             }else if(stopObject == undefined){
-                this.addNotesToDatabase(matchedProjectIDKey);
-                this.firebaseRef.push({
+                this.addNotesToDatabase();
+                this.firebaseRef1.push({
                     startNotes:startObject
                 });
             }else {
-                this.addNotesToDatabase(matchedProjectIDKey);
-                this.firebaseRef.push({
+                this.addNotesToDatabase();
+                this.firebaseRef1.push({
                     startNotes:startObject,
                     stopNotes: stopObject
                 });
             }
         }else {
-            this.addNotesToDatabase(matchedProjectIDKey);
-            this.firebaseRef.push({
+            this.addNotesToDatabase();
+            this.firebaseRef1.push({
                 startNotes:startObject,
                 stopNotes: stopObject,
                 continueNotes:continueObject
@@ -192,7 +181,7 @@ class Dashboard extends React.Component {
     }
 
     render(){
-
+        var {retrospectiveKey_selected, loggedInUserDetails} = this.props;
         if(this.state.notes.length != 0 ){
             var startData = this.state.notes.map((data,index,key) => {
                 if(data.startNotes != undefined){
@@ -331,10 +320,13 @@ class Dashboard extends React.Component {
 
 
                 <Row style={{margin:"20px"}}>
-                    <Col xs={4} md={4}> </Col>
-                    <Col xs={4} md={4}>
-                        <Button type="submit" style={{backgroundColor:"#484848", width:"150px"}} onClick={this.onSubmit.bind(this)} >
-                            <span style={{color:"white", fontSize:"18px"}}> <strong>Submit</strong> </span>
+                    <Col xs={3} md={3}> </Col>
+                    <Col xs={6} md={6}>
+                        <Button type="submit" style={{backgroundColor:"#484848", width:"150px", margin:"10px"}} >
+                            <span style={{color:"white", fontSize:"18px"}}> <strong>Save</strong> </span>
+                        </Button>
+                        <Button type="submit" style={{backgroundColor:"#484848", width:"150px", margin:"10px"}} onClick={this.onSubmit.bind(this)} >
+                            <span style={{color:"white", fontSize:"18px"}}> <strong>Publish</strong> </span>
                         </Button>
                     </Col>
                 </Row>
@@ -350,6 +342,8 @@ reactMixin(Dashboard.prototype,ReactFireMixin);
 //export default Dashboard;
 
 const mapStateToProps = (state) => ({
+    retrospectiveKey_selected: state.scrums.retrospectiveKey_selected,
+    loggedInUserDetails: state.scrums.loggedInUserDetails,
     selected_project_id: state.scrums.selected_project_id
 });
 

@@ -87,33 +87,33 @@ class AddTeamMember extends React.Component {
         this.setState({employeeJobRole: event.target.value});
     }
     addTeamMember(event){
-        for(var index=0; index <= this.state.projects.length; index++){
-            if(this.state.projects[index].project_name.toLowerCase() == this.props.selected_project_name.toLowerCase()){
+        /*for(var index=0; index <= this.state.projects.length; index++){
+            if(this.state.projects[index]['.key'] == this.props.projectKeyForManageTeam){
                 var matchedKey = this.state.projects[index]['.key'];
                 break;
             }
-        }
+        }*/
 
-        console.log("matchedKey : ", matchedKey);
-        this.addMemberToDatabase(matchedKey);
+        this.addMemberToDatabase();
         if(this.state.userKey != null){
             this.firebaseRef1.push({
                 user: this.state.userKey,
                 jobRole: this.state.employeeJobRole
             });
+            this.props.actions.loadPage('/ongoingRetro');
         }else {
             this.setState({warningShow_addMember: true});
         }
-        this.props.actions.loadPage('/ongoingRetro');
+
     }
 
-    addMemberToDatabase(matchedKey){
-        if(matchedKey != null){
-            var firebaseRef1 = firebase.database().ref('projects/'+ matchedKey +'/team');
-            this.firebaseRef1 = firebase.database().ref('projects/'+ matchedKey +'/team');
+    addMemberToDatabase(){
+        if(this.props.projectKeyForManageTeam != null){
+            var firebaseRef1 = firebase.database().ref('projects/'+ this.props.projectKeyForManageTeam +'/team');
+            this.firebaseRef1 = firebase.database().ref('projects/'+ this.props.projectKeyForManageTeam +'/team');
 
             this.firebaseRef1.limitToLast(25).on('value', function (dataSnapshot) {
-                console.log("Tree for team : " , 'projects/'+ matchedKey +'/team');
+                console.log("Tree for team : " , 'projects/'+ this.props.projectKeyForManageTeam +'/team');
                 var team = [];
                 dataSnapshot.forEach(function (childSnapshot) {
                     var teamMate = childSnapshot.val();
@@ -131,7 +131,7 @@ class AddTeamMember extends React.Component {
     }
 
     onWarningHide(){
-        this.setState({warningShow: false});
+        this.setState({warningShow_addMember: false});
     }
     modalSubmit_addMember(){
         console.log("This email id is not found in record. Please provide correct email id.");
@@ -176,6 +176,8 @@ class AddTeamMember extends React.Component {
 
 
 const mapStateToProps = (state) => ({
+    projectKeyForManageTeam: state.scrums.projectKeyForManageTeam,
+    retrospectiveKey_selected: state.scrums.retrospectiveKey_selected,
     selected_project_id: state.scrums.selected_project_id,
     selected_project_name: state.scrums.selected_project_name
 });
