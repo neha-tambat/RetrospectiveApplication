@@ -92,7 +92,7 @@ class LoginPage extends React.Component {
                             <FormGroup controlId="formControlsPassword">
                                 <FormControl type="password" placeholder="Password" onChange={this.loginPasswordChange.bind(this)}/>
                             </FormGroup>
-                            <Button type="submit" className="signUp-button" style={{backgroundColor: "#FF0000", width:"500px"}} onClick={this.loginAccount.bind(this)} >
+                            <Button className="signUp-button" style={{backgroundColor: "#FF0000", width:"500px"}} onClick={this.loginAccount.bind(this)} >
                                 <span style={{color:"#ffffff", fontSize:"18px"}}> <strong>Login</strong> </span>
                             </Button>
                             {errors}
