@@ -62,14 +62,17 @@ class LoginPage extends React.Component {
         console.log("callBack : ", res);
         var LoginWithEmail = res.providerData[res.providerData.length -1].email;
         //alert('Login with email : ' + LoginWithEmail);
-        var LoggedInUserDetails = null;
-        for(var index=0; index < this.state.users.length; index++){
-            if(this.state.users[index].email == LoginWithEmail){
-                LoggedInUserDetails = this.state.users[index];
+        if(this.state.users.length != 0){
+            var LoggedInUserDetails = null;
+            for(var index=0; index < this.state.users.length; index++){
+                if(this.state.users[index].email == LoginWithEmail){
+                    LoggedInUserDetails = this.state.users[index];
+                }
             }
+            this.props.actions.loggedInUserDetails(LoggedInUserDetails);
+            this.props.actions.loadPage('/ongoingRetro');
         }
-        this.props.actions.loggedInUserDetails(LoggedInUserDetails);
-        this.props.actions.loadPage('/ongoingRetro');
+
     }
     loginAccount(){
         var email = this.state.loginEmail;

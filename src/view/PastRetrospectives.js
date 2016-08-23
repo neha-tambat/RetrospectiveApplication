@@ -54,12 +54,12 @@ class PastRetrospectives extends React.Component {
     }
 
     render(){
-        var {selected_project_id,selected_project_name} = this.props;
+        var {selected_project_id,selected_project_name,projectKeyForManageTeam} = this.props;
         var {retrospectives} = this.state;
         var dataList = [];
         if(retrospectives.length != 0){
             for(var index=0; index < retrospectives.length; index++){
-                if(retrospectives[index].project_id == selected_project_id){
+                if(retrospectives[index].project_id == projectKeyForManageTeam){
                     dataList.push(retrospectives[index]);
                 }
             }
@@ -111,6 +111,8 @@ class PastRetrospectives extends React.Component {
 
 
 const mapStateToProps = (state) => ({
+    projectKeyForManageTeam: state.scrums.projectKeyForManageTeam,
+    retrospectiveKey_selected: state.scrums.retrospectiveKey_selected,
     selected_project_id: state.scrums.selected_project_id,
     selected_project_name: state.scrums.selected_project_name
 });

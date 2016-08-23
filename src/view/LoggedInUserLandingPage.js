@@ -59,11 +59,11 @@ class LoggedInUserLandingPage extends React.Component {
     }
 
     handleSelect(selectedKey) {
-        if(this.props.selected_project_id == null){
+        if(this.props.projectKeyForManageTeam == null){
             //alert("Please select project.");
             this.setState({warningShow: true});
         }else {
-            console.log("Selected project : ", this.props.selected_project_id);
+            console.log("Selected project : ", this.props.projectKeyForManageTeam);
             var tab;
             //alert('selected ' + selectedKey);
             if(selectedKey == "1"){
@@ -138,7 +138,7 @@ class LoggedInUserLandingPage extends React.Component {
     }*/
 
     render(){
-        var {leftDrawer,windowWidth,windowHeight,selected_project_id,selected_project_name} = this.props;
+        var {leftDrawer,windowWidth,windowHeight,projectKeyForManageTeam,selected_project_id,selected_project_name} = this.props;
         console.log("windowWidth : ",windowWidth);
         console.log("windowHeight : ",windowHeight);
 
@@ -234,6 +234,8 @@ const mapStateToProps = (state) => ({
     leftDrawer: state.scrums.leftDrawer,
     windowWidth: state.scrums.windowWidth,
     windowHeight: state.scrums.windowHeight,
+    projectKeyForManageTeam: state.scrums.projectKeyForManageTeam,
+    retrospectiveKey_selected: state.scrums.retrospectiveKey_selected,
     selected_project_id: state.scrums.selected_project_id,
     selected_project_name: state.scrums.selected_project_name
 

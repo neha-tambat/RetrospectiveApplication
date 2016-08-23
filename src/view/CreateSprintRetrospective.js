@@ -82,7 +82,7 @@ class CreateSprintRetrospective extends React.Component {
             sprint_start_date: this.state.startDate,
             sprint_end_date: this.state.endDate,
             retrospective_time: this.state.retrospectiveTime,
-            project_id: this.props.selected_project_id
+            project_id: this.props.projectKeyForManageTeam
         };
         this.firebaseRef.push(retroRegister);
         this.props.actions.loadPage('/ongoingRetro');
@@ -129,6 +129,8 @@ class CreateSprintRetrospective extends React.Component {
 }
 
 const mapStateToProps = (state) => ({
+    projectKeyForManageTeam: state.scrums.projectKeyForManageTeam,
+    retrospectiveKey_selected: state.scrums.retrospectiveKey_selected,
     selected_project_id: state.scrums.selected_project_id,
     selected_project_name: state.scrums.selected_project_name
 });

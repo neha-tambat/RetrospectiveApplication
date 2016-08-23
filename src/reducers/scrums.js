@@ -11,7 +11,7 @@ const initialState = {
 
     windowWidth: null,
     windowHeight:null,
-    selected_project_id: null,
+    //selected_project_id: null,
     selected_project_name: null,
     leftDrawer : true,
     loggedInUserDetails: null,
@@ -24,7 +24,7 @@ export default createReducer(initialState, {
 
     [SELECTED_PROJECT_ID]: (state, payload) =>{
         var _state = _.cloneDeep(state);
-        _state.selected_project_id = payload.projectId;
+        _state.projectKeyForManageTeam = payload.projectId;
         _state.selected_project_name = payload.projectName;
         return _state;
     },

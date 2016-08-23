@@ -53,7 +53,7 @@ class CreateProject extends React.Component {
     createProject(event){
         var projectDetails = {project_name: this.state.projectName, description: this.state.projectInfo};
         this.firebaseRef.push(projectDetails);
-        this.props.actions.loadPage('/addTeamMember');
+        this.props.actions.loadPage('/manageProject');
     }
 
     render(){

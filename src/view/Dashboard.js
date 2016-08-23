@@ -21,18 +21,24 @@ class Dashboard extends React.Component {
     constructor(){
         super();
         this.state = {
-            name : "",
+            selectedTab: 'myContribution',
             start: "", stop: "", continue: "",
             notes:[], retrospectives: [],
             matchedProjectIDKey: null
         };
+        this.myContributionClass = 'active';
+        this.teamContributionClass = '';
     }
 
     componentWillMount(){
-        var firebaseRef = firebase.database().ref('retrospectives/'+ this.props.retrospectiveKey_selected + '/notes');
+        var path = (this.state.selectedTab == 'myContribution') ?
+        'retrospectives/'+ this.props.retrospectiveKey_selected + '/notes/' + this.props.loggedInUserDetails['.key'] :
+        'retrospectives/'+ this.props.retrospectiveKey_selected + '/notes/public';
+
+        var firebaseRef = firebase.database().ref(path);
         //this.bindAsArray(firebaseRef.limitToLast(25), 'retrospectives');
 
-        this.firebaseRef = firebase.database().ref('retrospectives/'+ this.props.retrospectiveKey_selected + '/notes');
+        this.firebaseRef = firebase.database().ref(path);
         this.firebaseRef.limitToLast(25).on('value', function(dataSnapshot) {
             var notes = [];
             dataSnapshot.forEach(function(childSnapshot) {
@@ -49,8 +55,21 @@ class Dashboard extends React.Component {
         }.bind(this));
     }
 
-    nameChange(event){
-        this.setState({name: event.target.value});
+    onTabSelect(tabId){
+        this.setState({selectedTab:tabId});
+        this.myContributionClass = "";
+        this.teamContributionClass = "";
+        if(tabId == 'myContribution'){
+            this.myContributionClass = "active";
+            this.teamContributionClass = "";
+            //this.props.actions.loadPage('/dashboard');
+            this.addNotesToDatabase();
+        }else{
+            this.myContributionClass = "";
+            this.teamContributionClass = "active";
+            //this.props.actions.loadPage('/dashboard');
+            this.addNotesToDatabase_publish();
+        }
     }
 
     addNote(event){
@@ -64,11 +83,11 @@ class Dashboard extends React.Component {
             }
     }
 
-    addNotesToDatabase(matchedProjectIDKey){
-        var firebaseRef = firebase.database().ref('retrospectives/'+ this.props.retrospectiveKey_selected + '/notes');
+    addNotesToDatabase(){
+        var firebaseRef = firebase.database().ref('retrospectives/'+ this.props.retrospectiveKey_selected + '/notes/' + this.props.loggedInUserDetails['.key']);
         //this.bindAsArray(firebaseRef.limitToLast(25), 'retrospectives/notes');
 
-        this.firebaseRef1 = firebase.database().ref('retrospectives/'+ this.props.retrospectiveKey_selected + '/notes');
+        this.firebaseRef1 = firebase.database().ref('retrospectives/'+ this.props.retrospectiveKey_selected + '/notes/' + this.props.loggedInUserDetails['.key']);
 
         this.firebaseRef1.limitToLast(25).on('value', function(dataSnapshot) {
             var notes = [];
@@ -86,7 +105,63 @@ class Dashboard extends React.Component {
         }.bind(this));
     }
 
-    onSubmit(event){
+    addNotesToDatabase_publish(type){
+        var path = (type == undefined) ?
+            'retrospectives/'+ this.props.retrospectiveKey_selected + '/notes/public'
+            : 'retrospectives/'+ this.props.retrospectiveKey_selected + '/notes/public/' + type;
+
+        var firebaseRef = firebase.database().ref(path );
+        //this.bindAsArray(firebaseRef.limitToLast(25), 'retrospectives/notes');
+
+        this.firebaseRef1 = firebase.database().ref(path);
+
+        this.firebaseRef1.limitToLast(25).on('value', function(dataSnapshot) {
+            var notes = [];
+            dataSnapshot.forEach(function(childSnapshot) {
+                var note = childSnapshot.val();
+                note['.key'] = childSnapshot.key;
+                notes.push(note);
+            }.bind(this));
+
+            console.log("notes : ", notes);
+
+            this.setState({
+                notes: notes
+            });
+        }.bind(this));
+    }
+
+    onPublish(event){
+        event.preventDefault();
+        let  continueObject_save, startObject_save, stopObject_save;
+
+        if(this.state.start != "" ) {
+            startObject_save = {note : this.state.start, username: this.props.loggedInUserDetails.full_name};
+            this.addNotesToDatabase_publish('start');
+            this.firebaseRef1.push(startObject_save);
+        }
+        if(this.state.stop != ""){
+            stopObject_save = {note : this.state.stop, username: this.props.loggedInUserDetails.full_name};
+            this.addNotesToDatabase_publish('stop');
+            this.firebaseRef1.push(stopObject_save);
+        }
+        if(this.state.continue != ""){
+            continueObject_save = {note : this.state.continue, username: this.props.loggedInUserDetails.full_name};
+            this.addNotesToDatabase_publish('continue');
+            this.firebaseRef1.push(continueObject_save);
+        }
+
+        //this.addNotesToDatabase_publish();
+        //this.firebaseRef1.push();
+
+        this.setState({
+            start: "",
+            stop: "",
+            continue: ""
+        });
+    }
+
+    onSave(event){
         event.preventDefault();
         let  continueObject, startObject, stopObject;
 
@@ -104,54 +179,63 @@ class Dashboard extends React.Component {
             if(stopObject == undefined){
                 this.addNotesToDatabase();
                 this.firebaseRef1.push({
-                    continueNotes:continueObject
+                    continueNotes:continueObject,
+                    isPublished: true
                 });
             }else if(continueObject == undefined){
-                this.addNotesToDatabase();
+               this.addNotesToDatabase();
                 this.firebaseRef1.push({
-                    stopNotes: stopObject
+                    stopNotes: stopObject,
+                    isPublished: true
                 });
             }else {
                 this.addNotesToDatabase();
                 this.firebaseRef1.push({
                     stopNotes: stopObject,
-                    continueNotes:continueObject
+                    continueNotes:continueObject,
+                    isPublished: true
                 });
             }
         }else if(stopObject == undefined){
             if(startObject == undefined){
                 this.addNotesToDatabase();
                 this.firebaseRef1.push({
-                    continueNotes:continueObject
+                    continueNotes:continueObject,
+                    isPublished: true
                 });
             }else if(continueObject == undefined){
                 this.addNotesToDatabase();
                 this.firebaseRef1.push({
-                    startNotes:startObject
+                    startNotes:startObject,
+                    isPublished: true
                 });
             }else {
                 this.addNotesToDatabase();
                 this.firebaseRef1.push({
                     startNotes:startObject,
-                    continueNotes:continueObject
+                    continueNotes:continueObject,
+                    isPublished: true
                 });
             }
         }else if(continueObject == undefined){
             if(startObject == undefined){
                 this.addNotesToDatabase();
                 this.firebaseRef1.push({
-                    stopNotes: stopObject
+                    stopNotes: stopObject,
+                    isPublished: true
                 });
             }else if(stopObject == undefined){
                 this.addNotesToDatabase();
                 this.firebaseRef1.push({
-                    startNotes:startObject
+                    startNotes:startObject,
+                    isPublished: true
                 });
             }else {
                 this.addNotesToDatabase();
                 this.firebaseRef1.push({
                     startNotes:startObject,
-                    stopNotes: stopObject
+                    stopNotes: stopObject,
+                    isPublished: true
                 });
             }
         }else {
@@ -159,7 +243,8 @@ class Dashboard extends React.Component {
             this.firebaseRef1.push({
                 startNotes:startObject,
                 stopNotes: stopObject,
-                continueNotes:continueObject
+                continueNotes:continueObject,
+                isPublished: true
             });
         }
 
@@ -183,22 +268,40 @@ class Dashboard extends React.Component {
     render(){
         var {retrospectiveKey_selected, loggedInUserDetails} = this.props;
         if(this.state.notes.length != 0 ){
-            var startData = this.state.notes.map((data,index,key) => {
-                if(data.startNotes != undefined){
-                    if(data.startNotes.note == "NA"){
-                        return(
-                            undefined
-                        );
+            if(this.state.selectedTab == 'teamContribution'){
+                for(var index=0; index < this.state.notes.length; index++){
+                    if(this.state.notes[index]['.key'] == "start"){
+                        var startData_public = this.state.notes[index];
+                        //startData_public.push(this.state.notes[index]);
                     }
+                }
+                var startData = startData_public.map((public_startData, index, key) => {
                     return (
                         <Row style={{margin:"10px",backgroundColor:"#72B53E",padding:"10px"}} id="start" key={index}>
-                            <Col xs={10} md={10}> {data.startNotes.note} </Col>
+                            <Col xs={10} md={10}> {public_startData.note} </Col>
                             <Col xs={2} md={2} className="glyphicon glyphicon-trash" title="start" style={{cursor:"pointer"}}
-                                 id={index} accessKey={data['.key']} onClick={this.onDeleteNote.bind(this)}> </Col>
+                                 id={index} accessKey={public_startData['.key']} onClick={this.onDeleteNote.bind(this)}> </Col>
                         </Row>
                     );
-                }
-            });
+                });
+            }else{
+                var startData = this.state.notes.map((data,index,key) => {
+                    if(data.startNotes != undefined){
+                        if(data.startNotes.note == "NA"){
+                            return(
+                                undefined
+                            );
+                        }
+                        return (
+                            <Row style={{margin:"10px",backgroundColor:"#72B53E",padding:"10px"}} id="start" key={index}>
+                                <Col xs={10} md={10}> {data.startNotes.note} </Col>
+                                <Col xs={2} md={2} className="glyphicon glyphicon-trash" title="start" style={{cursor:"pointer"}}
+                                     id={index} accessKey={data['.key']} onClick={this.onDeleteNote.bind(this)}> </Col>
+                            </Row>
+                        );
+                    }
+                });
+            }
 
             var stopData = this.state.notes.map((data,index,key) => {
                 if(data.stopNotes != undefined){
@@ -235,20 +338,98 @@ class Dashboard extends React.Component {
             });
         }
 
-        return(
-            <Grid style={{textAlign: "center"}}>
-
-                <Row style={{marginTop:"20px"}}>
-                    <Col xs={4} md={4}> </Col>
-                    <Col xs={4} md={4}>
-                        <h3> Welcome to your team room! </h3>
+        var StartInputBox = (this.state.selectedTab == 'teamContribution') ? null :
+            (
+                <Row>
+                    <Col xs={1} md={1}>
+                        <span className="glyphicon glyphicon-pencil" style={{fontSize:"20px"}}> </span>
+                    </Col>
+                    <Col xs={11} md={11}>
+                        <FormControl type="text" id="start"
+                                     placeholder="Create a note"
+                                     value={this.state.start}
+                                     onChange={this.addNote.bind(this)}
+                                     style={{border: "transparent", borderBottom:"3px solid black" ,backgroundColor:"#E6E6E6"}} />
                     </Col>
                 </Row>
-                <Row style={{marginTop:"20px"}}>
-                    <Col xs={4} md={4}> </Col>
-                    <Col xs={4} md={4}>
-                        <FormControl type="text" placeholder="Please enter your name" onChange={this.nameChange.bind(this)} />
+            );
+
+        var StopInputBox = (this.state.selectedTab == 'teamContribution') ? null :
+            (
+                <Row>
+                    <Col xs={1} md={1}>
+                        <span className="glyphicon glyphicon-pencil" style={{fontSize:"20px"}}> </span>
                     </Col>
+                    <Col xs={11} md={11}>
+                        <FormControl type="text" id="stop"
+                                     placeholder="Create a note"
+                                     value={this.state.stop}
+                                     onChange={this.addNote.bind(this)}
+                                     style={{border: "transparent", borderBottom:"3px solid black" ,backgroundColor:"#E6E6E6"}} />
+                    </Col>
+                </Row>
+            );
+
+        var ContinueInputBox = (this.state.selectedTab == 'teamContribution') ? null :
+            (
+                <Row>
+                    <Col xs={1} md={1}>
+                        <span className="glyphicon glyphicon-pencil" style={{fontSize:"20px"}}> </span>
+                    </Col>
+                    <Col xs={11} md={11}>
+                        <FormControl type="text" id="continue"
+                                     placeholder="Create a note"
+                                     value={this.state.continue}
+                                     onChange={this.addNote.bind(this)}
+                                     style={{border: "transparent", borderBottom:"3px solid black" ,backgroundColor:"#E6E6E6"}} />
+                    </Col>
+                </Row>
+            );
+
+        var Buttons = (this.state.selectedTab == 'teamContribution') ?
+            <Row style={{margin:"20px"}}>
+                <Col xs={3} md={3}> </Col>
+                <Col xs={6} md={6}>
+                    <Button type="submit" style={{backgroundColor:"#484848", width:"250px", margin:"10px"}}>
+                        <span style={{color:"white", fontSize:"18px"}}> <strong>Retrospective Scheduled</strong> </span>
+                    </Button>
+                </Col>
+            </Row>
+            :
+            (
+                <Row style={{margin:"20px"}}>
+                    <Col xs={3} md={3}> </Col>
+                    <Col xs={6} md={6}>
+                        <Button type="submit" style={{backgroundColor:"#484848", width:"150px", margin:"10px"}} id="save" onClick={this.onSave.bind(this)}>
+                            <span style={{color:"white", fontSize:"18px"}}> <strong>Save</strong> </span>
+                        </Button>
+                        <Button type="submit" style={{backgroundColor:"#484848", width:"150px", margin:"10px"}} id="publish" onClick={this.onPublish.bind(this)} >
+                            <span style={{color:"white", fontSize:"18px"}}> <strong>Publish</strong> </span>
+                        </Button>
+                    </Col>
+                </Row>
+            );
+
+        return(
+            <div style={{textAlign: "center"}}>
+
+                <Row style={{cursor:'pointer', textAlign: "center", margin:'10px'}}>
+                    <ul className="nav nav-tabs nav-justified">
+                        <li className={this.ruleClass} style={{ backgroundColor:(this.myContributionClass == "active")? "#000000" : "#6A6A6A"}}>
+                            <div onClick={this.onTabSelect.bind(this,'myContribution')} style={{fontSize:16 ,margin:15}}>
+                                <a data toggle="tab" style={{color:"white"}}>
+                                    <b> My Contribution </b>
+                                </a>
+                            </div>
+                        </li>
+                        <li className={this.ruleClass} style={{ backgroundColor:(this.teamContributionClass == "active")? "#000000" : "#6A6A6A"}}>
+                            <div onClick={this.onTabSelect.bind(this,'teamContribution')} style={{fontSize:16 ,margin:15}}>
+                                <a data toggle="tab" style={{color:"white"}}>
+                                    <b> Team Contribution </b>
+                                </a>
+                            </div>
+                        </li>
+                    </ul>
                 </Row>
 
                 <Row style={{marginTop:"20px"}}>
@@ -256,52 +437,19 @@ class Dashboard extends React.Component {
                         <Row>
                             <ControlLabel style={{color:"#72B53E"}}> <h3> Start </h3> </ControlLabel>
                         </Row>
-                        <Row>
-                            <Col xs={1} md={1}>
-                                <span className="glyphicon glyphicon-pencil" style={{fontSize:"20px"}}> </span>
-                            </Col>
-                            <Col xs={11} md={11}>
-                                <FormControl type="text" id="start"
-                                             placeholder="Create a note"
-                                             value={this.state.start}
-                                             onChange={this.addNote.bind(this)}
-                                             style={{border: "transparent", borderBottom:"3px solid black" ,backgroundColor:"#E6E6E6"}} />
-                            </Col>
-                        </Row>
+                        {StartInputBox}
                     </Col>
                     <Col xs={4} md={4}>
                         <Row>
                             <ControlLabel style={{color:"#F36576"}}> <h3> Stop </h3> </ControlLabel>
                         </Row>
-                        <Row>
-                            <Col xs={1} md={1}>
-                                <span className="glyphicon glyphicon-pencil" style={{fontSize:"20px"}}> </span>
-                            </Col>
-                            <Col xs={11} md={11}>
-                                <FormControl type="text" id="stop"
-                                             placeholder="Create a note"
-                                             value={this.state.stop}
-                                             onChange={this.addNote.bind(this)}
-                                             style={{border: "transparent", borderBottom:"3px solid black" ,backgroundColor:"#E6E6E6"}} />
-                            </Col>
-                        </Row>
+                        {StopInputBox}
                     </Col>
                     <Col xs={4} md={4}>
                         <Row>
                             <ControlLabel style={{color:"#6593F1"}}> <h3> Continue </h3> </ControlLabel>
                         </Row>
-                        <Row>
-                            <Col xs={1} md={1}>
-                                <span className="glyphicon glyphicon-pencil" style={{fontSize:"20px"}}> </span>
-                            </Col>
-                            <Col xs={11} md={11}>
-                                <FormControl type="text" id="continue"
-                                             placeholder="Create a note"
-                                             value={this.state.continue}
-                                             onChange={this.addNote.bind(this)}
-                                             style={{border: "transparent", borderBottom:"3px solid black" ,backgroundColor:"#E6E6E6"}} />
-                            </Col>
-                        </Row>
+                        {ContinueInputBox}
                     </Col>
                 </Row>
 
@@ -319,19 +467,9 @@ class Dashboard extends React.Component {
                 </Row>
 
 
-                <Row style={{margin:"20px"}}>
-                    <Col xs={3} md={3}> </Col>
-                    <Col xs={6} md={6}>
-                        <Button type="submit" style={{backgroundColor:"#484848", width:"150px", margin:"10px"}} >
-                            <span style={{color:"white", fontSize:"18px"}}> <strong>Save</strong> </span>
-                        </Button>
-                        <Button type="submit" style={{backgroundColor:"#484848", width:"150px", margin:"10px"}} onClick={this.onSubmit.bind(this)} >
-                            <span style={{color:"white", fontSize:"18px"}}> <strong>Publish</strong> </span>
-                        </Button>
-                    </Col>
-                </Row>
+                {Buttons}
 
-            </Grid>
+            </div>
 
         );
     }

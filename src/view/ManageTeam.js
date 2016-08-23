@@ -95,8 +95,11 @@ class ManageTeam extends React.Component {
     handleManageTeamCancel(){
         this.props.actions.loadPage('/manageProject');
     }
-    handle_Remove(){
-
+    handle_Remove(key){
+        console.log("Team Member Remove Key:", key);
+        var path = "projects/"+ this.props.projectKeyForManageTeam + "/team/"+ key;
+        console.log("path:", path);
+        this.firebaseRef.child(key).remove();
     }
 
     render(){
