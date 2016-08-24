@@ -16,6 +16,7 @@ import firebaseInit from '../firebase/firebaseInit';
 import ModalBox from '../components/ModalBox';
 import WarningModalBox from '../components/WarningModalBox';
 import AppHeader from './AppHeader';
+import {getScreenMode} from '../utils/index';
 
 class LoggedInUserLandingPage extends React.Component {
     constructor() {
@@ -34,8 +35,10 @@ class LoggedInUserLandingPage extends React.Component {
     }
 
     componentWillMount(){
-    this.props.actions.windowSize();
-    this.props.actions.loadPage('/ongoingRetro');
+        this.props.actions.windowSize();
+        var screenSize = getScreenMode();
+        console.log("screenSize : ", screenSize);
+        this.props.actions.loadPage('/ongoingRetro');
 
         var firebaseRef = firebase.database().ref('projects');
         //this.bindAsArray(firebaseRef.limitToLast(25), 'projects');
@@ -49,7 +52,7 @@ class LoggedInUserLandingPage extends React.Component {
                 projects.push(project);
             }.bind(this));
 
-            console.log('projects', projects);
+            //console.log('projects', projects);
 
             this.setState({
                 projects: projects
@@ -141,7 +144,7 @@ class LoggedInUserLandingPage extends React.Component {
         var {leftDrawer,windowWidth,windowHeight,projectKeyForManageTeam,selected_project_id,selected_project_name} = this.props;
         console.log("windowWidth : ",windowWidth);
         console.log("windowHeight : ",windowHeight);
-
+        var screenSize = getScreenMode();
         var LeftDrawer = null;
         var leftDrawerColSize = 0;
         var contentSize = 12;

@@ -15,6 +15,7 @@ import database from 'firebase/database';
 import auth from 'firebase/auth';
 import firebaseInit from '../firebase/firebaseInit';
 import ProjectList from './ProjectList';
+import {getScreenMode} from '../utils/index';
 
 class AppHeader extends React.Component {
     constructor() {
@@ -61,6 +62,7 @@ class AppHeader extends React.Component {
     render(){
         var {userIconClick} = this.state;
         var {leftDrawer,loggedInUserDetails} = this.props;
+        var screenSize = getScreenMode();
         var userIconClickList = null;
 
         var leftDrawerIcon = leftDrawer ? "glyphicon glyphicon-chevron-left" : "glyphicon glyphicon-menu-hamburger";

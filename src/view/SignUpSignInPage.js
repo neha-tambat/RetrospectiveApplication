@@ -12,6 +12,7 @@ import firebase from 'firebase';
 import database from 'firebase/database';
 import auth from 'firebase/auth';
 import firebaseInit from '../firebase/firebaseInit';
+import {getScreenMode} from '../utils/index';
 
 import SignUpSignInPageHeader from './SignUpSignInPageHeader';
 
@@ -25,6 +26,8 @@ class SignUpSignInPage extends React.Component {
     }
     componentWillMount(){
         this.props.actions.windowSize();
+        var screenSize = getScreenMode();
+        console.log("screenSize : ", screenSize);
     }
 
     handleSignUp(){

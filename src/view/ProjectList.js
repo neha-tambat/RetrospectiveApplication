@@ -29,7 +29,7 @@ class ProjectList extends React.Component {
         this.firebaseRef = firebase.database().ref('projects');
 
         this.firebaseRef.limitToLast(25).on('value', function (dataSnapshot) {
-            console.log("Tree for projects : ", 'projects');
+           // console.log("Tree for projects : ", 'projects');
             var projects = [];
             dataSnapshot.forEach(function (childSnapshot) {
                 var project = childSnapshot.val();
@@ -37,7 +37,7 @@ class ProjectList extends React.Component {
                 projects.push(project);
             }.bind(this));
 
-            console.log("projects : ", projects);
+            //console.log("projects : ", projects);
 
             this.setState({
                 projects: projects
@@ -55,7 +55,7 @@ class ProjectList extends React.Component {
             this.props.actions.loadPage('/ongoingRetro');
             this.setState({projectName: null, projectId: null});
         }else {
-            console.log("projectId:", event.target.id);
+            //console.log("projectId:", event.target.id);
             this.props.actions.selectProject({
                 projectName: event.target.value,
                 projectId: event.target.selectedOptions[0].id
@@ -69,7 +69,7 @@ class ProjectList extends React.Component {
         var {projects} = this.state;
 
         var projectList = projects.map(data => {
-            console.log("Projects : ", data);
+            //console.log("Projects : ", data);
             var projectName = data.project_name;
             return(
                 <option id={data['.key']} key={data['.key']}
@@ -78,7 +78,7 @@ class ProjectList extends React.Component {
             );
         });
 
-        console.log("ProjectList : ", projectList);
+        //console.log("ProjectList : ", projectList);
 
         return(
             <FormGroup controlId="formControlsProjectName">

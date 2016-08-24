@@ -119,10 +119,12 @@ class SignUpPage extends React.Component {
                             <FormGroup controlId="formControlsConfirmPassword">
                                 <FormControl type="password" placeholder="Confirm Password" onChange={this.confirmPasswordChange.bind(this)}/>
                             </FormGroup>
-                            <Button type="submit" className="signUp-button" style={{backgroundColor: "#FF0000", width:"500px"}} onClick={this.signUp.bind(this)} >
-                                <span style={{color:"#ffffff", fontSize:"18px"}}> <strong>Sign Up</strong> </span>
-                            </Button>
+                            <FormControl type="button" className="signUp-button" value="Sign Up"
+                                         //style={{backgroundColor: "#FF0000", color:'#ffffff'}}
+                                         onClick={this.signUp.bind(this)} />
+
                             {errors}
+
                         </form>
                     </Col>
                 </Row>

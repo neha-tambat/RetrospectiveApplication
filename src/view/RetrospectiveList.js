@@ -36,7 +36,7 @@ class RetrospectiveList extends React.Component {
                 retrospectives.push(retrospective);
             }.bind(this));
 
-            console.log("retrospectives : ", retrospectives);
+            //console.log("retrospectives : ", retrospectives);
 
             this.setState({
                 retrospectives: retrospectives
@@ -46,7 +46,7 @@ class RetrospectiveList extends React.Component {
 
     render(){
         var {retrospectives} = this.state;
-        console.log("RetrospectiveList : ", retrospectives);
+        //console.log("RetrospectiveList : ", retrospectives);
 
         return(
             retrospectives

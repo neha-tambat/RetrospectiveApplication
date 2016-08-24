@@ -97,6 +97,21 @@ export function parseJSON(response) {
     return response.json();
 }
 
+export function getScreenMode(){
+    var screenWidth = window.innerWidth;
+    if(screenWidth >= 1200){
+        return 'large';
+    }else if(screenWidth >= 996){
+        return 'medium';
+    }else if(screenWidth >= 768){
+        return 'small';
+    }else if(screenWidth >= 480){
+        return 'xsmall';
+    }
+
+    return 'xsmall';
+}
+
 /*
 export function getThumbnailURL(imagePath) {
     let token = localStorage.getItem('loggedinUser');

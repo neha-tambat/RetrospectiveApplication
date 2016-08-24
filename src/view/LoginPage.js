@@ -13,6 +13,7 @@ import firebase from 'firebase';
 import database from 'firebase/database';
 import auth from 'firebase/auth';
 import firebaseInit from '../firebase/firebaseInit';
+import {getScreenMode} from '../utils/index';
 
 import SignUpSignInPageHeader from './SignUpSignInPageHeader';
 
@@ -31,6 +32,8 @@ class LoginPage extends React.Component {
     componentWillMount() {
 
         this.props.actions.windowSize();
+        var screenSize = getScreenMode();
+        console.log("screenSize : ", screenSize);
 
         var firebaseRef = firebase.database().ref('users');
         //this.bindAsArray(firebaseRef.limitToLast(25), 'users');
@@ -95,10 +98,12 @@ class LoginPage extends React.Component {
                             <FormGroup controlId="formControlsPassword">
                                 <FormControl type="password" placeholder="Password" onChange={this.loginPasswordChange.bind(this)}/>
                             </FormGroup>
-                            <Button className="signUp-button" style={{backgroundColor: "#FF0000", width:"500px"}} onClick={this.loginAccount.bind(this)} >
-                                <span style={{color:"#ffffff", fontSize:"18px"}}> <strong>Login</strong> </span>
-                            </Button>
+                            <FormControl type="button" className="signUp-button" value="Login"
+                                         style={{backgroundColor: "#FF0000", color:'#ffffff'}}
+                                         onClick={this.loginAccount.bind(this)} />
+
                             {errors}
+
                         </form>
                     </Col>
                 </Row>

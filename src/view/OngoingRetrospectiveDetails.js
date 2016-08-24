@@ -17,6 +17,7 @@ import TextCell from './TextCell';
 var FixedDataTable = require('fixed-data-table');
 const {Table, Column, Cell, ColumnGroup} = FixedDataTable;
 import { BootstrapTable, TableHeaderColumn } from 'react-bootstrap-table';
+import {getScreenMode} from '../utils/index';
 
 class OngoingRetrospectiveDetails extends React.Component {
     constructor() {
@@ -36,7 +37,7 @@ class OngoingRetrospectiveDetails extends React.Component {
         this.firebaseRef = firebase.database().ref('retrospectives');
 
         this.firebaseRef.limitToLast(25).on('value', function(dataSnapshot) {
-            console.log("Tree for notes : ", 'retrospectives');
+            //console.log("Tree for notes : ", 'retrospectives');
             var retrospectives = [];
             dataSnapshot.forEach(function(childSnapshot) {
                 var retrospective = childSnapshot.val();
@@ -44,7 +45,7 @@ class OngoingRetrospectiveDetails extends React.Component {
                 retrospectives.push(retrospective);
             }.bind(this));
 
-            console.log("retrospectives : ", retrospectives);
+            //console.log("retrospectives : ", retrospectives);
 
             this.setState({
                 retrospectives: retrospectives
@@ -78,6 +79,7 @@ class OngoingRetrospectiveDetails extends React.Component {
 
     render(){
         var {selected_project_id,selected_project_name} = this.props;
+        var screenSize = getScreenMode();
         var {retrospectives} = this.state;
         var dataList = [];
         if(retrospectives.length != 0){

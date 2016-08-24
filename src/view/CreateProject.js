@@ -36,7 +36,7 @@ class CreateProject extends React.Component {
                 projects.push(project);
             }.bind(this));
 
-            console.log('projects', projects);
+            //console.log('projects', projects);
 
             this.setState({
                 projects: projects
@@ -67,9 +67,11 @@ class CreateProject extends React.Component {
                         <FormGroup controlId="formControlsProjectDescription">
                             <FormControl type="text" componentClass="textarea" placeholder="Additional info about project" onChange={this.additionalProjectInfoChange.bind(this)}/>
                         </FormGroup>
-                        <Button type="submit" style={{backgroundColor:"#FF0000", width:"500px"}} onClick={this.createProject.bind(this)} >
-                            <span style={{color:"white", fontSize:"18px"}}> <strong>Create Project</strong> </span>
-                        </Button>
+                        <FormControl type="button" value="Create Project"
+                                     style={{backgroundColor:"#FF0000",color:'#ffffff'}}
+                                     onClick={this.createProject.bind(this)} />
+
+
                     </form>
                 </Row>
             </Grid>

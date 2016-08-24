@@ -31,7 +31,7 @@ class SignUpSignInPageHeader extends React.Component {
         return(
             <Row style={{backgroundColor:"#FF0000"}}>
                 <Col xs={2} md={2}>
-                    <Image className="logo" src="../images/synerzip.png" style={{width:"300px", height:"60px"}} />
+                    <Image className="logo" src="../images/synerzip.png" className="logo" />
                 </Col>
                 <Col xs={8} md={8} style={{marginTop:"10px"}}> </Col>
                 <Col xs={1} md={1} style={{marginTop:"10px"}}>

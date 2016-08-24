@@ -36,7 +36,7 @@ class UserList extends React.Component {
                 users.push(user);
             }.bind(this));
 
-            console.log("users : ", users);
+            //console.log("users : ", users);
 
             this.setState({
                 users: users
@@ -46,7 +46,7 @@ class UserList extends React.Component {
 
     render(){
         var {users} = this.state;
-        console.log("UserList : ", users);
+        //console.log("UserList : ", users);
 
         return(
             users
