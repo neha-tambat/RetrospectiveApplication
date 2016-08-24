@@ -35,9 +35,6 @@ class Dashboard extends React.Component {
         'retrospectives/'+ this.props.retrospectiveKey_selected + '/notes/' + this.props.loggedInUserDetails['.key'] :
         'retrospectives/'+ this.props.retrospectiveKey_selected + '/notes/public';
 
-        var firebaseRef = firebase.database().ref(path);
-        //this.bindAsArray(firebaseRef.limitToLast(25), 'retrospectives');
-
         this.firebaseRef = firebase.database().ref(path);
         this.firebaseRef.limitToLast(25).on('value', function(dataSnapshot) {
             var notes = [];
@@ -46,8 +43,6 @@ class Dashboard extends React.Component {
                 note['.key'] = childSnapshot.key;
                 notes.push(note);
             }.bind(this));
-
-            console.log("notes : ", notes);
 
             this.setState({
                 notes: notes

@@ -23,11 +23,7 @@ class UserList extends React.Component {
     }
 
     componentWillMount(){
-        var firebaseRef = firebase.database().ref('users');
-        //this.bindAsArray(firebaseRef.limitToLast(25), 'retrospectives');
-
         this.firebaseRef = firebase.database().ref('users');
-
         this.firebaseRef.limitToLast(25).on('value', function(dataSnapshot) {
             var users = [];
             dataSnapshot.forEach(function(childSnapshot) {

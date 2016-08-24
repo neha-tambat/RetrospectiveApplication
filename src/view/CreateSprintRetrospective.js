@@ -30,11 +30,7 @@ class CreateSprintRetrospective extends React.Component {
     }
 
     componentWillMount(){
-        var firebaseRef = firebase.database().ref('retrospectives');
-        //this.bindAsArray(firebaseRef.limitToLast(25), 'retrospectives');
-
         this.firebaseRef = firebase.database().ref('retrospectives');
-
         this.firebaseRef.limitToLast(25).on('value', function(dataSnapshot) {
             var retrospectives = [];
             dataSnapshot.forEach(function(childSnapshot) {

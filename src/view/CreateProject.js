@@ -12,6 +12,7 @@ import firebase from 'firebase';
 import database from 'firebase/database';
 import auth from 'firebase/auth';
 import firebaseInit from '../firebase/firebaseInit';
+import {getScreenMode} from '../utils/index';
 
 class CreateProject extends React.Component {
     constructor() {
@@ -24,10 +25,7 @@ class CreateProject extends React.Component {
     }
 
     componentWillMount(){
-        var firebaseRef = firebase.database().ref('projects');
-        //this.bindAsArray(firebaseRef.limitToLast(25), 'projects');
         this.firebaseRef = firebase.database().ref('projects');
-
         this.firebaseRef.limitToLast(25).on('value', function (dataSnapshot) {
             var projects = [];
             dataSnapshot.forEach(function (childSnapshot) {
@@ -35,8 +33,6 @@ class CreateProject extends React.Component {
                 project['.key'] = childSnapshot.key;
                 projects.push(project);
             }.bind(this));
-
-            //console.log('projects', projects);
 
             this.setState({
                 projects: projects
@@ -57,10 +53,13 @@ class CreateProject extends React.Component {
     }
 
     render(){
+        var screenSize = getScreenMode();
+        var createProjectFormPosition = (screenSize == "medium") ? "createProject-form-md" : "createProject-form-lg";
+
         return(
             <Grid style={{margin:"100px"}}>
                 <Row>
-                    <form className="createProject-form" >
+                    <form className={createProjectFormPosition} >
                         <FormGroup controlId="formControlsProjectName">
                             <FormControl type="text" placeholder="Project Name" onChange={this.projectNameCreationChange.bind(this)}/>
                         </FormGroup>

@@ -30,8 +30,7 @@ class ManageTeam extends React.Component {
     }
 
     componentWillMount(){
-        var firebaseRef = firebase.database().ref('projects');
-        //this.bindAsArray(firebaseRef.limitToLast(25), 'projects');
+
         this.firebaseRef = firebase.database().ref('projects');
         this.firebaseRef.limitToLast(25).on('value', function (dataSnapshot) {
             var projects = [];
@@ -49,8 +48,6 @@ class ManageTeam extends React.Component {
         }.bind(this));
 
 
-        var firebaseRef = firebase.database().ref('users');
-        //this.bindAsArray(firebaseRef.limitToLast(25), 'projects');
         this.firebaseRef = firebase.database().ref('users');
         this.firebaseRef.limitToLast(25).on('value', function (dataSnapshot) {
             var users = [];
@@ -68,8 +65,6 @@ class ManageTeam extends React.Component {
         }.bind(this));
 
 
-        var firebaseRef = firebase.database().ref('projects/'+ this.props.projectKeyForManageTeam + '/team');
-        //this.bindAsArray(firebaseRef.limitToLast(25), 'projects');
         this.firebaseRef = firebase.database().ref('projects/'+ this.props.projectKeyForManageTeam + '/team');
         this.firebaseRef.limitToLast(25).on('value', function (dataSnapshot) {
             var team = [];
@@ -104,8 +99,10 @@ class ManageTeam extends React.Component {
 
     render(){
         var {selected_project_id,selected_project_name,projectKeyForManageTeam} = this.props;
-        var {projects} = this.state;
-        var dataList = [];
+        var {projects,team,users} = this.state;
+        var teamList = null;
+
+        /*var dataList = [];
         var userDetailsList = [];
         var userDetails = [];
 
@@ -120,6 +117,62 @@ class ManageTeam extends React.Component {
                     }
                 }
             }
+        }*/
+
+        var dataList = [];
+        var userDetails = [];
+
+        if(team != 0 && users != 0){
+            for(var index=0; index < team.length; index++){
+                for(var place=0; place < users.length; place++){
+                    if(team[index].user == users[place]['.key']){
+                        userDetails.push(users[place]);
+                        break;
+                    }
+                }
+            }
+        }
+
+        if(team.length == 0){
+            teamList = (
+                <div style={{margin:"10px", fontSize:"20px"}}>
+                    No members are added to this project team.
+                </div>
+            );
+        }else {
+            teamList = (
+                <Row style={{margin:"10px"}}>
+                    <Table
+                        rowHeight={50}
+                        rowsCount={team.length}
+                        width={1500}
+                        maxHeight={500}
+                        headerHeight={50}>
+
+                        <Column
+                            header={<Cell style={{backgroundColor: '#484848', color:'#ffffff'}}> Employee Name </Cell>}
+                            cell={<TextCell data={userDetails} col="full_name" />}
+                            width={400}
+                        />
+                        <Column
+                            header={<Cell style={{backgroundColor: '#484848',color:'#ffffff'}}> Role </Cell>}
+                            cell={<TextCell data={team} col="jobRole" />}
+                            width={400}
+                        />
+                        <Column
+                            header={<Cell style={{backgroundColor: '#484848',color:'#ffffff'}}> Email </Cell>}
+                            cell={<TextCell data={userDetails} col="email" />}
+                            width={400}
+                        />
+                        <Column
+                            header={<Cell style={{backgroundColor: '#484848',color:'#ffffff'}}> Action </Cell>}
+                            cell={<TextCell data={team} col="remove" handle_Remove={this.handle_Remove.bind(this)} />}
+                            width={300}
+                        />
+
+                    </Table>
+                </Row>
+            );
         }
 
         return(
@@ -127,37 +180,9 @@ class ManageTeam extends React.Component {
                 <Row style={{margin:"10px"}}>
                     <Button className="button" onClick={this.handleAddMemberToTeam.bind(this)}> Add </Button>
                 </Row>
-            <Row style={{margin:"10px"}}>
-                <Table
-                    rowHeight={50}
-                    rowsCount={dataList.length}
-                    width={1500}
-                    maxHeight={500}
-                    headerHeight={50}>
 
-                    <Column
-                        header={<Cell style={{backgroundColor: '#484848', color:'#ffffff'}}> Employee Name </Cell>}
-                        cell={<TextCell data={userDetails} col="full_name" />}
-                        width={400}
-                    />
-                    <Column
-                        header={<Cell style={{backgroundColor: '#484848',color:'#ffffff'}}> Role </Cell>}
-                        cell={<TextCell data={dataList} col="jobRole" />}
-                        width={400}
-                    />
-                    <Column
-                        header={<Cell style={{backgroundColor: '#484848',color:'#ffffff'}}> Email </Cell>}
-                        cell={<TextCell data={userDetails} col="email" />}
-                        width={400}
-                    />
-                    <Column
-                        header={<Cell style={{backgroundColor: '#484848',color:'#ffffff'}}> Action </Cell>}
-                        cell={<TextCell data={dataList} col="remove" handle_Remove={this.handle_Remove.bind(this)} />}
-                        width={300}
-                    />
+                {teamList}
 
-                </Table>
-            </Row>
                 <Row style={{margin:"10px"}}>
                     <Button className="button"> Save Changes </Button>
                     <Button className="button" onClick={this.handleManageTeamCancel.bind(this)}> Cancel </Button>

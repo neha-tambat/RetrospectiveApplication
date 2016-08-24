@@ -40,10 +40,7 @@ class LoggedInUserLandingPage extends React.Component {
         console.log("screenSize : ", screenSize);
         this.props.actions.loadPage('/ongoingRetro');
 
-        var firebaseRef = firebase.database().ref('projects');
-        //this.bindAsArray(firebaseRef.limitToLast(25), 'projects');
         this.firebaseRef = firebase.database().ref('projects');
-
         this.firebaseRef.limitToLast(25).on('value', function (dataSnapshot) {
             var projects = [];
             dataSnapshot.forEach(function (childSnapshot) {
@@ -52,23 +49,18 @@ class LoggedInUserLandingPage extends React.Component {
                 projects.push(project);
             }.bind(this));
 
-            //console.log('projects', projects);
-
             this.setState({
                 projects: projects
             });
         }.bind(this));
-
     }
 
     handleSelect(selectedKey) {
         if(this.props.projectKeyForManageTeam == null){
-            //alert("Please select project.");
             this.setState({warningShow: true});
         }else {
             console.log("Selected project : ", this.props.projectKeyForManageTeam);
             var tab;
-            //alert('selected ' + selectedKey);
             if(selectedKey == "1"){
                 tab = "createSprintRetro";
             }else if(selectedKey == "2"){
@@ -87,31 +79,6 @@ class LoggedInUserLandingPage extends React.Component {
     }
     onWarningHide(){
         this.setState({warningShow: false});
-    }
-
-
-
-    modalSubmitCreateProject(event,modalTab){
-        console.log("ModalTab : ", modalTab);
-        console.log("Event : " , event);
-
-        if(modalTab == "Create Project"){
-            this.firebaseRef.push(event);
-        }else if(modalTab == "Add Member"){
-
-            for(var index=0; index <= this.state.projects.length; index++){
-                if(this.state.projects[index].project_name.toLowerCase() == event.teamMemberProjectName.toLowerCase()){
-                    var matchedKey = this.state.projects[index]['.key'];
-                    break;
-                }
-            }
-
-            console.log("matchedKey : ", matchedKey);
-            this.addMemberToDatabase(matchedKey);
-            this.firebaseRef1.push(event);
-        }
-
-        this.setState({show:false, createEmployee: false});
     }
 
     modalSubmit(){
@@ -136,9 +103,6 @@ class LoggedInUserLandingPage extends React.Component {
         //alert('Registered email is : ' + res.providerData[res.providerData.length -1].email);
         this.props.actions.loadPage('/login');
     }
-    /*manageTeam(){
-        this.props.actions.loadPage('/manageTeam');
-    }*/
 
     render(){
         var {leftDrawer,windowWidth,windowHeight,projectKeyForManageTeam,selected_project_id,selected_project_name} = this.props;
@@ -150,33 +114,6 @@ class LoggedInUserLandingPage extends React.Component {
         var contentSize = 12;
         var navItems = null;
         console.log("leftDrawer : ", leftDrawer);
-        /*if(leftDrawer){
-            leftDrawerColSize = 2;
-            contentSize = 10;
-            navItems = (
-                <Nav bsStyle="pills" stacked activeKey={this.state.menuIndex} onSelect={this.handleSelect.bind(this)}>
-                    <NavItem eventKey={1} href="#myProfile"> <span style={{color:"white"}}>My Profile</span> </NavItem>
-                    <NavItem eventKey={2} href="#ongoingRetro"> <span style={{color:"white"}}>Ongoing Retrospective</span> </NavItem>
-                    <NavItem eventKey={3} href="#pastRetro"> <span style={{color:"white"}}>Past Retrospective</span> </NavItem>
-                    <NavItem eventKey={4} href="#projectManage"> <span style={{color:"white"}}>Manage Project</span> </NavItem>
-                    <NavItem eventKey={5} href="#createSprintRetro"> <span style={{color:"white"}}>Create Sprint Retrospective</span> </NavItem>
-                </Nav>
-            );
-
-        }/!*else {
-
-            leftDrawerColSize = 1;
-            contentSize = 11;
-            navItems=(
-                <Nav bsStyle="pills" stacked activeKey={this.state.menuIndex} onSelect={this.handleSelect.bind(this)}>
-                    <NavItem eventKey={1} href="#myProfile"> <span style={{color:"white"}} className="glyphicon glyphicon-user"> </span> </NavItem>
-                    <NavItem eventKey={2} href="#ongoingRetro"> <span style={{color:"white"}} className="glyphicon glyphicon-th-list"> </span> </NavItem>
-                    <NavItem eventKey={3} href="#pastRetro"> <span style={{color:"white"}} className="glyphicon glyphicon-eye-open"> </span> </NavItem>
-                    <NavItem eventKey={4} href="#projectManage"> <span style={{color:"white"}} className="glyphicon glyphicon-th"> </span> </NavItem>
-                    <NavItem eventKey={5} href="#createSprintRetro"> <span style={{color:"white"}} className="glyphicon glyphicon-plus"> </span> </NavItem>
-                </Nav>
-            );
-        }*!/*/
 
         if(leftDrawer){
             contentSize = 10;
@@ -193,10 +130,10 @@ class LoggedInUserLandingPage extends React.Component {
             );
         }
 
-
         return(
             <div style={{textAlign: "center"}}>
-                <AppHeader createProject={this.createProject.bind(this)}
+                <AppHeader projects={this.state.projects}
+                           createProject={this.createProject.bind(this)}
                            manageProject={this.manageProject.bind(this)}
                            myProfile={this.myProfile.bind(this)}
                            logout={this.logout.bind(this)} />
@@ -207,16 +144,6 @@ class LoggedInUserLandingPage extends React.Component {
                             {this.props.children}
                         </Row>
                     </Col>
-                </Row>
-                <Row>
-                    <ModalBox
-                        showModal= {this.state.show}
-                        onHide= {this.onHide.bind(this)}
-                        headerMsg= {this.state.headerMsg}
-                        modalbody={this.state.modalBody_createEmployee}
-                        onModalSubmit ={this.modalSubmitCreateProject.bind(this)}
-
-                    />
                 </Row>
                 <Row>
                     <WarningModalBox
@@ -239,6 +166,7 @@ const mapStateToProps = (state) => ({
     windowHeight: state.scrums.windowHeight,
     projectKeyForManageTeam: state.scrums.projectKeyForManageTeam,
     retrospectiveKey_selected: state.scrums.retrospectiveKey_selected,
+    loggedInUserDetails: state.scrums.loggedInUserDetails,
     selected_project_id: state.scrums.selected_project_id,
     selected_project_name: state.scrums.selected_project_name
 

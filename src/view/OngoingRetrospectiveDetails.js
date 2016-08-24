@@ -31,11 +31,7 @@ class OngoingRetrospectiveDetails extends React.Component {
     }
 
     componentWillMount(){
-        var firebaseRef = firebase.database().ref('retrospectives');
-        //this.bindAsArray(firebaseRef.limitToLast(25), 'retrospectives/notes');
-
         this.firebaseRef = firebase.database().ref('retrospectives');
-
         this.firebaseRef.limitToLast(25).on('value', function(dataSnapshot) {
             //console.log("Tree for notes : ", 'retrospectives');
             var retrospectives = [];
@@ -45,36 +41,15 @@ class OngoingRetrospectiveDetails extends React.Component {
                 retrospectives.push(retrospective);
             }.bind(this));
 
-            //console.log("retrospectives : ", retrospectives);
-
             this.setState({
                 retrospectives: retrospectives
             });
         }.bind(this));
     }
 
-
-    /*handleSelectRetro(event){
-        if(this.props.selected_project_id == null){
-            //alert("Please select project.");
-            this.setState({warningShow: true});
-        }else {
-            this.props.actions.loadPage('/dashboard');
-        }
-    }*/
-
-    onWarningHide(){
-        this.setState({warningShow: false});
-    }
-
-    modalSubmit(){
-        console.log("Warning message : Select project first and proceed.");
-        this.setState({warningShow: false});
-    }
     handleView(key){
         this.props.actions.RetrospectiveKey_selected(key);
         this.props.actions.loadPage('/dashboard');
-
     }
 
     render(){
@@ -86,7 +61,14 @@ class OngoingRetrospectiveDetails extends React.Component {
             dataList = retrospectives;
         }
 
-        return(
+        if(dataList.length == 0){
+            return(
+                <div style={{margin:"10px", fontSize:"20px"}}>
+                    No retrospectives to display.
+                </div>
+            );
+        }else {
+            return(
                 <div style={{margin:"10px"}}>
                     <Table
                         rowHeight={50}
@@ -113,7 +95,8 @@ class OngoingRetrospectiveDetails extends React.Component {
 
                     </Table>
                 </div>
-        );
+            );
+        }
     }
 }
 

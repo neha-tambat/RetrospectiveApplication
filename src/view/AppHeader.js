@@ -7,7 +7,7 @@ import { bindActionCreators } from 'redux';
 import { pushState } from 'redux-router';
 import {connect} from 'react-redux';
 import * as scrumsActionCreator from '../actions/scrums/index';
-import {Navbar, Nav,NavItem,Input,Image,Button,Grid,Row,Col,FormGroup,FormControl,ControlLabel,
+import {Navbar, Nav,NavItem,Input,Image,Button,Grid,Row,Col,FormGroup,FormControl,ControlLabel,Overlay,Tooltip,
     MenuItem,Clearfix,SplitButton,Dropdown,DropdownButton,NavDropdown} from 'react-bootstrap';
 import firebaseUtils from '../utils/firebaseUtils';
 import firebase from 'firebase';
@@ -21,10 +21,10 @@ class AppHeader extends React.Component {
     constructor() {
         super();
         this.state = {
-            users: [],
             projectName: null,
             projectId: null,
-            userIconClick : false
+            userIconClick : false,
+            show: true
         };
     }
 
@@ -33,19 +33,15 @@ class AppHeader extends React.Component {
         this.props.actions.selectProject({projectName: event.target.value, projectId: event.target.id});
         this.setState({projectName: event.target.value, projectId: event.target.id});
     }
-
     logout(event){
         this.props.logout();
     }
-
     left_Drawer(){
         this.props.actions.leftDrawer();
     }
-
     handleUser(){
-        this.setState({userIconClick : true});
+        this.setState({userIconClick : true, show: false});
     }
-
     createProject(){
         this.props.createProject();
         this.setState({userIconClick : false});
@@ -61,10 +57,9 @@ class AppHeader extends React.Component {
 
     render(){
         var {userIconClick} = this.state;
-        var {leftDrawer,loggedInUserDetails} = this.props;
+        var {leftDrawer,loggedInUserDetails, projects} = this.props;
         var screenSize = getScreenMode();
         var userIconClickList = null;
-
         var leftDrawerIcon = leftDrawer ? "glyphicon glyphicon-chevron-left" : "glyphicon glyphicon-menu-hamburger";
 
         if(userIconClick){
@@ -120,12 +115,14 @@ class AppHeader extends React.Component {
                                  onClick={this.handleUser.bind(this)} >
                             {userIconClickList}
                     </NavDropdown>
+                    <Overlay show={this.state.show} onHide={() => this.setState({ show: false })} placement="bottom">
+                        <Tooltip id="overload-bottom" style={{marginLeft:"1680px", marginTop:"60px"}}>Go to Create Project first.</Tooltip>
+                    </Overlay>
                 </Col>
             </Row>
         );
     }
 }
-
 
 const mapStateToProps = (state) => ({
     leftDrawer: state.scrums.leftDrawer,

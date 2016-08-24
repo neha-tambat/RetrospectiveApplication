@@ -55,38 +55,45 @@ class ManageProject extends React.Component {
 
     render() {
         var dataList = null;
-        if(this.state.projects.length != 0){
+        if (this.state.projects.length != 0) {
             dataList = this.state.projects;
         }
+        if (dataList == null || dataList.length == 0) {
+            return (
+                <div style={{margin:"10px", fontSize:"20px"}}>
+                    No projects to display.
+                </div>
+            );
+        } else {
+            return (
+                <div style={{margin:"10px"}}>
+                    <Table
+                        rowHeight={50}
+                        rowsCount={dataList.length}
+                        width={1500}
+                        maxHeight={500}
+                        headerHeight={50}>
 
-        return (
-            <div style={{margin:"10px"}}>
-                <Table
-                    rowHeight={50}
-                    rowsCount={dataList.length}
-                    width={1500}
-                    maxHeight={500}
-                    headerHeight={50}>
+                        <Column
+                            header={<Cell style={{backgroundColor: '#484848', color:'#ffffff'}}> Project Name </Cell>}
+                            cell={<TextCell data={dataList} col="project_name" />}
+                            width={500}
+                        />
+                        <Column
+                            header={<Cell style={{backgroundColor: '#484848',color:'#ffffff'}}> Description </Cell>}
+                            cell={<TextCell data={dataList} col="description" />}
+                            width={500}
+                        />
+                        <Column
+                            header={<Cell style={{backgroundColor: '#484848',color:'#ffffff'}}> Action </Cell>}
+                            cell={<TextCell data={dataList} col="manage_team" handleManageTeam={this.handleManageTeam.bind(this)} />}
+                            width={500}
+                        />
 
-                    <Column
-                        header={<Cell style={{backgroundColor: '#484848', color:'#ffffff'}}> Project Name </Cell>}
-                        cell={<TextCell data={dataList} col="project_name" />}
-                        width={500}
-                    />
-                    <Column
-                        header={<Cell style={{backgroundColor: '#484848',color:'#ffffff'}}> Description </Cell>}
-                        cell={<TextCell data={dataList} col="description" />}
-                        width={500}
-                    />
-                    <Column
-                        header={<Cell style={{backgroundColor: '#484848',color:'#ffffff'}}> Action </Cell>}
-                        cell={<TextCell data={dataList} col="manage_team" handleManageTeam={this.handleManageTeam.bind(this)} />}
-                        width={500}
-                    />
-
-                </Table>
-            </div>
-        );
+                    </Table>
+                </div>
+            );
+        }
     }
 }
 

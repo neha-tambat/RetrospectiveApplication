@@ -33,8 +33,6 @@ class AddTeamMember extends React.Component {
     componentWillMount(){
         this.props.actions.windowSize();
 
-        var firebaseRef = firebase.database().ref('projects');
-        //this.bindAsArray(firebaseRef.limitToLast(25), 'projects');
         this.firebaseRef = firebase.database().ref('projects');
         this.firebaseRef.limitToLast(25).on('value', function (dataSnapshot) {
             var projects = [];
@@ -43,8 +41,6 @@ class AddTeamMember extends React.Component {
                 project['.key'] = childSnapshot.key;
                 projects.push(project);
             }.bind(this));
-
-            console.log('projects', projects);
 
             this.setState({
                 projects: projects
@@ -68,6 +64,20 @@ class AddTeamMember extends React.Component {
             });
         }.bind(this));
 
+        this.firebaseRef1 = firebase.database().ref('projects/'+ this.props.projectKeyForManageTeam +'/team');
+        this.firebaseRef1.limitToLast(25).on('value', function (dataSnapshot) {
+            console.log("Tree for team : " , 'projects/'+ this.props.projectKeyForManageTeam +'/team');
+            var team = [];
+            dataSnapshot.forEach(function (childSnapshot) {
+                var teamMate = childSnapshot.val();
+                teamMate['.key'] = childSnapshot.key;
+                team.push(teamMate);
+            }.bind(this));
+
+            this.setState({
+                team: team
+            });
+        }.bind(this));
     }
 
     employeeName_Change(event){
@@ -87,46 +97,16 @@ class AddTeamMember extends React.Component {
         this.setState({employeeJobRole: event.target.value});
     }
     addTeamMember(event){
-        /*for(var index=0; index <= this.state.projects.length; index++){
-            if(this.state.projects[index]['.key'] == this.props.projectKeyForManageTeam){
-                var matchedKey = this.state.projects[index]['.key'];
-                break;
-            }
-        }*/
-
-        this.addMemberToDatabase();
         if(this.state.userKey != null){
             this.firebaseRef1.push({
                 user: this.state.userKey,
                 jobRole: this.state.employeeJobRole
             });
-            this.props.actions.loadPage('/ongoingRetro');
+            var firebaseRef = firebase.database().ref('users/' + this.state.userKey + '/projects');
+            firebaseRef.push({project_id: this.props.projectKeyForManageTeam});
+            this.props.actions.loadPage('/manageTeam');
         }else {
             this.setState({warningShow_addMember: true});
-        }
-
-    }
-
-    addMemberToDatabase(){
-        if(this.props.projectKeyForManageTeam != null){
-            var firebaseRef1 = firebase.database().ref('projects/'+ this.props.projectKeyForManageTeam +'/team');
-            this.firebaseRef1 = firebase.database().ref('projects/'+ this.props.projectKeyForManageTeam +'/team');
-
-            this.firebaseRef1.limitToLast(25).on('value', function (dataSnapshot) {
-                console.log("Tree for team : " , 'projects/'+ this.props.projectKeyForManageTeam +'/team');
-                var team = [];
-                dataSnapshot.forEach(function (childSnapshot) {
-                    var teamMate = childSnapshot.val();
-                    teamMate['.key'] = childSnapshot.key;
-                    team.push(teamMate);
-                }.bind(this));
-
-                console.log('team', team);
-
-                this.setState({
-                    team: team
-                });
-            }.bind(this));
         }
     }
 
@@ -154,9 +134,9 @@ class AddTeamMember extends React.Component {
                         <FormGroup controlId="formControlsEmployeeJobRole">
                             <FormControl type="text" placeholder="Job Role" onChange={this.employeeJobRole.bind(this)}/>
                         </FormGroup>
-                        <Button type="submit" style={{backgroundColor:"#FF0000", width:"500px"}} onClick={this.addTeamMember.bind(this)} >
-                            <span style={{color:"white", fontSize:"18px"}}> <strong>Add Team Member</strong> </span>
-                        </Button>
+                        <FormControl type="button" className="signUp-button" value="Add Team Member"
+                                     style={{backgroundColor: "#FF0000", color:'#ffffff'}}
+                                     onClick={this.addTeamMember.bind(this)} />
                     </form>
                 </Row>
                 <Row>
@@ -178,6 +158,7 @@ class AddTeamMember extends React.Component {
 const mapStateToProps = (state) => ({
     projectKeyForManageTeam: state.scrums.projectKeyForManageTeam,
     retrospectiveKey_selected: state.scrums.retrospectiveKey_selected,
+    loggedInUserDetails: state.scrums.loggedInUserDetails,
     selected_project_id: state.scrums.selected_project_id,
     selected_project_name: state.scrums.selected_project_name
 });

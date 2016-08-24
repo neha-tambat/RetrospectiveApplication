@@ -51,11 +51,17 @@ body{
     color: #ffffff;
 }
 
-.createProject-form{
+.createProject-form-lg{
     background-color: #E6E6E6;
     border-radius: 10px;
     width: 600px;
     margin-left: 325px;
+    padding: 30px;
+}
+.createProject-form-md{
+    background-color: #E6E6E6;
+    border-radius: 10px;
+    width: 600px;
     padding: 30px;
 }
 .addMemberToProject-form{
