@@ -60,11 +60,17 @@ class TextCell extends React.Component {
             );
         }
         if(col == "manage_team"){
-            return(
-                <Cell {...props}>
-                    <Button id={id} style={{backgroundColor:"#000000", color:"#ffffff"}} onClick={this.handleManageTeam.bind(this,id)}> Manage Team </Button>
-                </Cell>
-            );
+            if(this.props.loggedInUserDetails['.key'] == data[rowIndex].owner){
+                return(
+                    <Cell {...props}>
+                        <Button id={id} style={{backgroundColor:"#000000", color:"#ffffff"}} onClick={this.handleManageTeam.bind(this,id)}> Manage Team </Button>
+                    </Cell>
+                );
+            }else {
+                return(
+                    <Cell {...props}> - </Cell>
+                );
+            }
         }
 
         if(col == "remove"){
@@ -96,7 +102,8 @@ class TextCell extends React.Component {
 
 
 const mapStateToProps = (state) => ({
-
+    loggedInUserDetails: state.scrums.loggedInUserDetails,
+    projectKeyForManageTeam: state.scrums.projectKeyForManageTeam,
 });
 
 const mapDispatchToProps = (dispatch) => ({
