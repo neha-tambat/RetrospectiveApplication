@@ -113,10 +113,9 @@ class CreateSprintRetrospective extends React.Component {
                             <ControlLabel>Retrospective Time</ControlLabel>
                             <FormControl type="time" onChange={this.retrospectiveTimeChange.bind(this)}/>
                         </FormGroup>
-
-                        <Button type="submit" style={{backgroundColor:"#FF0000", width:"150px"}} onClick={this.registerScrum.bind(this)} >
-                            <span style={{color:"white", fontSize:"18px"}}> <strong>Create</strong> </span>
-                        </Button>
+                        <FormControl type="button" className="signUp-button" value="Create Retrospective"
+                                     style={{backgroundColor: "#FF0000", color:'#ffffff'}}
+                                     onClick={this.registerScrum.bind(this)} />
                     </form>
                 </Row>
             </Grid>

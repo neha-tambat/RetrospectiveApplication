@@ -101,24 +101,6 @@ class ManageTeam extends React.Component {
         var {selected_project_id,selected_project_name,projectKeyForManageTeam} = this.props;
         var {projects,team,users} = this.state;
         var teamList = null;
-
-        /*var dataList = [];
-        var userDetailsList = [];
-        var userDetails = [];
-
-        if(this.state.team != 0 && this.state.users != 0){
-            dataList = this.state.team;
-            userDetailsList = this.state.users;
-            for(var index=0; index < dataList.length; index++){
-                for(var place=0; place < userDetailsList.length; place++){
-                    if(dataList[index].user == userDetailsList[place]['.key']){
-                        userDetails.push(userDetailsList[place]);
-                        break;
-                    }
-                }
-            }
-        }*/
-
         var dataList = [];
         var userDetails = [];
 

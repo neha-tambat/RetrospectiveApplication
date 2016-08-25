@@ -33,7 +33,7 @@ class AddTeamMember extends React.Component {
     componentWillMount(){
         this.props.actions.windowSize();
 
-        this.firebaseRef = firebase.database().ref('projects');
+       /* this.firebaseRef = firebase.database().ref('projects');
         this.firebaseRef.limitToLast(25).on('value', function (dataSnapshot) {
             var projects = [];
             dataSnapshot.forEach(function (childSnapshot) {
@@ -45,7 +45,7 @@ class AddTeamMember extends React.Component {
             this.setState({
                 projects: projects
             });
-        }.bind(this));
+        }.bind(this));*/
 
 
         this.firebaseRef_users = firebase.database().ref('users');

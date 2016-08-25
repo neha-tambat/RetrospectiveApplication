@@ -23,16 +23,13 @@ class ManageProject extends React.Component {
     constructor(){
         super();
         this.state={
-            projects:[]
+            projects:[], userSpecificProjects:[]
         };
     }
 
     componentWillMount() {
-        var firebaseRef = firebase.database().ref('projects');
         this.firebaseRef = firebase.database().ref('projects');
-
         this.firebaseRef.limitToLast(25).on('value', function (dataSnapshot) {
-            console.log("Tree for projects : ", 'projects');
             var projects = [];
             dataSnapshot.forEach(function (childSnapshot) {
                 var project = childSnapshot.val();
@@ -46,6 +43,22 @@ class ManageProject extends React.Component {
                 projects: projects
             });
         }.bind(this));
+
+        this.firebaseRef_userProjects = firebase.database().ref('users/' + this.props.loggedInUserDetails['.key'] + '/projects');
+        this.firebaseRef_userProjects.limitToLast(25).on('value', function (dataSnapshot) {
+            var userSpecificProjects = [];
+            dataSnapshot.forEach(function (childSnapshot) {
+                var user_project = childSnapshot.val();
+                user_project['.key'] = childSnapshot.key;
+                userSpecificProjects.push(user_project);
+            }.bind(this));
+
+            console.log("userSpecificProjects : ", userSpecificProjects);
+
+            this.setState({
+                userSpecificProjects: userSpecificProjects
+            });
+        }.bind(this));
     }
 
     handleManageTeam(key){
@@ -54,10 +67,19 @@ class ManageProject extends React.Component {
     }
 
     render() {
-        var dataList = null;
-        if (this.state.projects.length != 0) {
-            dataList = this.state.projects;
+        var {userSpecificProjects,projects} = this.state;
+        var dataList = [];
+        if (projects.length != 0 && userSpecificProjects != 0) {
+            for(var index = 0; index < userSpecificProjects.length; index++){
+                for(var place=0; place < projects.length; place++){
+                    if(userSpecificProjects[index].project_id == projects[place]['.key']){
+                        dataList.push(projects[place]);
+                    }
+                }
+            }
         }
+
+
         if (dataList == null || dataList.length == 0) {
             return (
                 <div style={{margin:"10px", fontSize:"20px"}}>
@@ -99,7 +121,8 @@ class ManageProject extends React.Component {
 
 
 const mapStateToProps = (state) => ({
-    leftDrawer: state.scrums.leftDrawer
+    leftDrawer: state.scrums.leftDrawer,
+    loggedInUserDetails: state.scrums.loggedInUserDetails,
 });
 
 const mapDispatchToProps = (dispatch) => ({
