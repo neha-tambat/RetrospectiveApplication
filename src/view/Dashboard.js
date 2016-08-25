@@ -175,20 +175,20 @@ class Dashboard extends React.Component {
                 this.addNotesToDatabase();
                 this.firebaseRef1.push({
                     continueNotes:continueObject,
-                    isPublished: true
+                    isPublished: false
                 });
             }else if(continueObject == undefined){
                this.addNotesToDatabase();
                 this.firebaseRef1.push({
                     stopNotes: stopObject,
-                    isPublished: true
+                    isPublished: false
                 });
             }else {
                 this.addNotesToDatabase();
                 this.firebaseRef1.push({
                     stopNotes: stopObject,
                     continueNotes:continueObject,
-                    isPublished: true
+                    isPublished: false
                 });
             }
         }else if(stopObject == undefined){
@@ -196,20 +196,20 @@ class Dashboard extends React.Component {
                 this.addNotesToDatabase();
                 this.firebaseRef1.push({
                     continueNotes:continueObject,
-                    isPublished: true
+                    isPublished: false
                 });
             }else if(continueObject == undefined){
                 this.addNotesToDatabase();
                 this.firebaseRef1.push({
                     startNotes:startObject,
-                    isPublished: true
+                    isPublished: false
                 });
             }else {
                 this.addNotesToDatabase();
                 this.firebaseRef1.push({
                     startNotes:startObject,
                     continueNotes:continueObject,
-                    isPublished: true
+                    isPublished: false
                 });
             }
         }else if(continueObject == undefined){
@@ -217,20 +217,20 @@ class Dashboard extends React.Component {
                 this.addNotesToDatabase();
                 this.firebaseRef1.push({
                     stopNotes: stopObject,
-                    isPublished: true
+                    isPublished: false
                 });
             }else if(stopObject == undefined){
                 this.addNotesToDatabase();
                 this.firebaseRef1.push({
                     startNotes:startObject,
-                    isPublished: true
+                    isPublished: false
                 });
             }else {
                 this.addNotesToDatabase();
                 this.firebaseRef1.push({
                     startNotes:startObject,
                     stopNotes: stopObject,
-                    isPublished: true
+                    isPublished: false
                 });
             }
         }else {
@@ -239,7 +239,7 @@ class Dashboard extends React.Component {
                 startNotes:startObject,
                 stopNotes: stopObject,
                 continueNotes:continueObject,
-                isPublished: true
+                isPublished: false
             });
         }
 

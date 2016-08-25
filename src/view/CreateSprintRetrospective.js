@@ -20,7 +20,7 @@ class CreateSprintRetrospective extends React.Component {
         super();
         this.state = {
             retrospectives: [],
-            scrumMasterName : null,
+            userRoleInRetrospective: null,
             projectName : null,
             sprintTitle : null,
             startDate : null,
@@ -47,8 +47,8 @@ class CreateSprintRetrospective extends React.Component {
         }.bind(this));
     }
 
-    scrumMasterNameChange(event){
-        this.setState({scrumMasterName: event.target.value});
+    userRoleInRetrospective(event){
+        this.setState({userRoleInRetrospective: event.target.value});
     }
     projectNameChange(event){
         this.setState({projectName: event.target.value});
@@ -74,6 +74,7 @@ class CreateSprintRetrospective extends React.Component {
 
     registerScrum(){
         var retroRegister = {
+            scrum_master: this.props.loggedInUserDetails['.key'],
             sprint_title: this.state.sprintTitle,
             sprint_start_date: this.state.startDate,
             sprint_end_date: this.state.endDate,
@@ -81,6 +82,8 @@ class CreateSprintRetrospective extends React.Component {
             project_id: this.props.projectKeyForManageTeam
         };
         this.firebaseRef.push(retroRegister);
+        //var firebaseRef = firebase.database().ref('users/' + this.props.loggedInUserDetails['.key'] + '/retrospectives');
+        //firebaseRef.push({retrospective_id: this.props.projectKeyForManageTeam});
         this.props.actions.loadPage('/ongoingRetro');
     }
 
@@ -93,9 +96,13 @@ class CreateSprintRetrospective extends React.Component {
 
                         <ProjectList />
 
-                        <FormGroup controlId="formControlsScrumMasterName">
-                            <ControlLabel>Scrum Master Name</ControlLabel>
-                            <FormControl type="text" onChange={this.scrumMasterNameChange.bind(this)}/>
+                        <FormGroup controlId="formControlsRoleInRetrospective">
+                            <ControlLabel>Role in retrospective</ControlLabel>
+                            <FormControl componentClass="select" placeholder="Select role" onChange={this.userRoleInRetrospective.bind(this)}>
+                                <option value="select">Select role</option>
+                                <option value="scrumMaster">Scrum Master</option>
+                                <option value="user">User</option>
+                            </FormControl>
                         </FormGroup>
                         <FormGroup controlId="formControlsSprintTitle">
                             <ControlLabel>Sprint Title</ControlLabel>
@@ -126,6 +133,7 @@ class CreateSprintRetrospective extends React.Component {
 const mapStateToProps = (state) => ({
     projectKeyForManageTeam: state.scrums.projectKeyForManageTeam,
     retrospectiveKey_selected: state.scrums.retrospectiveKey_selected,
+    loggedInUserDetails: state.scrums.loggedInUserDetails,
     selected_project_id: state.scrums.selected_project_id,
     selected_project_name: state.scrums.selected_project_name
 });

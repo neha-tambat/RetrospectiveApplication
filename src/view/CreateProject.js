@@ -18,7 +18,7 @@ class CreateProject extends React.Component {
     constructor() {
         super();
         this.state = {
-            projects:[],
+            projects:[], team:[],
             projectName: null,
             projectInfo: null
         };
@@ -47,7 +47,11 @@ class CreateProject extends React.Component {
         this.setState({projectInfo: event.target.value});
     }
     createProject(event){
-        var projectDetails = {project_name: this.state.projectName, description: this.state.projectInfo};
+        var projectDetails = {
+            project_name: this.state.projectName,
+            description: this.state.projectInfo,
+            owner: this.props.loggedInUserDetails['.key']
+        };
         this.firebaseRef.push(projectDetails);
         this.props.actions.loadPage('/manageProject');
     }
@@ -79,7 +83,8 @@ class CreateProject extends React.Component {
 }
 
 const mapStateToProps = (state) => ({
-
+    loggedInUserDetails: state.scrums.loggedInUserDetails,
+    projectKeyForManageTeam: state.scrums.projectKeyForManageTeam,
 });
 
 const mapDispatchToProps = (dispatch) => ({
