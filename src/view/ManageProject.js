@@ -28,6 +28,7 @@ class ManageProject extends React.Component {
     }
 
     componentWillMount() {
+        /*All projects*/
         this.firebaseRef = firebase.database().ref('projects');
         this.firebaseRef.limitToLast(25).on('value', function (dataSnapshot) {
             var projects = [];
@@ -37,13 +38,12 @@ class ManageProject extends React.Component {
                 projects.push(project);
             }.bind(this));
 
-            console.log("projects : ", projects);
-
             this.setState({
                 projects: projects
             });
         }.bind(this));
 
+        /*Logged in user specific projects*/
         this.firebaseRef_userProjects = firebase.database().ref('users/' + this.props.loggedInUserDetails['.key'] + '/projects');
         this.firebaseRef_userProjects.limitToLast(25).on('value', function (dataSnapshot) {
             var userSpecificProjects = [];
@@ -53,8 +53,6 @@ class ManageProject extends React.Component {
                 userSpecificProjects.push(user_project);
             }.bind(this));
 
-            console.log("userSpecificProjects : ", userSpecificProjects);
-
             this.setState({
                 userSpecificProjects: userSpecificProjects
             });
@@ -62,7 +60,10 @@ class ManageProject extends React.Component {
     }
 
     handleManageTeam(key){
+        /*Set key for selected project*/
         this.props.actions.ManageTeamForProject_key(key);
+
+        /*Go to manage team page*/
         this.props.actions.loadPage('/manageTeam');
     }
 
@@ -73,6 +74,7 @@ class ManageProject extends React.Component {
             for(var index = 0; index < userSpecificProjects.length; index++){
                 for(var place=0; place < projects.length; place++){
                     if(userSpecificProjects[index].project_id == projects[place]['.key']){
+                        /*User specific project list*/
                         dataList.push(projects[place]);
                     }
                 }

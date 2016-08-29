@@ -25,17 +25,8 @@ class CreateProject extends React.Component {
     }
 
     componentWillMount(){
+        /*All projects*/
         this.firebaseRef = firebase.database().ref('projects');
-        this.firebaseRef.orderByChild('timestamp').startAt(Date.now()).on('child_added', function(snapshot) {
-            console.log('new record of project', snapshot.key);
-            console.log("this.props.loggedInUserDetails['.key']",this.props.loggedInUserDetails['.key']);
-
-            var firebaseRef1 = firebase.database().ref('users/' + this.props.loggedInUserDetails['.key'] + '/projects');
-            firebaseRef1.push({project_id: snapshot.key});
-
-            var firebaseRef2 = firebase.database().ref('projects/'+ snapshot.key +'/team');
-            firebaseRef2.push({user: this.props.loggedInUserDetails['.key']});
-        }.bind(this));
     }
 
     projectNameCreationChange(event){
@@ -51,7 +42,24 @@ class CreateProject extends React.Component {
             owner: this.props.loggedInUserDetails['.key'],
             timestamp: Date.now()
         };
-        this.firebaseRef.push(projectDetails);
+
+        /*Add new project to database*/
+        var new_project = this.firebaseRef.push(projectDetails);
+        console.log("new_project", new_project);
+
+        /*Set key for created or selected project*/
+        this.props.actions.ManageTeamForProject_key({projectId: new_project.key});
+        /*this.props.actions.selectProject({ projectId: new_project.key });*/
+
+        /*Add project id to user/project owner in user list*/
+        var firebaseRef1 = firebase.database().ref('users/' + this.props.loggedInUserDetails['.key'] + '/projects');
+        firebaseRef1.push({project_id: new_project.key});
+
+        /*Add project owner to project team*/
+        var firebaseRef2 = firebase.database().ref('projects/'+ new_project.key +'/team');
+        firebaseRef2.push({user: this.props.loggedInUserDetails['.key'], is_active_member: true});
+
+        /*Go to add team member page*/
         this.props.actions.loadPage('/addTeamMember');
     }
 
@@ -72,7 +80,6 @@ class CreateProject extends React.Component {
                         <FormControl type="button" value="Create Project"
                                      style={{backgroundColor:"#FF0000",color:'#ffffff'}}
                                      onClick={this.createProject.bind(this)} />
-
 
                     </form>
                 </Row>

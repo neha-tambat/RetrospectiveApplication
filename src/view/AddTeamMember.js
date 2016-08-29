@@ -19,7 +19,7 @@ class AddTeamMember extends React.Component {
     constructor() {
         super();
         this.state = {
-            team: [], users:[],
+            team: [], users:[], projects: [],
             employeeName: null,
             employeeEmail: null,
             employeeJobRole: null,
@@ -42,10 +42,23 @@ class AddTeamMember extends React.Component {
                 users.push(user);
             }.bind(this));
 
-            console.log('users', users);
-
             this.setState({
                 users: users
+            });
+        }.bind(this));
+
+        this.firebaseRef = firebase.database().ref('projects');
+        this.firebaseRef.limitToLast(25).on('value', function (dataSnapshot) {
+            // console.log("Tree for projects : ", 'projects');
+            var projects = [];
+            dataSnapshot.forEach(function (childSnapshot) {
+                var project = childSnapshot.val();
+                project['.key'] = childSnapshot.key;
+                projects.push(project);
+            }.bind(this));
+
+            this.setState({
+                projects: projects
             });
         }.bind(this));
 
@@ -69,14 +82,19 @@ class AddTeamMember extends React.Component {
     }
     addTeamMember(event){
         if(this.state.userKey != null){
+            /*Add member to project team*/
             var firebaseRef1 = firebase.database().ref('projects/'+ this.props.projectKeyForManageTeam +'/team');
             firebaseRef1.push({
                 user: this.state.userKey,
-                jobRole: this.state.employeeJobRole
+                jobRole: this.state.employeeJobRole,
+                is_active_member: true
             });
 
+            /*Add project id to user in user list*/
             var firebaseRef = firebase.database().ref('users/' + this.state.userKey + '/projects');
             firebaseRef.push({project_id: this.props.projectKeyForManageTeam});
+
+            /*Go to manage team page*/
             this.props.actions.loadPage('/manageTeam');
         }else {
             this.setState({warningShow_addMember: true});
@@ -92,12 +110,21 @@ class AddTeamMember extends React.Component {
     }
 
     render(){
+        var {projects} = this.state;
+        var selectedProjectName = null;
+        for(var index=0; index < projects.length; index++){
+            if(projects[index]['.key'] == this.props.projectKeyForManageTeam){
+                selectedProjectName = projects[index].project_name;
+            }
+        }
+
         return(
             <Grid style={{margin:"100px"}}>
                 <Row>
                     <form className="addMemberToProject-form" >
-                        <ProjectList />
-
+                        <FormGroup controlId="formControlsProjectName">
+                            <FormControl type="text" placeholder="Project Name" value={selectedProjectName} readOnly="readOnly" />
+                        </FormGroup>
                         <FormGroup controlId="formControlsEmployeeName">
                             <FormControl type="text" placeholder="Employee Name" onChange={this.employeeName_Change.bind(this)}/>
                         </FormGroup>

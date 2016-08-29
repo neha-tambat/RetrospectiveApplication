@@ -11,7 +11,6 @@ const initialState = {
 
     windowWidth: null,
     windowHeight:null,
-    //selected_project_id: null,
     selected_project_name: null,
     leftDrawer : true,
     loggedInUserDetails: null,
