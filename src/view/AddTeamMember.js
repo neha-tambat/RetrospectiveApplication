@@ -19,7 +19,7 @@ class AddTeamMember extends React.Component {
     constructor() {
         super();
         this.state = {
-            projects: [], team: [], users:[],
+            team: [], users:[],
             employeeName: null,
             employeeEmail: null,
             employeeJobRole: null,
@@ -32,21 +32,6 @@ class AddTeamMember extends React.Component {
 
     componentWillMount(){
         this.props.actions.windowSize();
-
-       /* this.firebaseRef = firebase.database().ref('projects');
-        this.firebaseRef.limitToLast(25).on('value', function (dataSnapshot) {
-            var projects = [];
-            dataSnapshot.forEach(function (childSnapshot) {
-                var project = childSnapshot.val();
-                project['.key'] = childSnapshot.key;
-                projects.push(project);
-            }.bind(this));
-
-            this.setState({
-                projects: projects
-            });
-        }.bind(this));*/
-
 
         this.firebaseRef_users = firebase.database().ref('users');
         this.firebaseRef_users.limitToLast(25).on('value', function (dataSnapshot) {
@@ -64,20 +49,6 @@ class AddTeamMember extends React.Component {
             });
         }.bind(this));
 
-        this.firebaseRef1 = firebase.database().ref('projects/'+ this.props.projectKeyForManageTeam +'/team');
-        this.firebaseRef1.limitToLast(25).on('value', function (dataSnapshot) {
-            console.log("Tree for team : " , 'projects/'+ this.props.projectKeyForManageTeam +'/team');
-            var team = [];
-            dataSnapshot.forEach(function (childSnapshot) {
-                var teamMate = childSnapshot.val();
-                teamMate['.key'] = childSnapshot.key;
-                team.push(teamMate);
-            }.bind(this));
-
-            this.setState({
-                team: team
-            });
-        }.bind(this));
     }
 
     employeeName_Change(event){
@@ -98,10 +69,12 @@ class AddTeamMember extends React.Component {
     }
     addTeamMember(event){
         if(this.state.userKey != null){
-            this.firebaseRef1.push({
+            var firebaseRef1 = firebase.database().ref('projects/'+ this.props.projectKeyForManageTeam +'/team');
+            firebaseRef1.push({
                 user: this.state.userKey,
                 jobRole: this.state.employeeJobRole
             });
+
             var firebaseRef = firebase.database().ref('users/' + this.state.userKey + '/projects');
             firebaseRef.push({project_id: this.props.projectKeyForManageTeam});
             this.props.actions.loadPage('/manageTeam');
