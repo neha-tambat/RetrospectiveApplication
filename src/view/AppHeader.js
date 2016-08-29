@@ -57,7 +57,7 @@ class AppHeader extends React.Component {
 
     render(){
         var {userIconClick} = this.state;
-        var {leftDrawer,loggedInUserDetails, projects} = this.props;
+        var {leftDrawer,loggedInUserDetails} = this.props;
         var screenSize = getScreenMode();
         var userIconClickList = null;
         var leftDrawerIcon = leftDrawer ? "glyphicon glyphicon-chevron-left" : "glyphicon glyphicon-menu-hamburger";

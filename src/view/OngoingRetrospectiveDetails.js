@@ -26,7 +26,7 @@ class OngoingRetrospectiveDetails extends React.Component {
             warningShow: false,
             WaringHeaderMsg : 'Warning',
             modalBody_warning: 'Select project first and proceed.',
-            retrospectives: []
+            retrospectives: [], userSpecificRetrospectives:[]
         };
     }
 
@@ -45,6 +45,22 @@ class OngoingRetrospectiveDetails extends React.Component {
                 retrospectives: retrospectives
             });
         }.bind(this));
+
+        this.firebaseRef_userRetrospectives = firebase.database().ref('users/' + this.props.loggedInUserDetails['.key'] + '/retrospectives');
+        this.firebaseRef_userRetrospectives.limitToLast(25).on('value', function (dataSnapshot) {
+            var userSpecificRetrospectives = [];
+            dataSnapshot.forEach(function (childSnapshot) {
+                var user_retrospective = childSnapshot.val();
+                user_retrospective['.key'] = childSnapshot.key;
+                userSpecificRetrospectives.push(user_retrospective);
+            }.bind(this));
+
+            console.log("userSpecificRetrospectives : ", userSpecificRetrospectives);
+
+            this.setState({
+                userSpecificRetrospectives: userSpecificRetrospectives
+            });
+        }.bind(this));
     }
 
     handleView(key){
@@ -54,11 +70,22 @@ class OngoingRetrospectiveDetails extends React.Component {
 
     render(){
         var {selected_project_id,selected_project_name} = this.props;
+        var {retrospectives,userSpecificRetrospectives} = this.state;
         var screenSize = getScreenMode();
-        var {retrospectives} = this.state;
         var dataList = [];
-        if(retrospectives.length != 0){
+
+        /*if(retrospectives.length != 0){
             dataList = retrospectives;
+        }*/
+
+        if (retrospectives.length != 0 && userSpecificRetrospectives != 0) {
+            for(var index = 0; index < userSpecificRetrospectives.length; index++){
+                for(var place=0; place < retrospectives.length; place++){
+                    if(userSpecificRetrospectives[index].retrospective_id == retrospectives[place]['.key']){
+                        dataList.push(retrospectives[place]);
+                    }
+                }
+            }
         }
 
         if(dataList.length == 0){
@@ -103,6 +130,7 @@ class OngoingRetrospectiveDetails extends React.Component {
 const mapStateToProps = (state) => ({
     windowWidth: state.scrums.windowWidth,
     windowHeight: state.scrums.windowHeight,
+    loggedInUserDetails: state.scrums.loggedInUserDetails,
     selected_project_id: state.scrums.selected_project_id,
     selected_project_name: state.scrums.selected_project_name
 });

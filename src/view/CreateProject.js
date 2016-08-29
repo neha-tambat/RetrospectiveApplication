@@ -26,17 +26,15 @@ class CreateProject extends React.Component {
 
     componentWillMount(){
         this.firebaseRef = firebase.database().ref('projects');
-        this.firebaseRef.limitToLast(25).on('value', function (dataSnapshot) {
-            var projects = [];
-            dataSnapshot.forEach(function (childSnapshot) {
-                var project = childSnapshot.val();
-                project['.key'] = childSnapshot.key;
-                projects.push(project);
-            }.bind(this));
+        this.firebaseRef.orderByChild('timestamp').startAt(Date.now()).on('child_added', function(snapshot) {
+            console.log('new record of project', snapshot.key);
+            console.log("this.props.loggedInUserDetails['.key']",this.props.loggedInUserDetails['.key']);
 
-            this.setState({
-                projects: projects
-            });
+            var firebaseRef1 = firebase.database().ref('users/' + this.props.loggedInUserDetails['.key'] + '/projects');
+            firebaseRef1.push({project_id: snapshot.key});
+
+            var firebaseRef2 = firebase.database().ref('projects/'+ snapshot.key +'/team');
+            firebaseRef2.push({user: this.props.loggedInUserDetails['.key']});
         }.bind(this));
     }
 
@@ -50,10 +48,11 @@ class CreateProject extends React.Component {
         var projectDetails = {
             project_name: this.state.projectName,
             description: this.state.projectInfo,
-            owner: this.props.loggedInUserDetails['.key']
+            owner: this.props.loggedInUserDetails['.key'],
+            timestamp: Date.now()
         };
         this.firebaseRef.push(projectDetails);
-        this.props.actions.loadPage('/manageProject');
+        this.props.actions.loadPage('/addTeamMember');
     }
 
     render(){

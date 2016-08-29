@@ -264,12 +264,12 @@ class Dashboard extends React.Component {
         var {retrospectiveKey_selected, loggedInUserDetails} = this.props;
         if(this.state.notes.length != 0 ){
             if(this.state.selectedTab == 'teamContribution'){
-                for(var index=0; index < this.state.notes.length; index++){
+                /*for(var index=0; index < this.state.notes.length; index++){
                     if(this.state.notes[index]['.key'] == "start"){
                         var startData_public = this.state.notes[index];
                         //startData_public.push(this.state.notes[index]);
                     }
-                }
+                }*/
                 var startData = startData_public.map((public_startData, index, key) => {
                     return (
                         <Row style={{margin:"10px",backgroundColor:"#72B53E",padding:"10px"}} id="start" key={index}>
