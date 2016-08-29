@@ -63,7 +63,24 @@ class Dashboard extends React.Component {
             this.myContributionClass = "";
             this.teamContributionClass = "active";
             //this.props.actions.loadPage('/dashboard');
-            this.addNotesToDatabase_publish();
+            //this.addNotesToDatabase_publish();
+            var path = 'retrospectives/'+ this.props.retrospectiveKey_selected + '/notes/public/';
+
+            var firebaseRef = firebase.database().ref(path);
+            firebaseRef.limitToLast(25).on('value', function(dataSnapshot) {
+                var notes = [];
+                dataSnapshot.forEach(function(childSnapshot) {
+                    var note = childSnapshot.val();
+                    note['.key'] = childSnapshot.key;
+                    notes.push(note);
+                }.bind(this));
+
+                console.log("notes : ", notes);
+
+                this.setState({
+                    notes: notes
+                });
+            }.bind(this));
         }
     }
 
@@ -100,17 +117,14 @@ class Dashboard extends React.Component {
         }.bind(this));
     }
 
-    addNotesToDatabase_publish(type){
-        var path = (type == undefined) ?
-            'retrospectives/'+ this.props.retrospectiveKey_selected + '/notes/public'
-            : 'retrospectives/'+ this.props.retrospectiveKey_selected + '/notes/public/' + type;
+    addNotesToDatabase_publish(type, data){
+        var path = 'retrospectives/'+ this.props.retrospectiveKey_selected + '/notes/public/' + type;
 
-        var firebaseRef = firebase.database().ref(path );
+        var firebaseRef = firebase.database().ref(path);
+        firebaseRef.push(data);
         //this.bindAsArray(firebaseRef.limitToLast(25), 'retrospectives/notes');
 
-        this.firebaseRef1 = firebase.database().ref(path);
-
-        this.firebaseRef1.limitToLast(25).on('value', function(dataSnapshot) {
+        /*this.firebaseRef1.limitToLast(25).on('value', function(dataSnapshot) {
             var notes = [];
             dataSnapshot.forEach(function(childSnapshot) {
                 var note = childSnapshot.val();
@@ -123,7 +137,7 @@ class Dashboard extends React.Component {
             this.setState({
                 notes: notes
             });
-        }.bind(this));
+        }.bind(this));*/
     }
 
     onPublish(event){
@@ -132,18 +146,18 @@ class Dashboard extends React.Component {
 
         if(this.state.start != "" ) {
             startObject_save = {note : this.state.start, username: this.props.loggedInUserDetails.full_name};
-            this.addNotesToDatabase_publish('start');
-            this.firebaseRef1.push(startObject_save);
+            this.addNotesToDatabase_publish('start', startObject_save);
+            //this.firebaseRef1.push(startObject_save);
         }
         if(this.state.stop != ""){
             stopObject_save = {note : this.state.stop, username: this.props.loggedInUserDetails.full_name};
-            this.addNotesToDatabase_publish('stop');
-            this.firebaseRef1.push(stopObject_save);
+            this.addNotesToDatabase_publish('stop', stopObject_save);
+            //this.firebaseRef1.push(stopObject_save);
         }
         if(this.state.continue != ""){
             continueObject_save = {note : this.state.continue, username: this.props.loggedInUserDetails.full_name};
-            this.addNotesToDatabase_publish('continue');
-            this.firebaseRef1.push(continueObject_save);
+            this.addNotesToDatabase_publish('continue', continueObject_save);
+            //this.firebaseRef1.push(continueObject_save);
         }
 
         //this.addNotesToDatabase_publish();
@@ -264,10 +278,11 @@ class Dashboard extends React.Component {
         var {retrospectiveKey_selected, loggedInUserDetails} = this.props;
         if(this.state.notes.length != 0 ){
             if(this.state.selectedTab == 'teamContribution'){
+                var startData_public = []
                 for(var index=0; index < this.state.notes.length; index++){
                     if(this.state.notes[index]['.key'] == "start"){
-                        var startData_public = this.state.notes[index];
-                        //startData_public.push(this.state.notes[index]);
+                        //var startData_public = this.state.notes[index];
+                        startData_public.push(this.state.notes[index]);
                     }
                 }
                 var startData = startData_public.map((public_startData, index, key) => {
