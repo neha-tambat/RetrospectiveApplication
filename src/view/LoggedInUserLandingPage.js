@@ -40,7 +40,7 @@ class LoggedInUserLandingPage extends React.Component {
         console.log("screenSize : ", screenSize);
         this.props.actions.loadPage('/ongoingRetro');
 
-        this.firebaseRef = firebase.database().ref('projects');
+        /*this.firebaseRef = firebase.database().ref('projects');
         this.firebaseRef.limitToLast(25).on('value', function (dataSnapshot) {
             var projects = [];
             dataSnapshot.forEach(function (childSnapshot) {
@@ -52,7 +52,7 @@ class LoggedInUserLandingPage extends React.Component {
             this.setState({
                 projects: projects
             });
-        }.bind(this));
+        }.bind(this));*/
     }
 
     handleSelect(selectedKey) {
@@ -110,9 +110,7 @@ class LoggedInUserLandingPage extends React.Component {
         console.log("windowHeight : ",windowHeight);
         var screenSize = getScreenMode();
         var LeftDrawer = null;
-        var leftDrawerColSize = 0;
         var contentSize = 12;
-        var navItems = null;
         console.log("leftDrawer : ", leftDrawer);
 
         if(leftDrawer){
@@ -132,8 +130,7 @@ class LoggedInUserLandingPage extends React.Component {
 
         return(
             <div style={{textAlign: "center"}}>
-                <AppHeader projects={this.state.projects}
-                           createProject={this.createProject.bind(this)}
+                <AppHeader createProject={this.createProject.bind(this)}
                            manageProject={this.manageProject.bind(this)}
                            myProfile={this.myProfile.bind(this)}
                            logout={this.logout.bind(this)} />

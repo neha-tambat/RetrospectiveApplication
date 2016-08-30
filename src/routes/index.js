@@ -19,6 +19,7 @@ import PastRetrospectives from '../view/PastRetrospectives';
 import MyProfile from '../view/MyProfile';
 import ManageTeam from '../view/ManageTeam';
 import AddTeamMember from '../view/AddTeamMember';
+//import LandingLayout from '../layouts/LandingLayout';
 
 var Routes = (
     <Router>
@@ -27,19 +28,19 @@ var Routes = (
             <Route path="login" component={LoginPage}/>
         </Route>
 
-            <Route path="/" component={LoggedInUserLandingPage} onEnter={requireAuth}>
-                <IndexRoute component={OngoingRetrospectiveDetails} />
-                <Route path="ongoingRetro" component={OngoingRetrospectiveDetails} />
-                <Route path="myProfile" component={MyProfile} />
-                <Route path="createProject" component={CreateProject} />
-                <Route path="addTeamMember" component={AddTeamMember} />
-                <Route path="manageProject" component={ManageProject} />
-                <Route path="manageTeam" component={ManageTeam} />
-                <Route path="pastRetro" component={PastRetrospectives} />
-                <Route path="createSprintRetro" component={CreateSprintRetrospective} />
-                <Route path="main" component={Main}/>
-                <Route path="dashboard" component={Dashboard}/>
-            </Route>
+        <Route path="/" component={LoggedInUserLandingPage} onEnter={requireAuth}>
+            <IndexRoute component={OngoingRetrospectiveDetails} />
+            <Route path="ongoingRetro" component={OngoingRetrospectiveDetails} />
+            <Route path="myProfile" component={MyProfile} />
+            <Route path="createProject" component={CreateProject} />
+            <Route path="addTeamMember" component={AddTeamMember} />
+            <Route path="manageProject" component={ManageProject} />
+            <Route path="manageTeam" component={ManageTeam} />
+            <Route path="pastRetro" component={PastRetrospectives} />
+            <Route path="createSprintRetro" component={CreateSprintRetrospective} />
+            <Route path="main" component={Main}/>
+            <Route path="dashboard" component={Dashboard}/>
+        </Route>
 
     </Router>);
 

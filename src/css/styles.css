@@ -3,18 +3,16 @@ body{
 }
 
 .logo{
-    width: 305px;
-    height: 60px;
-    background-image: url("../images/synerzip.png");
+    width: 100%;
+    height: 100%;
+    margin-left: -3.6%;
 }
 
 .main-image{
-    width: 100%;
-    height: 1320px;
-    display: inline-block;
+    width: 102%;
+    height: 580px;
     background-image: url("../images/main.png");
-    background-size: contain;
-    background-repeat: no-repeat;
+    margin-left: -13px !important;
 }
 
 .container-page{
@@ -40,6 +38,7 @@ body{
 }
 
 .login-form{
+    margin-top: 50px;
     background-color: #ffffff;
     box-shadow: 5px 5px 5px;
     border-radius: 10px;
@@ -102,4 +101,12 @@ body{
 .button{
     background-color: #000000;
     color: #ffffff;
+}
+.custom-button{
+    background-color: black !important;
+    color: white !important;
+    width: 100px;
+    height: 40px;
+    margin-left: 10px;
+    margin-top: 10px;
 }

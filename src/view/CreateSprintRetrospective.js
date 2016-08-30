@@ -19,8 +19,7 @@ class CreateSprintRetrospective extends React.Component {
     constructor(){
         super();
         this.state = {
-            retrospectives: [],
-            userRoleInRetrospective: null,
+            userRoleInRetrospective: null, users:[], team:[],retrospectives:[],
             projectName : null,
             sprintTitle : null,
             startDate : null,
@@ -30,20 +29,49 @@ class CreateSprintRetrospective extends React.Component {
     }
 
     componentWillMount(){
-        this.firebaseRef = firebase.database().ref('retrospectives');
-        this.firebaseRef.limitToLast(25).on('value', function(dataSnapshot) {
-            var retrospectives = [];
-            dataSnapshot.forEach(function(childSnapshot) {
-                var retrospective = childSnapshot.val();
-                retrospective['.key'] = childSnapshot.key;
-                retrospectives.push(retrospective);
+        this.firebaseRef_users = firebase.database().ref('users');
+        this.firebaseRef_users.limitToLast(25).on('value', function (dataSnapshot) {
+            var users = [];
+            dataSnapshot.forEach(function (childSnapshot) {
+                var user = childSnapshot.val();
+                user['.key'] = childSnapshot.key;
+                users.push(user);
             }.bind(this));
 
-            console.log("retrospectives : ", retrospectives);
+            console.log('users', users);
 
             this.setState({
-                retrospectives: retrospectives
+                users: users
             });
+        }.bind(this));
+
+        this.firebaseRef_team = firebase.database().ref('projects/'+ this.props.projectKeyForManageTeam + '/team');
+        this.firebaseRef_team.limitToLast(25).on('value', function (dataSnapshot) {
+            var team = [];
+            dataSnapshot.forEach(function (childSnapshot) {
+                var member = childSnapshot.val();
+                member['.key'] = childSnapshot.key;
+                team.push(member);
+            }.bind(this));
+
+            console.log('team', team);
+
+            this.setState({
+                team: team
+            });
+        }.bind(this));
+
+        this.firebaseRef = firebase.database().ref('retrospectives');
+        this.firebaseRef.orderByChild('timestamp').startAt(Date.now()).on('child_added', function(snapshot) {
+            console.log('new record of retrospective', snapshot.key);
+            console.log("this.props.loggedInUserDetails['.key']",this.props.loggedInUserDetails['.key']);
+
+            for(var index=0; index < this.state.team.length; index++){
+                var userKeyToAddRetrospective = this.state.team[index].user;
+                var firebaseRef1 = firebase.database().ref('users/' + userKeyToAddRetrospective + '/retrospectives');
+                firebaseRef1.push({retrospective_id: snapshot.key});
+            }
+
         }.bind(this));
     }
 
@@ -79,7 +107,8 @@ class CreateSprintRetrospective extends React.Component {
             sprint_start_date: this.state.startDate,
             sprint_end_date: this.state.endDate,
             retrospective_time: this.state.retrospectiveTime,
-            project_id: this.props.projectKeyForManageTeam
+            project_id: this.props.projectKeyForManageTeam,
+            timestamp: Date.now()
         };
         this.firebaseRef.push(retroRegister);
         //var firebaseRef = firebase.database().ref('users/' + this.props.loggedInUserDetails['.key'] + '/retrospectives');

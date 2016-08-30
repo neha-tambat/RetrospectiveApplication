@@ -99,11 +99,10 @@ class SignUpPage extends React.Component {
         var {windowWidth,windowHeight} = this.props;
         var errors = this.state.error ? <p> {this.state.error} </p> : '';
         return (
-            <div style={{textAlign: "center"}}>
-                <Row style={{margin:"50px"}}>
-                    <Col xs={4} md={4}> </Col>
-                    <Col xs={4} md={4}>
-                        <form className="signUp-form">
+            <Grid fluid={true}>
+                <Row>
+                    <Col xs={4} md={4} xsOffset={4} mdOffset={4}>
+                        <form className="login-form">
                             <FormGroup controlId="formControlsFirstName">
                                 <FormControl type="text" placeholder="First Name" onChange={this.firstNameChange.bind(this)}/>
                             </FormGroup>
@@ -128,7 +127,7 @@ class SignUpPage extends React.Component {
                         </form>
                     </Col>
                 </Row>
-            </div>
+            </Grid>
         );
     }
 }

@@ -40,16 +40,15 @@ class SignUpSignInPage extends React.Component {
 
     render(){
         var {windowWidth,windowHeight} = this.props;
+        //
+        //{this.props.children} className="align-left"
         return(
-            <div style={{textAlign: "center"}}>
-
+            <Grid fluid={true}>
                 <SignUpSignInPageHeader handleSignUp={this.handleSignUp.bind(this)} handleLogin={this.handleLogin.bind(this)} />
-
-                <div  className="main-image">
+                <div className="main-image">
                     {this.props.children}
                 </div>
-
-            </div>
+            </Grid>
         );
     }
 }

@@ -263,6 +263,7 @@ class Dashboard extends React.Component {
                 var stopData_public = [];
                 var continueData_public = [];
                 for(var index=0; index < this.state.notes.length; index++){
+
                     if(this.state.notes[index]['.key'] == "start"){
                         var startData = this.state.notes[index];
                         for (var key in startData){
@@ -292,7 +293,6 @@ class Dashboard extends React.Component {
                             }
                         }
                     }
-
                 }
                 var startData = startData_public.map((public_startData, index, key) => {
                     return (

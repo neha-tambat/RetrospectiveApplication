@@ -30,17 +30,15 @@ class SignUpSignInPageHeader extends React.Component {
     render(){
         return(
             <Row style={{backgroundColor:"#FF0000"}}>
-                <Col xs={2} md={2}>
-                    <Image className="logo" src="../images/synerzip.png" className="logo" />
+                <Col xs={4} md={4}>
+                    <Image className="logo" src="../images/synerzip.png"/>
                 </Col>
-                <Col xs={8} md={8} style={{marginTop:"10px"}}> </Col>
-                <Col xs={1} md={1} style={{marginTop:"10px"}}>
-                    <Button type="submit" onClick={this.handleSignUp.bind(this)} style={{backgroundColor:"black",color:"white",width:"100px", height:"40px"}}>
+
+                <Col xs={3} md={3} xsOffset={5} mdOffset={5}>
+                    <Button className="custom-button" type="submit" onClick={this.handleSignUp.bind(this)} >
                         Sign Up
                     </Button>
-                </Col>
-                <Col xs={1} md={1} style={{marginTop:"10px"}}>
-                    <Button type="submit" onClick={this.handleLogin.bind(this)} style={{backgroundColor:"black", color:"white",width:"100px", height:"40px"}}>
+                    <Button className="custom-button" type="submit" onClick={this.handleLogin.bind(this)}>
                         Login
                     </Button>
                 </Col>
