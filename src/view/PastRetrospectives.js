@@ -27,11 +27,8 @@ class PastRetrospectives extends React.Component {
     }
 
     componentWillMount(){
-        var firebaseRef = firebase.database().ref('retrospectives');
-        //this.bindAsArray(firebaseRef.limitToLast(25), 'retrospectives/notes');
-
+        /*All retrospectives*/
         this.firebaseRef = firebase.database().ref('retrospectives');
-
         this.firebaseRef.limitToLast(25).on('value', function(dataSnapshot) {
             console.log("Tree for notes : ", 'retrospectives');
             var retrospectives = [];
@@ -40,8 +37,6 @@ class PastRetrospectives extends React.Component {
                 retrospective['.key'] = childSnapshot.key;
                 retrospectives.push(retrospective);
             }.bind(this));
-
-            console.log("retrospectives : ", retrospectives);
 
             this.setState({
                 retrospectives: retrospectives
@@ -59,7 +54,8 @@ class PastRetrospectives extends React.Component {
         var dataList = [];
         if(retrospectives.length != 0){
             for(var index=0; index < retrospectives.length; index++){
-                if(retrospectives[index].project_id == projectKeyForManageTeam){
+                if(retrospectives[index].project_id == projectKeyForManageTeam && retrospectives[index].is_completed == true){
+                   /*Only past retrospectives*/
                     dataList.push(retrospectives[index]);
                 }
             }
@@ -94,7 +90,7 @@ class PastRetrospectives extends React.Component {
                                            dataAlign="center"
                                            dataSort={true}
                                            className="table-header">Sprint End Date</TableHeaderColumn>
-                        <TableHeaderColumn dataField="retrospective_time"
+                        <TableHeaderColumn dataField="retrospective_date"
                                            dataAlign="center"
                                            dataSort={true}
                                            className="table-header">Retrospective Date</TableHeaderColumn>

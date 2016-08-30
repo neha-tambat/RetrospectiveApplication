@@ -21,7 +21,7 @@ class ManageTeam extends React.Component {
     constructor() {
         super();
         this.state = {
-            projects: [],
+            projects: [], selectedProjectSpecificRetrospectives:[],
             projectName: null,
             projectInfo: null,
             team:[],
@@ -30,7 +30,7 @@ class ManageTeam extends React.Component {
     }
 
     componentWillMount(){
-
+        /*All projects*/
         this.firebaseRef = firebase.database().ref('projects');
         this.firebaseRef.limitToLast(25).on('value', function (dataSnapshot) {
             var projects = [];
@@ -40,14 +40,12 @@ class ManageTeam extends React.Component {
                 projects.push(project);
             }.bind(this));
 
-            console.log('projects', projects);
-
             this.setState({
                 projects: projects
             });
         }.bind(this));
 
-
+        /*All users*/
         this.firebaseRef = firebase.database().ref('users');
         this.firebaseRef.limitToLast(25).on('value', function (dataSnapshot) {
             var users = [];
@@ -57,14 +55,34 @@ class ManageTeam extends React.Component {
                 users.push(user);
             }.bind(this));
 
-            console.log('users', users);
-
             this.setState({
                 users: users
             });
         }.bind(this));
 
+        /*Selected project specific retrospectives*/
+        this.firebaseRef = firebase.database().ref('retrospectives');
+        this.firebaseRef.limitToLast(25).on('value', function(dataSnapshot) {
+            var selectedProjectSpecificRetrospectives = [];
+            var retrospectives = [];
+            dataSnapshot.forEach(function(childSnapshot) {
+                var retrospective = childSnapshot.val();
+                retrospective['.key'] = childSnapshot.key;
+                retrospectives.push(retrospective);
+            }.bind(this));
 
+            for(var index=0; index < retrospectives.length; index++){
+                if(retrospectives[index].project_id == this.props.projectKeyForManageTeam){
+                    selectedProjectSpecificRetrospectives.push(retrospectives[index]);
+                }
+            }
+
+            this.setState({
+                selectedProjectSpecificRetrospectives: selectedProjectSpecificRetrospectives
+            });
+        }.bind(this));
+
+        /*Team of selected project*/
         this.firebaseRef = firebase.database().ref('projects/'+ this.props.projectKeyForManageTeam + '/team');
         this.firebaseRef.limitToLast(25).on('value', function (dataSnapshot) {
             var team = [];
@@ -73,8 +91,6 @@ class ManageTeam extends React.Component {
                 member['.key'] = childSnapshot.key;
                 team.push(member);
             }.bind(this));
-
-            console.log('team', team);
 
             this.setState({
                 team: team
@@ -91,23 +107,67 @@ class ManageTeam extends React.Component {
         this.props.actions.loadPage('/manageProject');
     }
     handle_Remove(key){
+        var teamKey_member = null;
+        var userSpecificRetro_removeKey = [];
+        var selectedProjectSpecificRetrospectives = this.state.selectedProjectSpecificRetrospectives;
+        for(var index=0; index < this.state.team.length; index++){
+            if(this.state.team[index].user == key){
+                teamKey_member = this.state.team[index]['.key'];
+                break;
+            }
+        }
         console.log("Team Member Remove Key:", key);
-        var path = "projects/"+ this.props.projectKeyForManageTeam + "/team/"+ key;
+
+        /*Remove or in-active member from project team*/
+        var path = "projects/"+ this.props.projectKeyForManageTeam + "/team/"+ teamKey_member;
         console.log("path:", path);
-        this.firebaseRef.child(key).remove();
+        var firebase_Ref = firebase.database().ref(path);
+        firebase_Ref.update({is_active_member: false});
+
+        /*Remove user specific retrospective*/
+        //var firebase_userSpecificRetro = firebase.database().ref('users/' + key + '/retrospectives');
+        //this.firebaseRef.child(key).remove();
+
+        this.firebase_userSpecificRetro = firebase.database().ref('users/' + key + '/retrospectives');
+        this.firebase_userSpecificRetro.limitToLast(25).on('value', function (dataSnapshot) {
+            var userSpecificRetros = [];
+            dataSnapshot.forEach(function (childSnapshot) {
+                var userSpecificRetro = childSnapshot.val();
+                userSpecificRetro['.key'] = childSnapshot.key;
+                userSpecificRetros.push(userSpecificRetro);
+            }.bind(this));
+
+            for(var i=0; i < selectedProjectSpecificRetrospectives.length; i++){
+                for(var j=0; j < userSpecificRetros.length; j++){
+                    if(!selectedProjectSpecificRetrospectives[i].is_completed){  //selected project ongoing retrospectives
+                        if(selectedProjectSpecificRetrospectives[i]['.key'] == userSpecificRetros[j].retrospective_id){
+                            userSpecificRetro_removeKey.push(userSpecificRetros[j]['.key']);
+                            break;
+                        }
+                    }
+                }
+            }
+            console.log("userSpecificRetro_removeKey",userSpecificRetro_removeKey);
+
+        }.bind(this));
+
+        for(var k=0; k < userSpecificRetro_removeKey.length; k++){
+            var firebase_removeUserSpecificRetro = firebase.database().ref('users/' + key + '/retrospectives');
+            firebase_removeUserSpecificRetro.child(userSpecificRetro_removeKey[k]).remove();
+        }
     }
 
     render(){
         var {selected_project_id,selected_project_name,projectKeyForManageTeam} = this.props;
         var {projects,team,users} = this.state;
         var teamList = null;
-        var dataList = [];
         var userDetails = [];
 
         if(team != 0 && users != 0){
             for(var index=0; index < team.length; index++){
                 for(var place=0; place < users.length; place++){
-                    if(team[index].user == users[place]['.key']){
+                    if(team[index].user == users[place]['.key'] && team[index].is_active_member == true){
+                        /*project team with only active members*/
                         userDetails.push(users[place]);
                         break;
                     }
@@ -126,7 +186,7 @@ class ManageTeam extends React.Component {
                 <Row style={{margin:"10px"}}>
                     <Table
                         rowHeight={50}
-                        rowsCount={team.length}
+                        rowsCount={userDetails.length}
                         width={1500}
                         maxHeight={500}
                         headerHeight={50}>
@@ -138,7 +198,7 @@ class ManageTeam extends React.Component {
                         />
                         <Column
                             header={<Cell style={{backgroundColor: '#484848',color:'#ffffff'}}> Role </Cell>}
-                            cell={<TextCell data={team} col="jobRole" />}
+                            cell={<TextCell data={userDetails} col="jobRole" />}
                             width={400}
                         />
                         <Column
@@ -148,7 +208,7 @@ class ManageTeam extends React.Component {
                         />
                         <Column
                             header={<Cell style={{backgroundColor: '#484848',color:'#ffffff'}}> Action </Cell>}
-                            cell={<TextCell data={team} col="remove" handle_Remove={this.handle_Remove.bind(this)} />}
+                            cell={<TextCell data={userDetails} col="remove" handle_Remove={this.handle_Remove.bind(this)} />}
                             width={300}
                         />
 

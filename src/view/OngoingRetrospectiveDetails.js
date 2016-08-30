@@ -81,7 +81,9 @@ class OngoingRetrospectiveDetails extends React.Component {
         if (retrospectives.length != 0 && userSpecificRetrospectives != 0) {
             for(var index = 0; index < userSpecificRetrospectives.length; index++){
                 for(var place=0; place < retrospectives.length; place++){
-                    if(userSpecificRetrospectives[index].retrospective_id == retrospectives[place]['.key']){
+                    if(userSpecificRetrospectives[index].retrospective_id == retrospectives[place]['.key']
+                        && retrospectives[place].is_completed == false)
+                    {
                         dataList.push(retrospectives[place]);
                     }
                 }
@@ -107,17 +109,22 @@ class OngoingRetrospectiveDetails extends React.Component {
                         <Column
                             header={<Cell style={{backgroundColor: '#484848', color:'#ffffff'}}> Sprint End Date </Cell>}
                             cell={<TextCell data={dataList} col="sprint_end_date" />}
-                            width={500}
+                            width={400}
+                        />
+                        <Column
+                            header={<Cell style={{backgroundColor: '#484848',color:'#ffffff'}}> Retrospective Date </Cell>}
+                            cell={<TextCell data={dataList} col="retrospective_date" />}
+                            width={400}
                         />
                         <Column
                             header={<Cell style={{backgroundColor: '#484848',color:'#ffffff'}}> Retrospective Time </Cell>}
                             cell={<TextCell data={dataList} col="retrospective_time" />}
-                            width={500}
+                            width={400}
                         />
                         <Column
                             header={<Cell style={{backgroundColor: '#484848',color:'#ffffff'}}> Action </Cell>}
                             cell={<TextCell data={dataList} col="view" handleView={this.handleView.bind(this)} />}
-                            width={500}
+                            width={300}
                         />
 
                     </Table>
