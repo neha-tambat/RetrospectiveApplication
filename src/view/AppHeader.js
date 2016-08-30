@@ -21,11 +21,35 @@ class AppHeader extends React.Component {
     constructor() {
         super();
         this.state = {
+            userSpecificProjects:[],
             projectName: null,
             projectId: null,
             userIconClick : false,
-            show: true
+            show: false
         };
+    }
+
+    componentWillMount(){
+        /*Logged in user specific projects*/
+        this.firebaseRef_userProjects = firebase.database().ref('users/' + this.props.loggedInUserDetails['.key'] + '/projects');
+        this.firebaseRef_userProjects.limitToLast(25).on('value', function (dataSnapshot) {
+            var userSpecificProjects = [];
+            var overlayShow = false;
+            dataSnapshot.forEach(function (childSnapshot) {
+                var user_project = childSnapshot.val();
+                user_project['.key'] = childSnapshot.key;
+                userSpecificProjects.push(user_project);
+            }.bind(this));
+
+            if(userSpecificProjects.length == 0){
+                overlayShow = true
+            }
+
+            this.setState({
+                userSpecificProjects: userSpecificProjects,
+                show: overlayShow
+            });
+        }.bind(this));
     }
 
     projectNameChange(event){

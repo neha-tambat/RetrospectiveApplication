@@ -79,11 +79,7 @@ class Dashboard extends React.Component {
     }
 
     addNotesToDatabase(){
-        var firebaseRef = firebase.database().ref('retrospectives/'+ this.props.retrospectiveKey_selected + '/notes/' + this.props.loggedInUserDetails['.key']);
-        //this.bindAsArray(firebaseRef.limitToLast(25), 'retrospectives/notes');
-
         this.firebaseRef1 = firebase.database().ref('retrospectives/'+ this.props.retrospectiveKey_selected + '/notes/' + this.props.loggedInUserDetails['.key']);
-
         this.firebaseRef1.limitToLast(25).on('value', function(dataSnapshot) {
             var notes = [];
             dataSnapshot.forEach(function(childSnapshot) {
@@ -91,8 +87,6 @@ class Dashboard extends React.Component {
                 note['.key'] = childSnapshot.key;
                 notes.push(note);
             }.bind(this));
-
-            console.log("notes : ", notes);
 
             this.setState({
                 notes: notes
@@ -105,11 +99,7 @@ class Dashboard extends React.Component {
             'retrospectives/'+ this.props.retrospectiveKey_selected + '/notes/public'
             : 'retrospectives/'+ this.props.retrospectiveKey_selected + '/notes/public/' + type;
 
-        var firebaseRef = firebase.database().ref(path );
-        //this.bindAsArray(firebaseRef.limitToLast(25), 'retrospectives/notes');
-
         this.firebaseRef1 = firebase.database().ref(path);
-
         this.firebaseRef1.limitToLast(25).on('value', function(dataSnapshot) {
             var notes = [];
             dataSnapshot.forEach(function(childSnapshot) {
@@ -117,8 +107,6 @@ class Dashboard extends React.Component {
                 note['.key'] = childSnapshot.key;
                 notes.push(note);
             }.bind(this));
-
-            console.log("notes : ", notes);
 
             this.setState({
                 notes: notes

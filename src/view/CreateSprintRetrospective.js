@@ -31,7 +31,7 @@ class CreateSprintRetrospective extends React.Component {
 
     componentWillMount(){
         /*All retrospectives*/
-        this.firebaseRef = firebase.database().ref('retrospectives');
+        this.firebaseRef_retrospectives = firebase.database().ref('retrospectives');
 
         /*All users*/
         this.firebaseRef_users = firebase.database().ref('users');
@@ -134,10 +134,10 @@ class CreateSprintRetrospective extends React.Component {
         };
 
         /*Add new retrospective to database*/
-        var new_retrospective = this.firebaseRef.push(retroRegister);
+        var new_retrospective = this.firebaseRef_retrospectives.push(retroRegister);
         console.log("new_retrospective",new_retrospective);
 
-        /*Add retrospective id to all active members in user list*/
+        /*Add retrospective id to all project team active members in user list*/
         for(var index=0; index < this.state.team.length; index++){
             if(this.state.team[index].is_active_member == true) {
                 var userKeyToAddRetrospective = this.state.team[index].user;

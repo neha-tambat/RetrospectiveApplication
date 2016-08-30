@@ -22,7 +22,7 @@ class LoggedInUserLandingPage extends React.Component {
     constructor() {
         super();
         this.state = {
-            projects: [], team:[],
+            team:[],
             menuIndex: 2,
             show : false,
             warningShow: false,
@@ -39,20 +39,6 @@ class LoggedInUserLandingPage extends React.Component {
         var screenSize = getScreenMode();
         console.log("screenSize : ", screenSize);
         this.props.actions.loadPage('/ongoingRetro');
-
-        /*this.firebaseRef = firebase.database().ref('projects');
-        this.firebaseRef.limitToLast(25).on('value', function (dataSnapshot) {
-            var projects = [];
-            dataSnapshot.forEach(function (childSnapshot) {
-                var project = childSnapshot.val();
-                project['.key'] = childSnapshot.key;
-                projects.push(project);
-            }.bind(this));
-
-            this.setState({
-                projects: projects
-            });
-        }.bind(this));*/
     }
 
     handleSelect(selectedKey) {
@@ -105,7 +91,7 @@ class LoggedInUserLandingPage extends React.Component {
     }
 
     render(){
-        var {leftDrawer,windowWidth,windowHeight,projectKeyForManageTeam,selected_project_id,selected_project_name} = this.props;
+        var {leftDrawer,windowWidth,windowHeight, loggedInUserDetails,projectKeyForManageTeam,selected_project_name} = this.props;
         console.log("windowWidth : ",windowWidth);
         console.log("windowHeight : ",windowHeight);
         var screenSize = getScreenMode();
@@ -164,7 +150,6 @@ const mapStateToProps = (state) => ({
     projectKeyForManageTeam: state.scrums.projectKeyForManageTeam,
     retrospectiveKey_selected: state.scrums.retrospectiveKey_selected,
     loggedInUserDetails: state.scrums.loggedInUserDetails,
-    selected_project_id: state.scrums.selected_project_id,
     selected_project_name: state.scrums.selected_project_name
 
 });

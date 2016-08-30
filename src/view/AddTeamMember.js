@@ -19,7 +19,7 @@ class AddTeamMember extends React.Component {
     constructor() {
         super();
         this.state = {
-            team: [], users:[], projects: [],
+            team: [], users:[], projects: [], selectedProjectSpecificOngoingRetrospectives:[],
             employeeName: null,
             employeeEmail: null,
             employeeJobRole: null,
@@ -62,6 +62,29 @@ class AddTeamMember extends React.Component {
             });
         }.bind(this));
 
+        /*Selected project specific retrospectives*/
+        this.firebaseRef = firebase.database().ref('retrospectives');
+        this.firebaseRef.limitToLast(25).on('value', function(dataSnapshot) {
+            var selectedProjectSpecificOngoingRetrospectives = [];
+            var retrospectives = [];
+            dataSnapshot.forEach(function(childSnapshot) {
+                var retrospective = childSnapshot.val();
+                retrospective['.key'] = childSnapshot.key;
+                retrospectives.push(retrospective);
+            }.bind(this));
+
+            for(var index=0; index < retrospectives.length; index++){
+                if(retrospectives[index].project_id == this.props.projectKeyForManageTeam
+                    && retrospectives[index].is_completed == false)
+                {
+                    selectedProjectSpecificOngoingRetrospectives.push(retrospectives[index]);
+                }
+            }
+
+            this.setState({
+                selectedProjectSpecificOngoingRetrospectives: selectedProjectSpecificOngoingRetrospectives
+            });
+        }.bind(this));
     }
 
     employeeName_Change(event){
@@ -90,9 +113,16 @@ class AddTeamMember extends React.Component {
                 is_active_member: true
             });
 
-            /*Add project id to user in user list*/
-            var firebaseRef = firebase.database().ref('users/' + this.state.userKey + '/projects');
-            firebaseRef.push({project_id: this.props.projectKeyForManageTeam});
+            /*Add project id to newly added member/user in user list*/
+            var firebaseRef_userProject = firebase.database().ref('users/' + this.state.userKey + '/projects');
+            firebaseRef_userProject.push({project_id: this.props.projectKeyForManageTeam});
+
+            /*Add ongoing retrospective id to newly added member/user in user list*/
+            for(var index=0; index < this.state.selectedProjectSpecificOngoingRetrospectives.length; index++){
+                var retro_id = this.state.selectedProjectSpecificOngoingRetrospectives[index]['.key'];
+                var firebaseRef_userRetrospective = firebase.database().ref('users/' + this.state.userKey + '/retrospectives');
+                firebaseRef_userRetrospective.push({retrospective_id: retro_id});
+            }
 
             /*Go to manage team page*/
             this.props.actions.loadPage('/manageTeam');
