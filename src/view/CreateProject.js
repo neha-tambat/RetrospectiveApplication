@@ -48,8 +48,8 @@ class CreateProject extends React.Component {
         console.log("new_project", new_project);
 
         /*Set key for created or selected project*/
-        this.props.actions.ManageTeamForProject_key({projectId: new_project.key});
-        /*this.props.actions.selectProject({ projectId: new_project.key });*/
+        var projectId = new_project.key;
+        this.props.actions.ManageTeamForProject_key(projectId);
 
         /*Add project id to user/project owner in user list*/
         var firebaseRef1 = firebase.database().ref('users/' + this.props.loggedInUserDetails['.key'] + '/projects');

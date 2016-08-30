@@ -33,6 +33,7 @@ class AddTeamMember extends React.Component {
     componentWillMount(){
         this.props.actions.windowSize();
 
+        /*All users*/
         this.firebaseRef_users = firebase.database().ref('users');
         this.firebaseRef_users.limitToLast(25).on('value', function (dataSnapshot) {
             var users = [];
@@ -47,6 +48,7 @@ class AddTeamMember extends React.Component {
             });
         }.bind(this));
 
+        /*All projects*/
         this.firebaseRef = firebase.database().ref('projects');
         this.firebaseRef.limitToLast(25).on('value', function (dataSnapshot) {
             // console.log("Tree for projects : ", 'projects');
@@ -120,8 +122,8 @@ class AddTeamMember extends React.Component {
             /*Add ongoing retrospective id to newly added member/user in user list*/
             for(var index=0; index < this.state.selectedProjectSpecificOngoingRetrospectives.length; index++){
                 var retro_id = this.state.selectedProjectSpecificOngoingRetrospectives[index]['.key'];
-                var firebaseRef_userRetrospective = firebase.database().ref('users/' + this.state.userKey + '/retrospectives');
-                firebaseRef_userRetrospective.push({retrospective_id: retro_id});
+                var firebaseRef_userRetrospective = firebase.database().ref('users/' + this.state.userKey + '/retrospectives/' + retro_id);
+                firebaseRef_userRetrospective.push({"retrospective_date": this.state.selectedProjectSpecificOngoingRetrospectives[index].retrospective_date});
             }
 
             /*Go to manage team page*/
@@ -145,6 +147,7 @@ class AddTeamMember extends React.Component {
         for(var index=0; index < projects.length; index++){
             if(projects[index]['.key'] == this.props.projectKeyForManageTeam){
                 selectedProjectName = projects[index].project_name;
+                break;
             }
         }
 

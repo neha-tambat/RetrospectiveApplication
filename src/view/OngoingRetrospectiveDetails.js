@@ -81,7 +81,7 @@ class OngoingRetrospectiveDetails extends React.Component {
         if (retrospectives.length != 0 && userSpecificRetrospectives != 0) {
             for(var index = 0; index < userSpecificRetrospectives.length; index++){
                 for(var place=0; place < retrospectives.length; place++){
-                    if(userSpecificRetrospectives[index].retrospective_id == retrospectives[place]['.key']
+                    if(userSpecificRetrospectives[index]['.key'] == retrospectives[place]['.key']
                         && retrospectives[place].is_completed == false)
                     {
                         dataList.push(retrospectives[place]);
