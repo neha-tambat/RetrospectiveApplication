@@ -21,7 +21,7 @@ class ManageTeam extends React.Component {
     constructor() {
         super();
         this.state = {
-            projects: [], selectedProjectSpecificRetrospectives:[],
+            projects: [], selectedProjectSpecificOngoingRetrospectives:[],
             projectName: null,
             projectInfo: null,
             team:[],
@@ -60,10 +60,10 @@ class ManageTeam extends React.Component {
             });
         }.bind(this));
 
-        /*Selected project specific retrospectives*/
+        /*Selected project specific ongoing retrospectives*/
         this.firebaseRef = firebase.database().ref('retrospectives');
         this.firebaseRef.limitToLast(25).on('value', function(dataSnapshot) {
-            var selectedProjectSpecificRetrospectives = [];
+            var selectedProjectSpecificOngoingRetrospectives = [];
             var retrospectives = [];
             dataSnapshot.forEach(function(childSnapshot) {
                 var retrospective = childSnapshot.val();
@@ -72,13 +72,15 @@ class ManageTeam extends React.Component {
             }.bind(this));
 
             for(var index=0; index < retrospectives.length; index++){
-                if(retrospectives[index].project_id == this.props.projectKeyForManageTeam){
-                    selectedProjectSpecificRetrospectives.push(retrospectives[index]);
+                if(retrospectives[index].project_id == this.props.projectKeyForManageTeam
+                    && retrospectives[index].is_completed == false)
+                {
+                    selectedProjectSpecificOngoingRetrospectives.push(retrospectives[index]);
                 }
             }
 
             this.setState({
-                selectedProjectSpecificRetrospectives: selectedProjectSpecificRetrospectives
+                selectedProjectSpecificOngoingRetrospectives: selectedProjectSpecificOngoingRetrospectives
             });
         }.bind(this));
 
@@ -109,7 +111,7 @@ class ManageTeam extends React.Component {
     handle_Remove(key){
         var teamKey_member = null;
         var userSpecificRetro_removeKey = [];
-        var selectedProjectSpecificRetrospectives = this.state.selectedProjectSpecificRetrospectives;
+        var selectedProjectSpecificOngoingRetrospectives = this.state.selectedProjectSpecificOngoingRetrospectives;
         for(var index=0; index < this.state.team.length; index++){
             if(this.state.team[index].user == key){
                 teamKey_member = this.state.team[index]['.key'];
@@ -124,36 +126,11 @@ class ManageTeam extends React.Component {
         var firebase_Ref = firebase.database().ref(path);
         firebase_Ref.update({is_active_member: false});
 
+
         /*Remove user specific retrospective*/
-        //var firebase_userSpecificRetro = firebase.database().ref('users/' + key + '/retrospectives');
-        //this.firebaseRef.child(key).remove();
-
-        this.firebase_userSpecificRetro = firebase.database().ref('users/' + key + '/retrospectives');
-        this.firebase_userSpecificRetro.limitToLast(25).on('value', function (dataSnapshot) {
-            var userSpecificRetros = [];
-            dataSnapshot.forEach(function (childSnapshot) {
-                var userSpecificRetro = childSnapshot.val();
-                userSpecificRetro['.key'] = childSnapshot.key;
-                userSpecificRetros.push(userSpecificRetro);
-            }.bind(this));
-
-            for(var i=0; i < selectedProjectSpecificRetrospectives.length; i++){
-                for(var j=0; j < userSpecificRetros.length; j++){
-                    if(!selectedProjectSpecificRetrospectives[i].is_completed){  //selected project ongoing retrospectives
-                        if(selectedProjectSpecificRetrospectives[i]['.key'] == userSpecificRetros[j].retrospective_id){
-                            userSpecificRetro_removeKey.push(userSpecificRetros[j]['.key']);
-                            break;
-                        }
-                    }
-                }
-            }
-            console.log("userSpecificRetro_removeKey",userSpecificRetro_removeKey);
-
-        }.bind(this));
-
-        for(var k=0; k < userSpecificRetro_removeKey.length; k++){
-            var firebase_removeUserSpecificRetro = firebase.database().ref('users/' + key + '/retrospectives');
-            firebase_removeUserSpecificRetro.child(userSpecificRetro_removeKey[k]).remove();
+        for(var m=0; m < selectedProjectSpecificOngoingRetrospectives.length; m++){
+            var firebase_userSpecificRetro = firebase.database().ref('users/' + key + '/retrospectives');
+            firebase_userSpecificRetro.child(selectedProjectSpecificOngoingRetrospectives[m]['.key']).remove();
         }
     }
 

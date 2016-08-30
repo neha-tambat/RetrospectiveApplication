@@ -141,8 +141,8 @@ class CreateSprintRetrospective extends React.Component {
         for(var index=0; index < this.state.team.length; index++){
             if(this.state.team[index].is_active_member == true) {
                 var userKeyToAddRetrospective = this.state.team[index].user;
-                var firebaseRef1 = firebase.database().ref('users/' + userKeyToAddRetrospective + '/retrospectives');
-                firebaseRef1.push({retrospective_id: new_retrospective.key});
+                var firebaseRef1 = firebase.database().ref('users/' + userKeyToAddRetrospective + '/retrospectives/'+ new_retrospective.key);
+                firebaseRef1.push({retrospective_date: this.state.retrospectiveDate});
             }
         }
 
