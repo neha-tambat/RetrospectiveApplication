@@ -25,17 +25,15 @@ class ProjectList extends React.Component {
     }
 
     componentWillMount() {
+        /*All projects*/
         this.firebaseRef = firebase.database().ref('projects');
         this.firebaseRef.limitToLast(25).on('value', function (dataSnapshot) {
-           // console.log("Tree for projects : ", 'projects');
             var projects = [];
             dataSnapshot.forEach(function (childSnapshot) {
                 var project = childSnapshot.val();
                 project['.key'] = childSnapshot.key;
                 projects.push(project);
             }.bind(this));
-
-            //console.log("projects : ", projects);
 
             this.setState({
                 projects: projects
@@ -79,8 +77,8 @@ class ProjectList extends React.Component {
                 <FormControl
                     componentClass="select"
                     placeholder="Project Name"
-                    //onChange={this.projectNameChange.bind(this)}
-                    readOnly="readOnly">
+                    onChange={this.projectNameChange.bind(this)}
+                >
 
                     <option value="select">Project Name</option>
                     {projectList}

@@ -19,7 +19,7 @@ class CreateSprintRetrospective extends React.Component {
     constructor(){
         super();
         this.state = {
-            userRoleInRetrospective: null, users:[], team:[],retrospectives:[], projects:[],
+            users:[], team:[],retrospectives:[],
             projectName : null,
             sprintTitle : null,
             startDate : null,
@@ -50,22 +50,6 @@ class CreateSprintRetrospective extends React.Component {
             });
         }.bind(this));
 
-        /*All projects*/
-        this.firebaseRef = firebase.database().ref('projects');
-        this.firebaseRef.limitToLast(25).on('value', function (dataSnapshot) {
-            // console.log("Tree for projects : ", 'projects');
-            var projects = [];
-            dataSnapshot.forEach(function (childSnapshot) {
-                var project = childSnapshot.val();
-                project['.key'] = childSnapshot.key;
-                projects.push(project);
-            }.bind(this));
-
-            this.setState({
-                projects: projects
-            });
-        }.bind(this));
-
         /*Team of selected project*/
         this.firebaseRef_team = firebase.database().ref('projects/'+ this.props.projectKeyForManageTeam + '/team');
         this.firebaseRef_team.limitToLast(25).on('value', function (dataSnapshot) {
@@ -84,9 +68,6 @@ class CreateSprintRetrospective extends React.Component {
         }.bind(this));
     }
 
-    userRoleInRetrospective(event){
-        this.setState({userRoleInRetrospective: event.target.value});
-    }
     projectNameChange(event){
         this.setState({projectName: event.target.value});
     }
@@ -152,29 +133,13 @@ class CreateSprintRetrospective extends React.Component {
 
 
     render(){
-        var {projects} = this.state;
-        var selectedProjectName = null;
-        for(var index=0; index < projects.length; index++){
-            if(projects[index]['.key'] == this.props.projectKeyForManageTeam){
-                selectedProjectName = projects[index].project_name;
-            }
-        }
-
         return(
             <Grid style={{margin:"100px"}}>
                 <Row>
                     <form className="retrospective-form">
-                        <FormGroup controlId="formControlsProjectName">
-                            <FormControl type="text" placeholder="Project Name" value={selectedProjectName} readOnly="readOnly" />
-                        </FormGroup>
-                        <FormGroup controlId="formControlsRoleInRetrospective">
-                            <ControlLabel>Role in retrospective</ControlLabel>
-                            <FormControl componentClass="select" placeholder="Select role" onChange={this.userRoleInRetrospective.bind(this)}>
-                                <option value="select">Select role</option>
-                                <option value="scrumMaster">Scrum Master</option>
-                                <option value="user">User</option>
-                            </FormControl>
-                        </FormGroup>
+
+                        <ProjectList />
+
                         <FormGroup controlId="formControlsSprintTitle">
                             <ControlLabel>Sprint Title</ControlLabel>
                             <FormControl type="text" onChange={this.sprintTitleChange.bind(this)}/>

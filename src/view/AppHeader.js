@@ -14,7 +14,6 @@ import firebase from 'firebase';
 import database from 'firebase/database';
 import auth from 'firebase/auth';
 import firebaseInit from '../firebase/firebaseInit';
-import ProjectList from './ProjectList';
 import {getScreenMode} from '../utils/index';
 
 class AppHeader extends React.Component {
@@ -127,11 +126,8 @@ class AppHeader extends React.Component {
                          style={{cursor:'pointer',textAlign:"center",fontSize:"20px", color:'white'}}
                          onClick={this.left_Drawer.bind(this)}> </div>
                 </Col>
-                <Col xs={5} md={5} style={{ color:"white",fontSize:20, marginTop:"20px"}}>
+                <Col xs={7} md={7} style={{ color:"white",fontSize:20, marginTop:"20px"}}>
                     <strong> LiveRetro </strong>
-                </Col>
-                <Col xs={2} md={2} style={{marginTop:"10px"}}>
-                   <ProjectList />
                 </Col>
                 <Col xs={2} md={2}>
                     <NavDropdown title={<Image src="../images/common.jpg" circle style={{width:"60px", height:"60px"}} />}

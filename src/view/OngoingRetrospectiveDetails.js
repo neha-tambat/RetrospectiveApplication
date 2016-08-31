@@ -26,11 +26,27 @@ class OngoingRetrospectiveDetails extends React.Component {
             warningShow: false,
             WaringHeaderMsg : 'Warning',
             modalBody_warning: 'Select project first and proceed.',
-            retrospectives: [], userSpecificRetrospectives:[]
+            retrospectives: [], userSpecificRetrospectives:[], projects: []
         };
     }
 
     componentWillMount(){
+        /*All projects*/
+        this.firebaseRef = firebase.database().ref('projects');
+        this.firebaseRef.limitToLast(25).on('value', function (dataSnapshot) {
+            var projects = [];
+            dataSnapshot.forEach(function (childSnapshot) {
+                var project = childSnapshot.val();
+                project['.key'] = childSnapshot.key;
+                projects.push(project);
+            }.bind(this));
+
+            this.setState({
+                projects: projects
+            });
+        }.bind(this));
+
+        /*All retrospectives*/
         this.firebaseRef = firebase.database().ref('retrospectives');
         this.firebaseRef.limitToLast(25).on('value', function(dataSnapshot) {
             //console.log("Tree for notes : ", 'retrospectives');
@@ -46,6 +62,7 @@ class OngoingRetrospectiveDetails extends React.Component {
             });
         }.bind(this));
 
+        /*User specific retrospectives*/
         this.firebaseRef_userRetrospectives = firebase.database().ref('users/' + this.props.loggedInUserDetails['.key'] + '/retrospectives');
         this.firebaseRef_userRetrospectives.limitToLast(25).on('value', function (dataSnapshot) {
             var userSpecificRetrospectives = [];
@@ -70,7 +87,7 @@ class OngoingRetrospectiveDetails extends React.Component {
 
     render(){
         var {selected_project_id,selected_project_name} = this.props;
-        var {retrospectives,userSpecificRetrospectives} = this.state;
+        var {retrospectives,userSpecificRetrospectives, projects} = this.state;
         var screenSize = getScreenMode();
         var dataList = [];
 
@@ -107,19 +124,24 @@ class OngoingRetrospectiveDetails extends React.Component {
                         headerHeight={50}>
 
                         <Column
+                            header={<Cell style={{backgroundColor: '#484848', color:'#ffffff'}}> Project Name </Cell>}
+                            cell={<TextCell data={dataList} project_data={projects} col="projectName" />}
+                            width={300}
+                        />
+                        <Column
                             header={<Cell style={{backgroundColor: '#484848', color:'#ffffff'}}> Sprint End Date </Cell>}
                             cell={<TextCell data={dataList} col="sprint_end_date" />}
-                            width={400}
+                            width={300}
                         />
                         <Column
                             header={<Cell style={{backgroundColor: '#484848',color:'#ffffff'}}> Retrospective Date </Cell>}
                             cell={<TextCell data={dataList} col="retrospective_date" />}
-                            width={400}
+                            width={300}
                         />
                         <Column
                             header={<Cell style={{backgroundColor: '#484848',color:'#ffffff'}}> Retrospective Time </Cell>}
                             cell={<TextCell data={dataList} col="retrospective_time" />}
-                            width={400}
+                            width={300}
                         />
                         <Column
                             header={<Cell style={{backgroundColor: '#484848',color:'#ffffff'}}> Action </Cell>}
