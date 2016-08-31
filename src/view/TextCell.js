@@ -41,10 +41,21 @@ class TextCell extends React.Component {
         this.props.handleManageTeam(key);
     }
 
+    select_Row(event){
+        var data = {
+            select_Row: event.currentTarget.id,
+            selectedRow_rowIndex: event.currentTarget.accessKey
+        };
+        this.props.handleSelect(data);
+    }
+
     render() {
-        const {rowIndex, col, data, columnKey, ...props} = this.props;
+        const {rowIndex, col, data, columnKey,selectRow,project_data, ...props} = this.props;
 
         var id = data[rowIndex]['.key'];
+        if(selectRow == id){
+            var background = "#337ab7";
+        }
 
         if(data == null || data.length == 0 || rowIndex > data.length){
             return(
@@ -62,13 +73,13 @@ class TextCell extends React.Component {
         if(col == "manage_team"){
             if(this.props.loggedInUserDetails['.key'] == data[rowIndex].owner){
                 return(
-                    <Cell {...props}>
+                    <Cell {...props} style={{backgroundColor:background}}>
                         <Button id={id} style={{backgroundColor:"#000000", color:"#ffffff"}} onClick={this.handleManageTeam.bind(this,id)}> Manage Team </Button>
                     </Cell>
                 );
             }else {
                 return(
-                    <Cell {...props}> - </Cell>
+                    <Cell {...props} id={id} style={{backgroundColor:background}}> - </Cell>
                 );
             }
         }
@@ -91,9 +102,21 @@ class TextCell extends React.Component {
                       className="glyphicon glyphicon-eye-open center-block" onClick={this.handleView.bind(this)}> </Cell>
             );
         }
+        if(col == "projectName"){
+            for(var k=0; k < project_data.length; k++){
+                if(data[rowIndex].project_id == project_data[k]['.key']){
+                    var projectName = project_data[k].project_name;
+                }
+            }
+            return(
+                <Cell {...props} id={project_data[rowIndex]['.key']} >
+                    {projectName}
+                </Cell>
+            );
+        }
 
         return(
-            <Cell {...props} id={id} style={{cursor:'pointer',textAlign:'center'}} accessKey={rowIndex} >
+            <Cell {...props} id={id} style={{cursor:'pointer',textAlign:'center',backgroundColor:background}} accessKey={rowIndex} onClick={this.select_Row.bind(this)}>
                 {data[rowIndex][col]}
             </Cell>
         );

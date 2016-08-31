@@ -23,7 +23,8 @@ class ManageProject extends React.Component {
     constructor(){
         super();
         this.state={
-            projects:[], userSpecificProjects:[]
+            projects:[], userSpecificProjects:[],
+            selectRow: null, selectedRow_rowIndex: null,
         };
     }
 
@@ -67,6 +68,13 @@ class ManageProject extends React.Component {
         this.props.actions.loadPage('/manageTeam');
     }
 
+    handle_Select(data){
+        /*Set key for selected project*/
+        this.props.actions.ManageTeamForProject_key(data.select_Row);
+
+        this.setState({selectRow : data.select_Row, selectedRow_rowIndex: data.selectedRow_rowIndex});
+    }
+
     render() {
         var {userSpecificProjects,projects} = this.state;
         var dataList = [];
@@ -100,17 +108,20 @@ class ManageProject extends React.Component {
 
                         <Column
                             header={<Cell style={{backgroundColor: '#484848', color:'#ffffff'}}> Project Name </Cell>}
-                            cell={<TextCell data={dataList} col="project_name" />}
+                            cell={<TextCell data={dataList} col="project_name"
+                            handleSelect={this.handle_Select.bind(this)} selectRow={this.state.selectRow} />}
                             width={500}
                         />
                         <Column
                             header={<Cell style={{backgroundColor: '#484848',color:'#ffffff'}}> Description </Cell>}
-                            cell={<TextCell data={dataList} col="description" />}
+                            cell={<TextCell data={dataList} col="description"
+                            handleSelect={this.handle_Select.bind(this)} selectRow={this.state.selectRow} />}
                             width={500}
                         />
                         <Column
                             header={<Cell style={{backgroundColor: '#484848',color:'#ffffff'}}> Action </Cell>}
-                            cell={<TextCell data={dataList} col="manage_team" handleManageTeam={this.handleManageTeam.bind(this)} />}
+                            cell={<TextCell data={dataList} col="manage_team"
+                            handleManageTeam={this.handleManageTeam.bind(this)} selectRow={this.state.selectRow} />}
                             width={500}
                         />
 

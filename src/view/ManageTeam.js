@@ -171,22 +171,17 @@ class ManageTeam extends React.Component {
                         <Column
                             header={<Cell style={{backgroundColor: '#484848', color:'#ffffff'}}> Employee Name </Cell>}
                             cell={<TextCell data={userDetails} col="full_name" />}
-                            width={400}
-                        />
-                        <Column
-                            header={<Cell style={{backgroundColor: '#484848',color:'#ffffff'}}> Role </Cell>}
-                            cell={<TextCell data={userDetails} col="jobRole" />}
-                            width={400}
+                            width={500}
                         />
                         <Column
                             header={<Cell style={{backgroundColor: '#484848',color:'#ffffff'}}> Email </Cell>}
                             cell={<TextCell data={userDetails} col="email" />}
-                            width={400}
+                            width={500}
                         />
                         <Column
                             header={<Cell style={{backgroundColor: '#484848',color:'#ffffff'}}> Action </Cell>}
                             cell={<TextCell data={userDetails} col="remove" handle_Remove={this.handle_Remove.bind(this)} />}
-                            width={300}
+                            width={500}
                         />
 
                     </Table>
