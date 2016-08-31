@@ -57,13 +57,27 @@ class Dashboard extends React.Component {
         if(tabId == 'myContribution'){
             this.myContributionClass = "active";
             this.teamContributionClass = "";
-            //this.props.actions.loadPage('/dashboard');
             this.addNotesToDatabase();
         }else{
             this.myContributionClass = "";
             this.teamContributionClass = "active";
-            //this.props.actions.loadPage('/dashboard');
-            this.addNotesToDatabase_publish();
+            var path = 'retrospectives/'+ this.props.retrospectiveKey_selected + '/notes/public/';
+
+            var firebaseRef = firebase.database().ref(path);
+            firebaseRef.limitToLast(25).on('value', function(dataSnapshot) {
+                var notes = [];
+                dataSnapshot.forEach(function(childSnapshot) {
+                    var note = childSnapshot.val();
+                    note['.key'] = childSnapshot.key;
+                    notes.push(note);
+                }.bind(this));
+
+                console.log("notes : ", notes);
+
+                this.setState({
+                    notes: notes
+                });
+            }.bind(this));
         }
     }
 
@@ -94,24 +108,11 @@ class Dashboard extends React.Component {
         }.bind(this));
     }
 
-    addNotesToDatabase_publish(type){
-        var path = (type == undefined) ?
-            'retrospectives/'+ this.props.retrospectiveKey_selected + '/notes/public'
-            : 'retrospectives/'+ this.props.retrospectiveKey_selected + '/notes/public/' + type;
+    addNotesToDatabase_publish(type, data){
+        var path = 'retrospectives/'+ this.props.retrospectiveKey_selected + '/notes/public/' + type;
 
-        this.firebaseRef1 = firebase.database().ref(path);
-        this.firebaseRef1.limitToLast(25).on('value', function(dataSnapshot) {
-            var notes = [];
-            dataSnapshot.forEach(function(childSnapshot) {
-                var note = childSnapshot.val();
-                note['.key'] = childSnapshot.key;
-                notes.push(note);
-            }.bind(this));
-
-            this.setState({
-                notes: notes
-            });
-        }.bind(this));
+        var firebaseRef = firebase.database().ref(path);
+        firebaseRef.push(data);
     }
 
     onPublish(event){
@@ -120,18 +121,18 @@ class Dashboard extends React.Component {
 
         if(this.state.start != "" ) {
             startObject_save = {note : this.state.start, username: this.props.loggedInUserDetails.full_name};
-            this.addNotesToDatabase_publish('start');
-            this.firebaseRef1.push(startObject_save);
+            this.addNotesToDatabase_publish('start', startObject_save);
+            //this.firebaseRef1.push(startObject_save);
         }
         if(this.state.stop != ""){
             stopObject_save = {note : this.state.stop, username: this.props.loggedInUserDetails.full_name};
-            this.addNotesToDatabase_publish('stop');
-            this.firebaseRef1.push(stopObject_save);
+            this.addNotesToDatabase_publish('stop', stopObject_save);
+            //this.firebaseRef1.push(stopObject_save);
         }
         if(this.state.continue != ""){
             continueObject_save = {note : this.state.continue, username: this.props.loggedInUserDetails.full_name};
-            this.addNotesToDatabase_publish('continue');
-            this.firebaseRef1.push(continueObject_save);
+            this.addNotesToDatabase_publish('continue', continueObject_save);
+            //this.firebaseRef1.push(continueObject_save);
         }
 
         //this.addNotesToDatabase_publish();
@@ -252,21 +253,71 @@ class Dashboard extends React.Component {
         var {retrospectiveKey_selected, loggedInUserDetails} = this.props;
         if(this.state.notes.length != 0 ){
             if(this.state.selectedTab == 'teamContribution'){
-                /*for(var index=0; index < this.state.notes.length; index++){
+                var startData_public = [];
+                var stopData_public = [];
+                var continueData_public = [];
+                for(var index=0; index < this.state.notes.length; index++){
+
                     if(this.state.notes[index]['.key'] == "start"){
-                        var startData_public = this.state.notes[index];
-                        //startData_public.push(this.state.notes[index]);
+                        var startData = this.state.notes[index];
+                        for (var key in startData){
+                            if (startData[key] != "start") {
+                                startData[key].key = key;
+                                startData_public.push(startData[key]);
+                            }
+                        }
                     }
-                }*/
+
+                    if(this.state.notes[index]['.key'] == "continue"){
+                        var continueData = this.state.notes[index];
+                        for (var key in continueData){
+                            if (continueData[key] != "continue") {
+                                continueData[key].key = key;
+                                continueData_public.push(continueData[key]);
+                            }
+                        }
+                    }
+
+                    if(this.state.notes[index]['.key'] == "stop"){
+                        var stopData = this.state.notes[index];
+                        for (var key in stopData){
+                            if (stopData[key] != "stop") {
+                                stopData[key].key = key;
+                                stopData_public.push(stopData[key]);
+                            }
+                        }
+                    }
+                }
                 var startData = startData_public.map((public_startData, index, key) => {
                     return (
                         <Row style={{margin:"10px",backgroundColor:"#72B53E",padding:"10px"}} id="start" key={index}>
                             <Col xs={10} md={10}> {public_startData.note} </Col>
                             <Col xs={2} md={2} className="glyphicon glyphicon-trash" title="start" style={{cursor:"pointer"}}
-                                 id={index} accessKey={public_startData['.key']} onClick={this.onDeleteNote.bind(this)}> </Col>
+                                 id={index} accessKey={public_startData.key} onClick={this.onDeleteNote.bind(this)}> </Col>
                         </Row>
                     );
                 });
+
+                var stopData = stopData_public.map((public_startData, index, key) => {
+                    return (
+                        <Row style={{margin:"10px",backgroundColor:"#F36576",padding:"10px"}} id="stop" key={index}>
+                            <Col xs={10} md={10}> {public_startData.note} </Col>
+                            <Col xs={2} md={2} className="glyphicon glyphicon-trash" title="stop" style={{cursor:"pointer"}}
+                                 id={index} accessKey={public_startData.key} onClick={this.onDeleteNote.bind(this)}> </Col>
+                        </Row>
+                    );
+                });
+
+                var continueData = continueData_public.map((public_startData, index, key) => {
+                    return (
+                        <Row style={{margin:"10px",backgroundColor:"#6593F1",padding:"10px"}} id="continue" key={index}>
+                            <Col xs={10} md={10}> {public_startData.note} </Col>
+                            <Col xs={2} md={2} className="glyphicon glyphicon-trash" title="continue" style={{cursor:"pointer"}}
+                                 id={index} accessKey={public_startData.key} onClick={this.onDeleteNote.bind(this)}> </Col>
+                        </Row>
+                    );
+                });
+
             }else{
                 var startData = this.state.notes.map((data,index,key) => {
                     if(data.startNotes != undefined){
@@ -284,41 +335,42 @@ class Dashboard extends React.Component {
                         );
                     }
                 });
-            }
 
-            var stopData = this.state.notes.map((data,index,key) => {
-                if(data.stopNotes != undefined){
-                    if(data.stopNotes.note == "NA"){
-                        return(
-                            undefined
+                var stopData = this.state.notes.map((data,index,key) => {
+                    if(data.stopNotes != undefined){
+                        if(data.stopNotes.note == "NA"){
+                            return(
+                                undefined
+                            );
+                        }
+                        return (
+                            <Row style={{margin:"10px",backgroundColor:"#F36576",padding:"10px"}} id="stop" key={index}>
+                                <Col xs={10} md={10}> {data.stopNotes.note} </Col>
+                                <Col xs={2} md={2} className="glyphicon glyphicon-trash" title="stop" style={{cursor:"pointer"}}
+                                     id={index} accessKey={data['.key']} onClick={this.onDeleteNote.bind(this)}> </Col>
+                            </Row>
                         );
                     }
-                    return (
-                        <Row style={{margin:"10px",backgroundColor:"#F36576",padding:"10px"}} id="stop" key={index}>
-                            <Col xs={10} md={10}> {data.stopNotes.note} </Col>
-                            <Col xs={2} md={2} className="glyphicon glyphicon-trash" title="stop" style={{cursor:"pointer"}}
-                                 id={index} accessKey={data['.key']} onClick={this.onDeleteNote.bind(this)}> </Col>
-                        </Row>
-                    );
-                }
-            });
-            var continueData = this.state.notes.map((data,index,key) => {
-                if(data.continueNotes != undefined){
-                    if(data.continueNotes.note == "NA"){
-                        return(
-                            undefined
+                });
+
+                var continueData = this.state.notes.map((data,index,key) => {
+                    if(data.continueNotes != undefined){
+                        if(data.continueNotes.note == "NA"){
+                            return(
+                                undefined
+                            );
+                        }
+                        return (
+                            <Row style={{margin:"10px",backgroundColor:"#6593F1",padding:"10px"}} id="continue" key={index}>
+                                <Col xs={10} md={10}> {data.continueNotes.note} </Col>
+                                <Col xs={2} md={2} className="glyphicon glyphicon-trash" title="continue"
+                                     style={{cursor:"pointer"}}
+                                     id={index} accessKey={data['.key']} onClick={this.onDeleteNote.bind(this)}> </Col>
+                            </Row>
                         );
                     }
-                    return (
-                        <Row style={{margin:"10px",backgroundColor:"#6593F1",padding:"10px"}} id="continue" key={index}>
-                            <Col xs={10} md={10}> {data.continueNotes.note} </Col>
-                            <Col xs={2} md={2} className="glyphicon glyphicon-trash" title="continue"
-                                 style={{cursor:"pointer"}}
-                                 id={index} accessKey={data['.key']} onClick={this.onDeleteNote.bind(this)}> </Col>
-                        </Row>
-                    );
-                }
-            });
+                });
+            }
         }
 
         var StartInputBox = (this.state.selectedTab == 'teamContribution') ? null :
