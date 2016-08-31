@@ -105,7 +105,7 @@ class ManageTeam extends React.Component {
         this.props.actions.loadPage('/addTeamMember');
     }
 
-    handleManageTeamCancel(){
+    handleManageTeamBack(){
         this.props.actions.loadPage('/manageProject');
     }
     handle_Remove(key){
@@ -189,18 +189,28 @@ class ManageTeam extends React.Component {
             );
         }
 
+        for(var h=0; h < projects.length; h++){
+            if(projectKeyForManageTeam == projects[h]['.key']){
+                var projectName = projects[h].project_name;
+            }
+        }
+
         return(
             <div>
                 <Row style={{margin:"10px"}}>
-                    <Button className="button" onClick={this.handleAddMemberToTeam.bind(this)}> Add </Button>
+                    <Col xs={4} md={4}>
+                        <Button className="button" onClick={this.handleManageTeamBack.bind(this)}> Back </Button>
+                    </Col>
+                    <Col xs={4} md={4} className="project-name" >
+                        {projectName}
+                    </Col>
+                    <Col xs={4} md={4}>
+                        <Button className="button" onClick={this.handleAddMemberToTeam.bind(this)}> Add </Button>
+                    </Col>
                 </Row>
 
                 {teamList}
 
-                <Row style={{margin:"10px"}}>
-                    <Button className="button"> Save Changes </Button>
-                    <Button className="button" onClick={this.handleManageTeamCancel.bind(this)}> Cancel </Button>
-                </Row>
             </div>
         );
     }

@@ -40,6 +40,9 @@ class TextCell extends React.Component {
     handleManageTeam(key){
         this.props.handleManageTeam(key);
     }
+    handleMore(retroId){
+        this.props.handleMore(retroId);
+    }
 
     select_Row(event){
         var data = {
@@ -66,7 +69,7 @@ class TextCell extends React.Component {
         if(col == "more"){
             return(
                 <Cell {...props}>
-                    <Button id={id} style={{backgroundColor:"#000000", color:"#ffffff"}}> More </Button>
+                    <Button id={id} className="button" onClick={this.handleMore.bind(this,id)}> More </Button>
                 </Cell>
             );
         }
@@ -74,7 +77,7 @@ class TextCell extends React.Component {
             if(this.props.loggedInUserDetails['.key'] == data[rowIndex].owner){
                 return(
                     <Cell {...props} style={{backgroundColor:background}}>
-                        <Button id={id} style={{backgroundColor:"#000000", color:"#ffffff"}} onClick={this.handleManageTeam.bind(this,id)}> Manage Team </Button>
+                        <Button id={id} className="button" onClick={this.handleManageTeam.bind(this,id)}> Manage Team </Button>
                     </Cell>
                 );
             }else {

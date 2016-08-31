@@ -101,7 +101,7 @@ class AppHeader extends React.Component {
                                     {loggedInUserDetails.email}
                                 </Row>
                                 <Row style={{marginBottom:'10px'}}>
-                                    <Button style={{color:'white', backgroundColor:'black'}} id={loggedInUserDetails}
+                                    <Button className="button" id={loggedInUserDetails}
                                             onClick={this.myProfile.bind(this)}> My Profile </Button>
                                 </Row>
                             </Col>
