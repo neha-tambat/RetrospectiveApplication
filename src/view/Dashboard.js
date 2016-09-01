@@ -32,10 +32,28 @@ class Dashboard extends React.Component {
     }
 
     componentWillMount(){
+
+        /*All retrospectives*/
+        this.firebaseRef = firebase.database().ref('retrospectives');
+        this.firebaseRef.limitToLast(25).on('value', function(dataSnapshot) {
+            console.log("Tree for notes : ", 'retrospectives');
+            var retrospectives = [];
+            dataSnapshot.forEach(function(childSnapshot) {
+                var retrospective = childSnapshot.val();
+                retrospective['.key'] = childSnapshot.key;
+                retrospectives.push(retrospective);
+            }.bind(this));
+
+            this.setState({
+                retrospectives: retrospectives
+            });
+        }.bind(this));
+
         var path = (this.state.selectedTab == 'myContribution') ?
         'retrospectives/'+ this.props.retrospectiveKey_selected + '/notes/' + this.props.loggedInUserDetails['.key'] :
         'retrospectives/'+ this.props.retrospectiveKey_selected + '/notes/public';
 
+        /*Notes of my contribution or team contribution*/
         this.firebaseRef = firebase.database().ref(path);
         this.firebaseRef.limitToLast(25).on('value', function(dataSnapshot) {
             var notes = [];
@@ -258,6 +276,14 @@ class Dashboard extends React.Component {
 
     render(){
         var {retrospectiveKey_selected, loggedInUserDetails} = this.props;
+        var {retrospectives} = this.state;
+
+        for(var k=0; k < retrospectives.length; k++){
+            if(retrospectives[k]['.key'] == retrospectiveKey_selected){
+                var selectedRetroStatus = retrospectives[k].is_completed;
+            }
+        }
+
         if(this.state.notes.length != 0 ){
             if(this.state.selectedTab == 'teamContribution'){
                 var startData_public = [];
@@ -295,6 +321,7 @@ class Dashboard extends React.Component {
                         }
                     }
                 }
+
                 var startData = startData_public.map((public_startData, index, key) => {
                     var type = "start";
                     var overlayShowStatus = false;
@@ -303,9 +330,9 @@ class Dashboard extends React.Component {
                     return (
                         <Row style={{margin:"10px",backgroundColor:"#72B53E",padding:"10px"}} id={type} key={index}>
                             <Col xs={10} md={10}> {public_startData.note} </Col>
-                            <OverlayTrigger trigger="click" placement="bottom"
+                            <OverlayTrigger trigger={['hover', 'focus']} placement="bottom"
                                             overlay={
-                                                <Popover id="popover-positioned-bottom">
+                                                <Popover id="popover-trigger-hover-focus">
                                                     {public_startData.username}
                                                 </Popover>
                                             }
@@ -316,8 +343,12 @@ class Dashboard extends React.Component {
                                     <span className="glyphicon glyphicon-info-sign" />
                                 </Col>
                             </OverlayTrigger>
-                            <Col xs={1} md={1} className="glyphicon glyphicon-trash" title={type} style={{cursor:"pointer"}}
-                                 id={index} accessKey={public_startData.key} onClick={this.onDeleteNote.bind(this)}> </Col>
+                            {
+                                (selectedRetroStatus) ? null :
+                                    <Col xs={1} md={1} className="glyphicon glyphicon-trash" title={type} style={{cursor:"pointer"}}
+                                        id={index} accessKey={public_startData.key} onClick={this.onDeleteNote.bind(this)}> </Col>
+                            }
+
                         </Row>
                     );
                 });
@@ -329,9 +360,9 @@ class Dashboard extends React.Component {
                     return (
                         <Row style={{margin:"10px",backgroundColor:"#F36576",padding:"10px"}} id={type} key={index}>
                             <Col xs={10} md={10}> {public_stopData.note} </Col>
-                            <OverlayTrigger trigger="click" placement="bottom"
+                            <OverlayTrigger trigger={['hover', 'focus']} placement="bottom"
                                             overlay={
-                                                <Popover id="popover-positioned-bottom">
+                                                <Popover id="popover-trigger-hover-focus">
                                                     {public_stopData.username}
                                                 </Popover>
                                             }
@@ -342,8 +373,12 @@ class Dashboard extends React.Component {
                                         <span className="glyphicon glyphicon-info-sign" />
                                 </Col>
                             </OverlayTrigger>
-                            <Col xs={1} md={1} className="glyphicon glyphicon-trash" title={type} style={{cursor:"pointer"}}
-                                 id={index} accessKey={public_stopData.key} onClick={this.onDeleteNote.bind(this)}> </Col>
+                            {
+                                (selectedRetroStatus) ? null :
+                                    <Col xs={1} md={1} className="glyphicon glyphicon-trash" title={type} style={{cursor:"pointer"}}
+                                         id={index} accessKey={public_stopData.key} onClick={this.onDeleteNote.bind(this)}> </Col>
+                            }
+
                         </Row>
                     );
                 });
@@ -355,9 +390,9 @@ class Dashboard extends React.Component {
                     return (
                         <Row style={{margin:"10px",backgroundColor:"#6593F1",padding:"10px"}} id={type} key={index}>
                             <Col xs={10} md={10}> {public_continueData.note} </Col>
-                            <OverlayTrigger trigger="click" placement="bottom"
+                            <OverlayTrigger trigger={['hover', 'focus']} placement="bottom"
                                             overlay={
-                                                <Popover id="popover-positioned-bottom">
+                                                <Popover id="popover-trigger-hover-focus">
                                                     {public_continueData.username}
                                                 </Popover>
                                             }
@@ -368,8 +403,12 @@ class Dashboard extends React.Component {
                                     <span className="glyphicon glyphicon-info-sign" />
                             </Col>
                             </OverlayTrigger>
-                            <Col xs={1} md={1} className="glyphicon glyphicon-trash" title={type} style={{cursor:"pointer"}}
-                                 id={index} accessKey={public_continueData.key} onClick={this.onDeleteNote.bind(this)}> </Col>
+                            {
+                                (selectedRetroStatus) ? null :
+                                    <Col xs={1} md={1} className="glyphicon glyphicon-trash" title={type} style={{cursor:"pointer"}}
+                                         id={index} accessKey={public_continueData.key} onClick={this.onDeleteNote.bind(this)}> </Col>
+                            }
+
                         </Row>
                     );
                 });
@@ -385,8 +424,12 @@ class Dashboard extends React.Component {
                         return (
                             <Row style={{margin:"10px",backgroundColor:"#72B53E",padding:"10px"}} id="start" key={index}>
                                 <Col xs={10} md={10}> {data.startNotes.note} </Col>
-                                <Col xs={2} md={2} className="glyphicon glyphicon-trash" title="start" style={{cursor:"pointer"}}
-                                     id={index} accessKey={data['.key']} onClick={this.onDeleteNote.bind(this)}> </Col>
+                                {
+                                    (selectedRetroStatus) ? null :
+                                        <Col xs={2} md={2} className="glyphicon glyphicon-trash" title="start" style={{cursor:"pointer"}}
+                                             id={index} accessKey={data['.key']} onClick={this.onDeleteNote.bind(this)}> </Col>
+                                }
+
                             </Row>
                         );
                     }
@@ -402,8 +445,12 @@ class Dashboard extends React.Component {
                         return (
                             <Row style={{margin:"10px",backgroundColor:"#F36576",padding:"10px"}} id="stop" key={index}>
                                 <Col xs={10} md={10}> {data.stopNotes.note} </Col>
-                                <Col xs={2} md={2} className="glyphicon glyphicon-trash" title="stop" style={{cursor:"pointer"}}
-                                     id={index} accessKey={data['.key']} onClick={this.onDeleteNote.bind(this)}> </Col>
+                                {
+                                    (selectedRetroStatus) ? null :
+                                        <Col xs={2} md={2} className="glyphicon glyphicon-trash" title="stop" style={{cursor:"pointer"}}
+                                             id={index} accessKey={data['.key']} onClick={this.onDeleteNote.bind(this)}> </Col>
+                                }
+
                             </Row>
                         );
                     }
@@ -419,9 +466,12 @@ class Dashboard extends React.Component {
                         return (
                             <Row style={{margin:"10px",backgroundColor:"#6593F1",padding:"10px"}} id="continue" key={index}>
                                 <Col xs={10} md={10}> {data.continueNotes.note} </Col>
-                                <Col xs={2} md={2} className="glyphicon glyphicon-trash" title="continue"
-                                     style={{cursor:"pointer"}}
-                                     id={index} accessKey={data['.key']} onClick={this.onDeleteNote.bind(this)}> </Col>
+                                {
+                                    (selectedRetroStatus) ? null :
+                                        <Col xs={2} md={2} className="glyphicon glyphicon-trash" title="continue" style={{cursor:"pointer"}}
+                                             id={index} accessKey={data['.key']} onClick={this.onDeleteNote.bind(this)}> </Col>
+                                }
+
                             </Row>
                         );
                     }
@@ -477,25 +527,33 @@ class Dashboard extends React.Component {
                 </Row>
             );
 
-        var Buttons = (this.state.selectedTab == 'teamContribution') ?
-            <Row style={{margin:"20px"}}>
-                <Col xs={3} md={3}> </Col>
-                <Col xs={6} md={6}>
-                    <Button type="submit" className="button"> Retrospective Scheduled </Button>
-                </Col>
-            </Row>
-            :
-            (
+
+
+        if(selectedRetroStatus){
+            var Buttons = <Row style={{margin:"20px"}}>
+                    <span style={{fontSize:"20px"}}> Retrospective completed... ! </span>
+                </Row>
+        }else {
+            var Buttons = (this.state.selectedTab == 'teamContribution') ?
                 <Row style={{margin:"20px"}}>
                     <Col xs={3} md={3}> </Col>
                     <Col xs={6} md={6}>
-                        <Button type="submit" className="button" id="save"
-                                onClick={this.onSave.bind(this)} style={{margin:"10px"}}> Save </Button>
-                        <Button type="submit" className="button" id="publish"
-                                onClick={this.onPublish.bind(this)} style={{margin:"10px"}}> Publish </Button>
+                        <Button type="submit" className="button"> Retrospective Scheduled </Button>
                     </Col>
                 </Row>
-            );
+                :
+                (
+                    <Row style={{margin:"20px"}}>
+                        <Col xs={3} md={3}> </Col>
+                        <Col xs={6} md={6}>
+                            <Button type="submit" className="button" id="save"
+                                    onClick={this.onSave.bind(this)} style={{margin:"10px"}}> Save </Button>
+                            <Button type="submit" className="button" id="publish"
+                                    onClick={this.onPublish.bind(this)} style={{margin:"10px"}}> Publish </Button>
+                        </Col>
+                    </Row>
+                );
+        }
 
         return(
             <div style={{textAlign: "center"}}>

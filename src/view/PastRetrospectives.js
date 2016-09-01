@@ -22,7 +22,7 @@ class PastRetrospectives extends React.Component {
     constructor() {
         super();
         this.state = {
-            retrospectives: [], projects: []
+            retrospectives: [], projects: [], userSpecificRetrospectives: []
         };
     }
 
@@ -57,22 +57,43 @@ class PastRetrospectives extends React.Component {
                 retrospectives: retrospectives
             });
         }.bind(this));
+
+        /*User specific retrospectives*/
+        this.firebaseRef_userRetrospectives = firebase.database().ref('users/' + this.props.loggedInUserDetails['.key'] + '/retrospectives');
+        this.firebaseRef_userRetrospectives.limitToLast(25).on('value', function (dataSnapshot) {
+            var userSpecificRetrospectives = [];
+            dataSnapshot.forEach(function (childSnapshot) {
+                var user_retrospective = childSnapshot.val();
+                user_retrospective['.key'] = childSnapshot.key;
+                userSpecificRetrospectives.push(user_retrospective);
+            }.bind(this));
+
+            console.log("userSpecificRetrospectives : ", userSpecificRetrospectives);
+
+            this.setState({
+                userSpecificRetrospectives: userSpecificRetrospectives
+            });
+        }.bind(this));
     }
 
     handleMore(retroId){
         console.log("retroId", retroId);
+        this.props.actions.RetrospectiveKey_selected(retroId);
         this.props.actions.loadPage('/dashboard');
     }
 
     render(){
         var {selected_project_id,selected_project_name,projectKeyForManageTeam} = this.props;
-        var {retrospectives, projects} = this.state;
+        var {retrospectives, projects, userSpecificRetrospectives} = this.state;
         var dataList = [];
-        if(retrospectives.length != 0){
-            for(var index=0; index < retrospectives.length; index++){
-                if(retrospectives[index].project_id == projectKeyForManageTeam && retrospectives[index].is_completed == true){
-                   /*Only past retrospectives*/
-                    dataList.push(retrospectives[index]);
+        if(retrospectives.length != 0 && userSpecificRetrospectives.length != 0){
+            for(var place=0; place < userSpecificRetrospectives.length; place++){
+                for(var index=0; index < retrospectives.length; index++){
+                    if(userSpecificRetrospectives[place]['.key'] == retrospectives[index]['.key']
+                        && retrospectives[index].is_completed == true){
+                        /*Only past user specific retrospectives*/
+                        dataList.push(retrospectives[index]);
+                    }
                 }
             }
         }
@@ -130,6 +151,7 @@ class PastRetrospectives extends React.Component {
 const mapStateToProps = (state) => ({
     projectKeyForManageTeam: state.scrums.projectKeyForManageTeam,
     retrospectiveKey_selected: state.scrums.retrospectiveKey_selected,
+    loggedInUserDetails: state.scrums.loggedInUserDetails,
     selected_project_id: state.scrums.selected_project_id,
     selected_project_name: state.scrums.selected_project_name
 });

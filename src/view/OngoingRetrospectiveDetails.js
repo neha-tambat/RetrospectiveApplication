@@ -91,16 +91,13 @@ class OngoingRetrospectiveDetails extends React.Component {
         var screenSize = getScreenMode();
         var dataList = [];
 
-        /*if(retrospectives.length != 0){
-            dataList = retrospectives;
-        }*/
-
         if (retrospectives.length != 0 && userSpecificRetrospectives.length != 0) {
             for(var index = 0; index < userSpecificRetrospectives.length; index++){
                 for(var place=0; place < retrospectives.length; place++){
                     if(userSpecificRetrospectives[index]['.key'] == retrospectives[place]['.key']
                         && retrospectives[place].is_completed == false)
                     {
+                        /*Only ongoing user specific retrospectives*/
                         dataList.push(retrospectives[place]);
                     }
                 }
