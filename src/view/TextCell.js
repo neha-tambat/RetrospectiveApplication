@@ -109,10 +109,11 @@ class TextCell extends React.Component {
             for(var k=0; k < project_data.length; k++){
                 if(data[rowIndex].project_id == project_data[k]['.key']){
                     var projectName = project_data[k].project_name;
+                    break;
                 }
             }
             return(
-                <Cell {...props} id={project_data[rowIndex]['.key']} >
+                <Cell {...props} id={project_data[k]['.key']} >
                     {projectName}
                 </Cell>
             );

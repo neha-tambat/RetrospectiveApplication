@@ -22,7 +22,7 @@ class PastRetrospectives extends React.Component {
     constructor() {
         super();
         this.state = {
-            retrospectives: [], projects: [], userSpecificRetrospectives: []
+            retrospectives: [], projects: [], userSpecificRetrospectives: [], userSpecificProjects: []
         };
     }
 
@@ -74,6 +74,21 @@ class PastRetrospectives extends React.Component {
                 userSpecificRetrospectives: userSpecificRetrospectives
             });
         }.bind(this));
+
+        /*Logged in user specific projects*/
+        this.firebaseRef_userProjects = firebase.database().ref('users/' + this.props.loggedInUserDetails['.key'] + '/projects');
+        this.firebaseRef_userProjects.limitToLast(25).on('value', function (dataSnapshot) {
+            var userSpecificProjects = [];
+            dataSnapshot.forEach(function (childSnapshot) {
+                var user_project = childSnapshot.val();
+                user_project['.key'] = childSnapshot.key;
+                userSpecificProjects.push(user_project);
+            }.bind(this));
+
+            this.setState({
+                userSpecificProjects: userSpecificProjects
+            });
+        }.bind(this));
     }
 
     handleMore(retroId){
@@ -84,7 +99,7 @@ class PastRetrospectives extends React.Component {
 
     render(){
         var {selected_project_id,selected_project_name,projectKeyForManageTeam} = this.props;
-        var {retrospectives, projects, userSpecificRetrospectives} = this.state;
+        var {retrospectives, projects, userSpecificRetrospectives, userSpecificProjects} = this.state;
         var dataList = [];
         if(retrospectives.length != 0 && userSpecificRetrospectives.length != 0){
             for(var place=0; place < userSpecificRetrospectives.length; place++){
@@ -93,6 +108,18 @@ class PastRetrospectives extends React.Component {
                         && retrospectives[index].is_completed == true){
                         /*Only past user specific retrospectives*/
                         dataList.push(retrospectives[index]);
+                    }
+                }
+            }
+        }
+
+        var userProjects = [];
+        if (projects.length != 0 && userSpecificProjects != 0) {
+            for(var i = 0; i < userSpecificProjects.length; i++){
+                for(var p=0; p < projects.length; p++){
+                    if(userSpecificProjects[i].project_id == projects[p]['.key']){
+                        /*User specific project list*/
+                        userProjects.push(projects[p]);
                     }
                 }
             }
@@ -116,7 +143,7 @@ class PastRetrospectives extends React.Component {
 
                         <Column
                             header={<Cell style={{backgroundColor: '#484848', color:'#ffffff'}}> Project Name </Cell>}
-                            cell={<TextCell data={dataList} project_data={projects} col="projectName" />}
+                            cell={<TextCell data={dataList} project_data={userProjects} col="projectName" />}
                             width={300}
                         />
                         <Column
