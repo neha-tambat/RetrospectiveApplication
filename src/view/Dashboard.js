@@ -5,7 +5,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import {Navbar, Nav,NavItem,Input,Image,Button,Grid,Row,Col,FormGroup,FormControl,ControlLabel} from 'react-bootstrap';
+import {Navbar, Nav,NavItem,Input,Image,Button,Grid,Row,Col,FormGroup,FormControl,ControlLabel,Tooltip,Overlay,Popover, OverlayTrigger} from 'react-bootstrap';
 import _ from 'lodash';
 import * as scrumsActionCreator from '../actions/scrums/index';
 import reactMixin from 'react-mixin';
@@ -24,7 +24,8 @@ class Dashboard extends React.Component {
             selectedTab: 'myContribution',
             start: "", stop: "", continue: "",
             notes:[], retrospectives: [],
-            matchedProjectIDKey: null
+            matchedProjectIDKey: null,
+            userInfoDisplay: false, userInfoForTitle: null, userInfoForIndex: null
         };
         this.myContributionClass = 'active';
         this.teamContributionClass = '';
@@ -249,6 +250,12 @@ class Dashboard extends React.Component {
         //this.firebaseRef.child(key).remove();
     }
 
+    setUserInfoDisplay(event){
+        var title = event.target.title;
+        var index = event.target.id;
+        this.setState({userInfoDisplay: true, userInfoForTitle: title, userInfoForIndex: index});
+    }
+
     render(){
         var {retrospectiveKey_selected, loggedInUserDetails} = this.props;
         if(this.state.notes.length != 0 ){
@@ -289,31 +296,80 @@ class Dashboard extends React.Component {
                     }
                 }
                 var startData = startData_public.map((public_startData, index, key) => {
+                    var type = "start";
+                    var overlayShowStatus = false;
+                    overlayShowStatus = (this.state.userInfoForTitle == type && this.state.userInfoForIndex == index);
+
                     return (
-                        <Row style={{margin:"10px",backgroundColor:"#72B53E",padding:"10px"}} id="start" key={index}>
+                        <Row style={{margin:"10px",backgroundColor:"#72B53E",padding:"10px"}} id={type} key={index}>
                             <Col xs={10} md={10}> {public_startData.note} </Col>
-                            <Col xs={2} md={2} className="glyphicon glyphicon-trash" title="start" style={{cursor:"pointer"}}
+                            <OverlayTrigger trigger="click" placement="bottom"
+                                            overlay={
+                                                <Popover id="popover-positioned-bottom">
+                                                    {public_startData.username}
+                                                </Popover>
+                                            }
+                            >
+                                <Col xs={1} md={1} title={type} style={{cursor:"pointer"}}
+                                     id={index} accesskey={public_startData.key} name={public_startData.username}
+                                     onClick={this.setUserInfoDisplay.bind(this)}>
+                                    <span className="glyphicon glyphicon-info-sign" />
+                                </Col>
+                            </OverlayTrigger>
+                            <Col xs={1} md={1} className="glyphicon glyphicon-trash" title={type} style={{cursor:"pointer"}}
                                  id={index} accessKey={public_startData.key} onClick={this.onDeleteNote.bind(this)}> </Col>
                         </Row>
                     );
                 });
 
-                var stopData = stopData_public.map((public_startData, index, key) => {
+                var stopData = stopData_public.map((public_stopData, index, key) => {
+                    var type = "stop";
+                    var overlayShowStatus = false;
+                    overlayShowStatus = (this.state.userInfoForTitle == type && this.state.userInfoForIndex == index);
                     return (
-                        <Row style={{margin:"10px",backgroundColor:"#F36576",padding:"10px"}} id="stop" key={index}>
-                            <Col xs={10} md={10}> {public_startData.note} </Col>
-                            <Col xs={2} md={2} className="glyphicon glyphicon-trash" title="stop" style={{cursor:"pointer"}}
-                                 id={index} accessKey={public_startData.key} onClick={this.onDeleteNote.bind(this)}> </Col>
+                        <Row style={{margin:"10px",backgroundColor:"#F36576",padding:"10px"}} id={type} key={index}>
+                            <Col xs={10} md={10}> {public_stopData.note} </Col>
+                            <OverlayTrigger trigger="click" placement="bottom"
+                                            overlay={
+                                                <Popover id="popover-positioned-bottom">
+                                                    {public_stopData.username}
+                                                </Popover>
+                                            }
+                            >
+                                <Col xs={1} md={1} title={type} style={{cursor:"pointer"}}
+                                     id={index} accesskey={public_stopData.key} name={public_stopData.username}
+                                     onClick={this.setUserInfoDisplay.bind(this)}>
+                                        <span className="glyphicon glyphicon-info-sign" />
+                                </Col>
+                            </OverlayTrigger>
+                            <Col xs={1} md={1} className="glyphicon glyphicon-trash" title={type} style={{cursor:"pointer"}}
+                                 id={index} accessKey={public_stopData.key} onClick={this.onDeleteNote.bind(this)}> </Col>
                         </Row>
                     );
                 });
 
-                var continueData = continueData_public.map((public_startData, index, key) => {
+                var continueData = continueData_public.map((public_continueData, index, key) => {
+                    var type = "continue";
+                    var overlayShowStatus = false;
+                    overlayShowStatus = (this.state.userInfoForTitle == type && this.state.userInfoForIndex == index);
                     return (
-                        <Row style={{margin:"10px",backgroundColor:"#6593F1",padding:"10px"}} id="continue" key={index}>
-                            <Col xs={10} md={10}> {public_startData.note} </Col>
-                            <Col xs={2} md={2} className="glyphicon glyphicon-trash" title="continue" style={{cursor:"pointer"}}
-                                 id={index} accessKey={public_startData.key} onClick={this.onDeleteNote.bind(this)}> </Col>
+                        <Row style={{margin:"10px",backgroundColor:"#6593F1",padding:"10px"}} id={type} key={index}>
+                            <Col xs={10} md={10}> {public_continueData.note} </Col>
+                            <OverlayTrigger trigger="click" placement="bottom"
+                                            overlay={
+                                                <Popover id="popover-positioned-bottom">
+                                                    {public_continueData.username}
+                                                </Popover>
+                                            }
+                            >
+                            <Col xs={1} md={1} title={type} style={{cursor:"pointer"}}
+                                 id={index} accesskey={public_continueData.key} name={public_continueData.username}
+                                 onClick={this.setUserInfoDisplay.bind(this)}>
+                                    <span className="glyphicon glyphicon-info-sign" />
+                            </Col>
+                            </OverlayTrigger>
+                            <Col xs={1} md={1} className="glyphicon glyphicon-trash" title={type} style={{cursor:"pointer"}}
+                                 id={index} accessKey={public_continueData.key} onClick={this.onDeleteNote.bind(this)}> </Col>
                         </Row>
                     );
                 });
@@ -425,9 +481,7 @@ class Dashboard extends React.Component {
             <Row style={{margin:"20px"}}>
                 <Col xs={3} md={3}> </Col>
                 <Col xs={6} md={6}>
-                    <Button type="submit" style={{backgroundColor:"#484848", width:"250px", margin:"10px"}}>
-                        <span style={{color:"white", fontSize:"18px"}}> <strong>Retrospective Scheduled</strong> </span>
-                    </Button>
+                    <Button type="submit" className="button"> Retrospective Scheduled </Button>
                 </Col>
             </Row>
             :
@@ -435,12 +489,10 @@ class Dashboard extends React.Component {
                 <Row style={{margin:"20px"}}>
                     <Col xs={3} md={3}> </Col>
                     <Col xs={6} md={6}>
-                        <Button type="submit" style={{backgroundColor:"#484848", width:"150px", margin:"10px"}} id="save" onClick={this.onSave.bind(this)}>
-                            <span style={{color:"white", fontSize:"18px"}}> <strong>Save</strong> </span>
-                        </Button>
-                        <Button type="submit" style={{backgroundColor:"#484848", width:"150px", margin:"10px"}} id="publish" onClick={this.onPublish.bind(this)} >
-                            <span style={{color:"white", fontSize:"18px"}}> <strong>Publish</strong> </span>
-                        </Button>
+                        <Button type="submit" className="button" id="save"
+                                onClick={this.onSave.bind(this)} style={{margin:"10px"}}> Save </Button>
+                        <Button type="submit" className="button" id="publish"
+                                onClick={this.onPublish.bind(this)} style={{margin:"10px"}}> Publish </Button>
                     </Col>
                 </Row>
             );
@@ -450,14 +502,14 @@ class Dashboard extends React.Component {
 
                 <Row style={{cursor:'pointer', textAlign: "center", margin:'10px'}}>
                     <ul className="nav nav-tabs nav-justified">
-                        <li className={this.ruleClass} style={{ backgroundColor:(this.myContributionClass == "active")? "#000000" : "#6A6A6A"}}>
+                        <li className={this.myContributionClass} style={{ backgroundColor:(this.myContributionClass == "active")? "#000000" : "#6A6A6A"}}>
                             <div onClick={this.onTabSelect.bind(this,'myContribution')} style={{fontSize:16 ,margin:15}}>
                                 <a data toggle="tab" style={{color:"white"}}>
                                     <b> My Contribution </b>
                                 </a>
                             </div>
                         </li>
-                        <li className={this.ruleClass} style={{ backgroundColor:(this.teamContributionClass == "active")? "#000000" : "#6A6A6A"}}>
+                        <li className={this.teamContributionClass} style={{ backgroundColor:(this.teamContributionClass == "active")? "#000000" : "#6A6A6A"}}>
                             <div onClick={this.onTabSelect.bind(this,'teamContribution')} style={{fontSize:16 ,margin:15}}>
                                 <a data toggle="tab" style={{color:"white"}}>
                                     <b> Team Contribution </b>

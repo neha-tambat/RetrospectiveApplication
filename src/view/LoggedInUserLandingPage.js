@@ -42,34 +42,16 @@ class LoggedInUserLandingPage extends React.Component {
     }
 
     handleSelect(selectedKey) {
-        if(this.props.projectKeyForManageTeam == null){
-            this.setState({warningShow: true});
-        }else {
-            console.log("Selected project : ", this.props.projectKeyForManageTeam);
-            var tab;
-            if(selectedKey == "1"){
-                tab = "createSprintRetro";
-            }else if(selectedKey == "2"){
-                tab = "ongoingRetro";
-            }else if(selectedKey == "3"){
-                tab = "pastRetro";
-            }
-
-            this.props.actions.loadPage('/'+tab);
-            this.setState({menuIndex  : selectedKey});
+        var tab;
+        if(selectedKey == "1"){
+            tab = "createSprintRetro";
+        }else if(selectedKey == "2"){
+            tab = "ongoingRetro";
+        }else if(selectedKey == "3"){
+            tab = "pastRetro";
         }
-    }
-
-    onHide(){
-        this.setState({show:false});
-    }
-    onWarningHide(){
-        this.setState({warningShow: false});
-    }
-
-    modalSubmit(){
-        console.log("Warning message : Select project first and proceed.");
-        this.setState({warningShow: false});
+        this.props.actions.loadPage('/'+tab);
+        this.setState({menuIndex  : selectedKey});
     }
 
     myProfile(){
@@ -127,15 +109,6 @@ class LoggedInUserLandingPage extends React.Component {
                             {this.props.children}
                         </Row>
                     </Col>
-                </Row>
-                <Row>
-                    <WarningModalBox
-                        showModal={this.state.warningShow}
-                        onWarningHide={this.onWarningHide.bind(this)}
-                        headerMsg= {this.state.WaringHeaderMsg}
-                        modalbody={this.state.modalBody_warning}
-                        onWarningModalSubmit ={this.modalSubmit.bind(this)}
-                    />
                 </Row>
             </div>
         );

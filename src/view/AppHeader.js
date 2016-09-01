@@ -21,8 +21,6 @@ class AppHeader extends React.Component {
         super();
         this.state = {
             userSpecificProjects:[],
-            projectName: null,
-            projectId: null,
             userIconClick : false,
             show: false
         };
@@ -67,7 +65,7 @@ class AppHeader extends React.Component {
     }
     createProject(){
         this.props.createProject();
-        this.setState({userIconClick : false});
+        this.setState({userIconClick : false, show: false});
     }
     manageProject(){
         this.props.manageProject();
@@ -135,8 +133,14 @@ class AppHeader extends React.Component {
                                  onClick={this.handleUser.bind(this)} >
                             {userIconClickList}
                     </NavDropdown>
-                    <Overlay show={this.state.show} onHide={() => this.setState({ show: false })} placement="bottom">
-                        <Tooltip id="overload-bottom" style={{marginLeft:"1680px", marginTop:"60px"}}>Go to Create Project first.</Tooltip>
+                    <Overlay show={this.state.show} style={{backgroundColor:"#ffffff"}} onHide={() => this.setState({ show: false })} placement="bottom">
+                        <Tooltip id="overload-bottom" style={{marginLeft:"1680px", marginTop:"60px"}}>
+                            <p style={{margin:"5px",fontSize:"15px"}}>
+                                You have not projects assigned to you. <a onClick={this.createProject.bind(this)} style={{cursor:'pointer',color:'#ffffff'}}>
+                                    <strong> Create </strong>
+                                </a> Project first.
+                            </p>
+                        </Tooltip>
                     </Overlay>
                 </Col>
             </Row>

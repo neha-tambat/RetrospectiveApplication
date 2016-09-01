@@ -110,7 +110,7 @@ class OngoingRetrospectiveDetails extends React.Component {
         if(dataList.length == 0){
             return(
                 <div style={{margin:"10px", fontSize:"20px"}}>
-                    No retrospectives to display.
+                    No ongoing retrospectives to display.
                 </div>
             );
         }else {
