@@ -18,7 +18,7 @@ class CreateProject extends React.Component {
     constructor() {
         super();
         this.state = {
-            projects:[], team:[],
+           // projects:[], team:[],
             projectName: null,
             projectInfo: null
         };

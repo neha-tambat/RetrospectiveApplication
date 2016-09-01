@@ -23,11 +23,8 @@ class RetrospectiveList extends React.Component {
     }
 
     componentWillMount(){
-        var firebaseRef = firebase.database().ref('retrospectives');
-        //this.bindAsArray(firebaseRef.limitToLast(25), 'retrospectives');
-
+        /*All retrospectives*/
         this.firebaseRef = firebase.database().ref('retrospectives');
-
         this.firebaseRef.limitToLast(25).on('value', function(dataSnapshot) {
             var retrospectives = [];
             dataSnapshot.forEach(function(childSnapshot) {
@@ -35,8 +32,6 @@ class RetrospectiveList extends React.Component {
                 retrospective['.key'] = childSnapshot.key;
                 retrospectives.push(retrospective);
             }.bind(this));
-
-            //console.log("retrospectives : ", retrospectives);
 
             this.setState({
                 retrospectives: retrospectives
@@ -46,7 +41,6 @@ class RetrospectiveList extends React.Component {
 
     render(){
         var {retrospectives} = this.state;
-        //console.log("RetrospectiveList : ", retrospectives);
 
         return(
             retrospectives

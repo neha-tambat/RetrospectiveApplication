@@ -1,6 +1,11 @@
 body{
     background-color: #999988;
 }
+.welcome-note{
+    color: #ffffff;
+    font-size: 50px;
+    margin: 700px;
+}
 
 /*.logo{
     width: 100%;
@@ -71,7 +76,7 @@ body{
     padding: 30px;
 }
 
-.myProfile-form{
+.myProfile-form-lg{
     background-color: #E6E6E6;
     border-radius: 10px;
     width: 600px;
@@ -79,7 +84,13 @@ body{
     padding: 30px;
     text-align: left;
 }
-
+.myProfile-form-md{
+    background-color: #E6E6E6;
+    border-radius: 10px;
+    width: 600px;
+    padding: 30px;
+    text-align: left;
+}
 .retrospective-form{
     background-color: #E6E6E6;
     border-radius: 10px;

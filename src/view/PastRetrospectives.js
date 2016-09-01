@@ -45,7 +45,6 @@ class PastRetrospectives extends React.Component {
         /*All retrospectives*/
         this.firebaseRef = firebase.database().ref('retrospectives');
         this.firebaseRef.limitToLast(25).on('value', function(dataSnapshot) {
-            console.log("Tree for notes : ", 'retrospectives');
             var retrospectives = [];
             dataSnapshot.forEach(function(childSnapshot) {
                 var retrospective = childSnapshot.val();
@@ -67,8 +66,6 @@ class PastRetrospectives extends React.Component {
                 user_retrospective['.key'] = childSnapshot.key;
                 userSpecificRetrospectives.push(user_retrospective);
             }.bind(this));
-
-            console.log("userSpecificRetrospectives : ", userSpecificRetrospectives);
 
             this.setState({
                 userSpecificRetrospectives: userSpecificRetrospectives

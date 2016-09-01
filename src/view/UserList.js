@@ -23,6 +23,7 @@ class UserList extends React.Component {
     }
 
     componentWillMount(){
+        /*All users*/
         this.firebaseRef = firebase.database().ref('users');
         this.firebaseRef.limitToLast(25).on('value', function(dataSnapshot) {
             var users = [];
@@ -32,8 +33,6 @@ class UserList extends React.Component {
                 users.push(user);
             }.bind(this));
 
-            //console.log("users : ", users);
-
             this.setState({
                 users: users
             });
@@ -42,7 +41,6 @@ class UserList extends React.Component {
 
     render(){
         var {users} = this.state;
-        //console.log("UserList : ", users);
 
         return(
             users

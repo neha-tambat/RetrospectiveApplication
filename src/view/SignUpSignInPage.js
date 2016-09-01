@@ -46,6 +46,7 @@ class SignUpSignInPage extends React.Component {
             <Grid fluid={true}>
                 <SignUpSignInPageHeader handleSignUp={this.handleSignUp.bind(this)} handleLogin={this.handleLogin.bind(this)} />
                 <div className="main-image">
+                    <span className="welcome-note"> Welcome To LiveRetro!</span>
                     {this.props.children}
                 </div>
             </Grid>

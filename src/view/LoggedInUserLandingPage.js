@@ -56,12 +56,15 @@ class LoggedInUserLandingPage extends React.Component {
 
     myProfile(){
         this.props.actions.loadPage('/myProfile');
+        this.setState({menuIndex: 0});
     }
     createProject(){
         this.props.actions.loadPage('/createProject');
+        this.setState({menuIndex: 0});
     }
     manageProject(){
         this.props.actions.loadPage('/manageProject');
+        this.setState({menuIndex: 0});
     }
     logout(event){
         firebaseUtils.SignOut(this.callBack.bind(this));
