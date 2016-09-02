@@ -53,25 +53,6 @@ class CreateSprintRetrospective extends React.Component {
                 users: users, today: todayDate
             });
         }.bind(this));
-
-        /*/!*Team of selected project*!/
-        this.firebaseRef_team = firebase.database().ref('projects/'+ this.props.projectKeyForManageTeam + '/team');
-        this.firebaseRef_team.limitToLast(25).on('value', function (dataSnapshot) {
-            var team = [];
-            dataSnapshot.forEach(function (childSnapshot) {
-                var member = childSnapshot.val();
-                member['.key'] = childSnapshot.key;
-                team.push(member);
-            }.bind(this));
-
-            /!*Today's date*!/
-            var todayDate = moment(new Date()).format("YYYY-MM-DD HH:mm:ss");
-
-            this.setState({
-                team: team, today: todayDate
-            });
-        }.bind(this));*/
-
     }
 
     projectNameChange(event){

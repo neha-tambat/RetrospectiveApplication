@@ -82,6 +82,7 @@ class Dashboard extends React.Component {
             this.teamContributionClass = "active";
             var path = 'retrospectives/'+ this.props.retrospectiveKey_selected + '/notes/public/';
 
+            /*Notes of team contribution*/
             var firebaseRef = firebase.database().ref(path);
             firebaseRef.limitToLast(25).on('value', function(dataSnapshot) {
                 var notes = [];
@@ -90,8 +91,6 @@ class Dashboard extends React.Component {
                     note['.key'] = childSnapshot.key;
                     notes.push(note);
                 }.bind(this));
-
-                console.log("notes : ", notes);
 
                 this.setState({
                     notes: notes
@@ -274,6 +273,7 @@ class Dashboard extends React.Component {
         this.setState({userInfoDisplay: true, userInfoForTitle: title, userInfoForIndex: index});
     }
 
+
     render(){
         var {retrospectiveKey_selected, loggedInUserDetails} = this.props;
         var {retrospectives} = this.state;
@@ -329,7 +329,7 @@ class Dashboard extends React.Component {
 
                     return (
                         <Row style={{margin:"10px",backgroundColor:"#72B53E",padding:"10px"}} id={type} key={index}>
-                            <Col xs={10} md={10}> {public_startData.note} </Col>
+                            <Col xs={10} md={10} className="notes"> {public_startData.note} </Col>
                             <OverlayTrigger trigger={['hover', 'focus']} placement="bottom"
                                             overlay={
                                                 <Popover id="popover-trigger-hover-focus">
@@ -337,7 +337,7 @@ class Dashboard extends React.Component {
                                                 </Popover>
                                             }
                             >
-                                <Col xs={1} md={1} title={type} style={{cursor:"pointer"}}
+                                <Col xs={1} md={1} style={{cursor:"pointer"}}
                                      id={index} accesskey={public_startData.key} name={public_startData.username}
                                      onClick={this.setUserInfoDisplay.bind(this)}>
                                     <span className="glyphicon glyphicon-info-sign" />
@@ -359,7 +359,7 @@ class Dashboard extends React.Component {
                     overlayShowStatus = (this.state.userInfoForTitle == type && this.state.userInfoForIndex == index);
                     return (
                         <Row style={{margin:"10px",backgroundColor:"#F36576",padding:"10px"}} id={type} key={index}>
-                            <Col xs={10} md={10}> {public_stopData.note} </Col>
+                            <Col xs={10} md={10} className="notes"> {public_stopData.note} </Col>
                             <OverlayTrigger trigger={['hover', 'focus']} placement="bottom"
                                             overlay={
                                                 <Popover id="popover-trigger-hover-focus">
@@ -367,7 +367,7 @@ class Dashboard extends React.Component {
                                                 </Popover>
                                             }
                             >
-                                <Col xs={1} md={1} title={type} style={{cursor:"pointer"}}
+                                <Col xs={1} md={1} style={{cursor:"pointer"}}
                                      id={index} accesskey={public_stopData.key} name={public_stopData.username}
                                      onClick={this.setUserInfoDisplay.bind(this)}>
                                         <span className="glyphicon glyphicon-info-sign" />
@@ -389,7 +389,7 @@ class Dashboard extends React.Component {
                     overlayShowStatus = (this.state.userInfoForTitle == type && this.state.userInfoForIndex == index);
                     return (
                         <Row style={{margin:"10px",backgroundColor:"#6593F1",padding:"10px"}} id={type} key={index}>
-                            <Col xs={10} md={10}> {public_continueData.note} </Col>
+                            <Col xs={10} md={10} className="notes"> {public_continueData.note} </Col>
                             <OverlayTrigger trigger={['hover', 'focus']} placement="bottom"
                                             overlay={
                                                 <Popover id="popover-trigger-hover-focus">
@@ -397,7 +397,7 @@ class Dashboard extends React.Component {
                                                 </Popover>
                                             }
                             >
-                            <Col xs={1} md={1} title={type} style={{cursor:"pointer"}}
+                            <Col xs={1} md={1} style={{cursor:"pointer"}}
                                  id={index} accesskey={public_continueData.key} name={public_continueData.username}
                                  onClick={this.setUserInfoDisplay.bind(this)}>
                                     <span className="glyphicon glyphicon-info-sign" />
@@ -423,7 +423,7 @@ class Dashboard extends React.Component {
                         }
                         return (
                             <Row style={{margin:"10px",backgroundColor:"#72B53E",padding:"10px"}} id="start" key={index}>
-                                <Col xs={10} md={10}> {data.startNotes.note} </Col>
+                                <Col xs={10} md={10} className="notes"> {data.startNotes.note} </Col>
                                 {
                                     (selectedRetroStatus) ? null :
                                         <Col xs={2} md={2} className="glyphicon glyphicon-trash" title="start" style={{cursor:"pointer"}}
@@ -444,7 +444,7 @@ class Dashboard extends React.Component {
                         }
                         return (
                             <Row style={{margin:"10px",backgroundColor:"#F36576",padding:"10px"}} id="stop" key={index}>
-                                <Col xs={10} md={10}> {data.stopNotes.note} </Col>
+                                <Col xs={10} md={10} className="notes"> {data.stopNotes.note} </Col>
                                 {
                                     (selectedRetroStatus) ? null :
                                         <Col xs={2} md={2} className="glyphicon glyphicon-trash" title="stop" style={{cursor:"pointer"}}
@@ -465,7 +465,7 @@ class Dashboard extends React.Component {
                         }
                         return (
                             <Row style={{margin:"10px",backgroundColor:"#6593F1",padding:"10px"}} id="continue" key={index}>
-                                <Col xs={10} md={10}> {data.continueNotes.note} </Col>
+                                <Col xs={10} md={10} className="notes"> {data.continueNotes.note} </Col>
                                 {
                                     (selectedRetroStatus) ? null :
                                         <Col xs={2} md={2} className="glyphicon glyphicon-trash" title="continue" style={{cursor:"pointer"}}

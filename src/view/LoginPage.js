@@ -30,16 +30,12 @@ class LoginPage extends React.Component {
     }
 
     componentWillMount() {
-
         this.props.actions.windowSize();
         var screenSize = getScreenMode();
         console.log("screenSize : ", screenSize);
 
-        var firebaseRef = firebase.database().ref('users');
-        //this.bindAsArray(firebaseRef.limitToLast(25), 'users');
-
+        /*All users*/
         this.firebaseRef = firebase.database().ref('users');
-
         this.firebaseRef.limitToLast(25).on('value', function (dataSnapshot) {
             var users = [];
             dataSnapshot.forEach(function (childSnapshot) {
@@ -64,7 +60,6 @@ class LoginPage extends React.Component {
     callBack(res){
         console.log("callBack : ", res);
         var LoginWithEmail = res.providerData[res.providerData.length -1].email;
-        //alert('Login with email : ' + LoginWithEmail);
         if(this.state.users.length != 0){
             var LoggedInUserDetails = null;
             for(var index=0; index < this.state.users.length; index++){

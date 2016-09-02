@@ -150,3 +150,6 @@ body{
     margin-left: 1680px;
     margin-top9: 60px;
 }
+.notes{
+    overflow-wrap: break-word;
+}
