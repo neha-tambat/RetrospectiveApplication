@@ -120,22 +120,17 @@ class OngoingRetrospectiveDetails extends React.Component {
                         <Column
                             header={<Cell style={{backgroundColor: '#484848', color:'#ffffff'}}> Project Name </Cell>}
                             cell={<TextCell data={dataList} project_data={projects} col="projectName" />}
-                            width={300}
+                            width={400}
                         />
                         <Column
                             header={<Cell style={{backgroundColor: '#484848', color:'#ffffff'}}> Sprint End Date </Cell>}
                             cell={<TextCell data={dataList} col="sprint_end_date" />}
-                            width={300}
+                            width={400}
                         />
                         <Column
                             header={<Cell style={{backgroundColor: '#484848',color:'#ffffff'}}> Retrospective Date </Cell>}
                             cell={<TextCell data={dataList} col="retrospective_date" />}
-                            width={300}
-                        />
-                        <Column
-                            header={<Cell style={{backgroundColor: '#484848',color:'#ffffff'}}> Retrospective Time </Cell>}
-                            cell={<TextCell data={dataList} col="retrospective_time" />}
-                            width={300}
+                            width={400}
                         />
                         <Column
                             header={<Cell style={{backgroundColor: '#484848',color:'#ffffff'}}> Action </Cell>}

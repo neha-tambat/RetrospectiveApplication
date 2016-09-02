@@ -7,6 +7,8 @@ import { bindActionCreators } from 'redux';
 import { pushState } from 'redux-router';
 import {connect} from 'react-redux';
 import * as scrumsActionCreator from '../actions/scrums/index';
+import DateTimeField from 'react-bootstrap-datetimepicker';
+import moment from 'moment';
 import {Navbar, Nav,NavItem,Input,Image,Tab,TabContainer,TabContent,TabPane,Button,Grid,Row,Col,FormGroup,FormControl,ControlLabel} from 'react-bootstrap';
 import firebase from 'firebase';
 import database from 'firebase/database';
@@ -22,10 +24,11 @@ class CreateSprintRetrospective extends React.Component {
             users:[], team:[],retrospectives:[],
             projectName : null,
             sprintTitle : null,
+            today: null,
             startDate : null,
             endDate : null,
             retrospectiveDate: null,
-            retrospectiveTime : null
+
         };
     }
 
@@ -43,14 +46,15 @@ class CreateSprintRetrospective extends React.Component {
                 users.push(user);
             }.bind(this));
 
-            console.log('users', users);
+            /*Today's date*/
+            var todayDate = moment(new Date()).format("YYYY-MM-DD HH:mm:ss");
 
             this.setState({
-                users: users
+                users: users, today: todayDate
             });
         }.bind(this));
 
-        /*Team of selected project*/
+        /*/!*Team of selected project*!/
         this.firebaseRef_team = firebase.database().ref('projects/'+ this.props.projectKeyForManageTeam + '/team');
         this.firebaseRef_team.limitToLast(25).on('value', function (dataSnapshot) {
             var team = [];
@@ -60,12 +64,14 @@ class CreateSprintRetrospective extends React.Component {
                 team.push(member);
             }.bind(this));
 
-            console.log('team', team);
+            /!*Today's date*!/
+            var todayDate = moment(new Date()).format("YYYY-MM-DD HH:mm:ss");
 
             this.setState({
-                team: team
+                team: team, today: todayDate
             });
-        }.bind(this));
+        }.bind(this));*/
+
     }
 
     projectNameChange(event){
@@ -75,31 +81,24 @@ class CreateSprintRetrospective extends React.Component {
         this.setState({sprintTitle: event.target.value});
     }
     startDateChange(newDate){
-        var start_date = newDate.target.value;
-        //    var start_date = new Date(new Number(newDate));
-        this.setState({startDate: start_date});
+        var start_date = new Date(new Number(newDate));
+        var dateFormatChange_startDate = moment(start_date).format("YYYY-MM-DD HH:mm:ss");
+        this.setState({startDate: dateFormatChange_startDate});
     }
     endDateChange(newDate){
-        var end_date = newDate.target.value;
-        //    var end_date = new Date(newDate/1);
-        this.setState({endDate: end_date});
+        var end_date = new Date(newDate/1);
+        var dateFormatChange_endDate = moment(end_date).format("YYYY-MM-DD HH:mm:ss");
+        this.setState({endDate: dateFormatChange_endDate});
     }
     retrospectiveDateChange(newDate){
-        var retrospective_date = newDate.target.value;
-        //    var end_date = new Date(newDate/1);
-        this.setState({retrospectiveDate: retrospective_date});
-    }
-    retrospectiveTimeChange(newDate){
-        var retrospectiveTime = newDate.target.value;
-        //    var retrospectiveTime = new Date(newDate/1);
-        this.setState({retrospectiveTime: retrospectiveTime});
+        var retrospective_date = new Date(newDate/1);
+        var dateFormatChange_retroDate = moment(retrospective_date).format("YYYY-MM-DD HH:mm:ss");
+        this.setState({retrospectiveDate: dateFormatChange_retroDate});
     }
 
     registerScrum(){
         /*Check retrospective status completed or not*/
-        var todayDate = new Date().toJSON().slice(0,10);
-        console.log("Today's date:", todayDate);
-        var Retro_status = (this.state.retrospectiveDate > todayDate) ;
+        var Retro_status = (this.state.retrospectiveDate > this.state.today);
         console.log("Retro_status:",Retro_status);
 
         var retroRegister = {
@@ -108,7 +107,6 @@ class CreateSprintRetrospective extends React.Component {
             sprint_start_date: this.state.startDate,
             sprint_end_date: this.state.endDate,
             retrospective_date: this.state.retrospectiveDate,
-            retrospective_time: this.state.retrospectiveTime,
             project_id: this.props.projectKeyForManageTeam,
             is_completed: !Retro_status,
             timestamp: Date.now()
@@ -118,17 +116,29 @@ class CreateSprintRetrospective extends React.Component {
         var new_retrospective = this.firebaseRef_retrospectives.push(retroRegister);
         console.log("new_retrospective",new_retrospective);
 
-        /*Add retrospective id to all project team active members in user list*/
-        for(var index=0; index < this.state.team.length; index++){
-            if(this.state.team[index].is_active_member == true) {
-                var userKeyToAddRetrospective = this.state.team[index].user;
-                var firebaseRef1 = firebase.database().ref('users/' + userKeyToAddRetrospective + '/retrospectives/'+ new_retrospective.key);
-                firebaseRef1.push({retrospective_date: this.state.retrospectiveDate});
-            }
-        }
+        /*Team of selected project*/
+        this.firebaseRef_team = firebase.database().ref('projects/'+ this.props.projectKeyForManageTeam + '/team');
+        this.firebaseRef_team.limitToLast(25).once('value', function (dataSnapshot) {
+            var team = [];
+            dataSnapshot.forEach(function (childSnapshot) {
+                var member = childSnapshot.val();
+                member['.key'] = childSnapshot.key;
+                team.push(member);
+            }.bind(this));
 
-        /*Go to ongoing retrospective page*/
-        this.props.actions.loadPage('/ongoingRetro');
+            /*Add retrospective id to all project team active members in user list*/
+            for(var index=0; index < team.length; index++){
+                if(team[index].is_active_member == true) {
+                    var userKeyToAddRetrospective = team[index].user;
+                    var firebaseRef1 = firebase.database().ref('users/' + userKeyToAddRetrospective + '/retrospectives/'+ new_retrospective.key);
+                    firebaseRef1.push({retrospective_date: this.state.retrospectiveDate});
+                }
+            }
+
+            /*Go to ongoing retrospective page*/
+            this.props.actions.loadPage('/ongoingRetro');
+
+        }.bind(this));
     }
 
 
@@ -144,21 +154,20 @@ class CreateSprintRetrospective extends React.Component {
                             <ControlLabel>Sprint Title</ControlLabel>
                             <FormControl type="text" onChange={this.sprintTitleChange.bind(this)}/>
                         </FormGroup>
-                        <FormGroup controlId="formControlsStartDate">
+                        <FormGroup controlId="formControlsStartDateTime">
                             <ControlLabel>Start Date</ControlLabel>
-                            <FormControl type="date" onChange={this.startDateChange.bind(this)}/>
+                            <DateTimeField minDate={moment(this.state.today)} size="md"
+                                           onChange={this.startDateChange.bind(this)} style={{cursor:'pointer'}} />
                         </FormGroup>
-                        <FormGroup controlId="formControlsEndDate">
+                        <FormGroup controlId="formControlsEndDateTime">
                             <ControlLabel>End Date</ControlLabel>
-                            <FormControl type="date" onChange={this.endDateChange.bind(this)}/>
+                            <DateTimeField minDate={moment(this.state.startDate)} size="md"
+                                           onChange={this.endDateChange.bind(this)} style={{cursor:'pointer'}} />
                         </FormGroup>
-                        <FormGroup controlId="formControlsRetrospectiveDate">
+                        <FormGroup controlId="formControlsRetrospectiveDateTime">
                             <ControlLabel>Retrospective Date</ControlLabel>
-                            <FormControl type="date" onChange={this.retrospectiveDateChange.bind(this)}/>
-                        </FormGroup>
-                        <FormGroup controlId="formControlsRetrospectiveTime">
-                            <ControlLabel>Retrospective Time</ControlLabel>
-                            <FormControl type="time" onChange={this.retrospectiveTimeChange.bind(this)}/>
+                            <DateTimeField  minDate={moment(this.state.endDate)} size="md"
+                                            onChange={this.retrospectiveDateChange.bind(this)} style={{cursor:'pointer'}} />
                         </FormGroup>
                         <FormControl type="button" className="signUp-button" value="Create Retrospective"
                                      style={{backgroundColor: "#FF0000", color:'#ffffff'}}
